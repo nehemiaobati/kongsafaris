@@ -25,6 +25,11 @@
 
                 <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Sign In</button>
 
+                <div class="d-flex justify-content-between mt-3">
+                    <a href="<?= url_to('auth.forgot') ?>" class="text-accent small">Forgot Password?</a>
+                    <a href="<?= url_to('auth.register') ?>" class="text-accent small">Create Account</a>
+                </div>
+
                 <div class="text-center text-muted small mt-2">
                     <p class="mb-0">Demo Credentials:</p>
                     <code class="text-accent">manager@kongsafaris.com</code> / <code class="text-accent">manager123</code><br>

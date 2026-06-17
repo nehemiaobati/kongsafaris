@@ -20,7 +20,7 @@ class EmailService
             'SMTPUser'  => (string)env('email.SMTPUser'),
             'SMTPPass'  => (string)env('email.SMTPPass'),
             'SMTPPort'  => (int)(env('email.SMTPPort') ?? 587),
-            'SMTPCrypto'=> (string)(env('email.SMTPCrypto') ?? 'tls'),
+            'SMTPCrypto' => (string)(env('email.SMTPCrypto') ?? 'tls'),
             'mailType'  => (string)(env('email.mailType') ?? 'html'),
             'charset'   => 'UTF-8',
             'wordWrap'  => true,
@@ -88,6 +88,21 @@ class EmailService
             </html>
         ";
 
+        return $this->_sendEmail($to, $subject, $body);
+    }
+
+    /**
+     * Send a raw HTML email with subject and body.
+     * Used for dynamic transactional emails (verification, password reset, etc.)
+     *
+     * @param string $to
+     * @param string $subject
+     * @param string $body HTML content
+     *
+     * @return bool
+     */
+    public function sendRawEmail(string $to, string $subject, string $body): bool
+    {
         return $this->_sendEmail($to, $subject, $body);
     }
 

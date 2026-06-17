@@ -30,6 +30,12 @@ $routes->group('trips', ['namespace' => 'App\Modules\Trips\Controllers'], static
     $routes->post('manager/refund', 'ManagerDashboardController::processRefund', ['as' => 'trips.manager.refund']);
     $routes->post('manager/assign-driver', 'ManagerDashboardController::assignDriver', ['as' => 'trips.manager.assign_driver']);
 
+    // Manager Admin Override Tools
+    $routes->get('manager/manual-booking', 'ManagerDashboardController::manualBookingView', ['as' => 'trips.manager.manual_booking']);
+    $routes->post('manager/manual-booking/create', 'ManagerDashboardController::manualBookingCreate', ['as' => 'trips.manager.manual_booking.create']);
+    $routes->post('manager/force-cancel', 'ManagerDashboardController::forceCancelBooking', ['as' => 'trips.manager.force_cancel']);
+    $routes->post('manager/override-payment', 'ManagerDashboardController::overridePaymentStatus', ['as' => 'trips.manager.override_payment']);
+
     // Fleet Vehicles CRUD
     $routes->post('vehicles/add', 'FleetController::addVehicle', ['as' => 'trips.vehicle.add']);
     $routes->post('vehicles/edit', 'FleetController::editVehicle', ['as' => 'trips.vehicle.edit']);
@@ -39,4 +45,8 @@ $routes->group('trips', ['namespace' => 'App\Modules\Trips\Controllers'], static
     $routes->post('drivers/add', 'FleetController::addDriver', ['as' => 'trips.driver.add']);
     $routes->post('drivers/edit', 'FleetController::editDriver', ['as' => 'trips.driver.edit']);
     $routes->post('drivers/delete/(:num)', 'FleetController::deleteDriver/$1', ['as' => 'trips.driver.delete']);
+
+    // Reports
+    $routes->get('reports', 'ReportController::index', ['as' => 'trips.reports']);
+    $routes->get('reports/csv', 'ReportController::exportCsv', ['as' => 'trips.reports.csv']);
 });

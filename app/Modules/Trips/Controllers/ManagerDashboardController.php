@@ -231,4 +231,222 @@ class ManagerDashboardController extends BaseController
             return redirect()->back()->with('error', 'Failed to assign driver.');
         }
     }
+
+    // --- Admin Override Tools ---
+
+    /**
+     * Display manual booking creation form.
+     */
+    public function manualBookingView(): string|ResponseInterface
+    {
+        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
+            return redirect()->to(url_to('auth.login'));
+        }
+
+        $db = \Config\Database::connect();
+        $customers = $db->table('users')
+            ->select('id, first_name, last_name, email')
+            ->where('role', 'customer')
+            ->orderBy('first_name', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        $vehicleModel = new VehicleModel();
+        $vehicles = $vehicleModel->where('status', 'active')->findAll();
+
+        $drivers = $db->table('drivers')
+            ->select('drivers.id, drivers.status, users.first_name, users.last_name')
+            ->join('users', 'users.id = drivers.user_id')
+            ->get()
+            ->getResultArray();
+
+        return view('App\Modules\Trips\Views\manual_booking', [
+            'pageTitle'       => 'Manual Booking | Kong Safaris',
+            'metaDescription' => 'Create a booking on behalf of a customer.',
+            'canonicalUrl'    => url_to('trips.manager.manual_booking'),
+            'robotsTag'       => 'noindex, nofollow',
+            'googleApiKey'    => env('GoogleMaps.APIKey') ?? '',
+            'customers'       => $customers,
+            'vehicles'        => $vehicles,
+            'drivers'         => $drivers,
+        ]);
+    }
+
+    /**
+     * Process manual booking creation by manager.
+     */
+    public function manualBookingCreate(): ResponseInterface
+    {
+        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
+            return redirect()->to(url_to('auth.login'));
+        }
+
+        $rules = [
+            'customer_id'     => 'required|integer',
+            'vehicle_id'      => 'required|integer',
+            'driver_id'       => 'required|integer',
+            'pickup_address'  => 'required|string',
+            'dropoff_address' => 'required|string',
+            'pickup_latitude'   => 'required|numeric',
+            'pickup_longitude'  => 'required|numeric',
+            'dropoff_latitude'  => 'required|numeric',
+            'dropoff_longitude' => 'required|numeric',
+            'distance_km'       => 'required|numeric|greater_than[0]',
+            'total_price'       => 'required|numeric|greater_than[0]',
+            'payment_status'    => 'required|in_list[pending,paid,manual_verified]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            $booking = new \App\Modules\Trips\Entities\Booking([
+                'customer_id'         => (int) $this->request->getPost('customer_id'),
+                'vehicle_id'          => (int) $this->request->getPost('vehicle_id'),
+                'driver_id'           => (int) $this->request->getPost('driver_id'),
+                'pickup_address'      => (string) $this->request->getPost('pickup_address'),
+                'dropoff_address'     => (string) $this->request->getPost('dropoff_address'),
+                'pickup_latitude'     => (float) $this->request->getPost('pickup_latitude'),
+                'pickup_longitude'    => (float) $this->request->getPost('pickup_longitude'),
+                'dropoff_latitude'    => (float) $this->request->getPost('dropoff_latitude'),
+                'dropoff_longitude'   => (float) $this->request->getPost('dropoff_longitude'),
+                'distance_km'         => (float) $this->request->getPost('distance_km'),
+                'total_price'         => (float) $this->request->getPost('total_price'),
+                'base_booking_fee'    => 0.00,
+                'per_km_fuel_cost'    => 0.00,
+                'maintenance_reserve' => 0.00,
+                'driver_allowance'    => 0.00,
+                'payment_status'      => (string) $this->request->getPost('payment_status'),
+                'trip_status'         => 'pending',
+                'paystack_reference'  => (string) ($this->request->getPost('paystack_reference') ?? 'MANUAL-' . bin2hex(random_bytes(4))),
+            ]);
+
+            $bookingModel = new BookingModel();
+            $bookingModel->insert($booking);
+
+            // Set driver to on_trip if paid
+            if (in_array($booking->payment_status, ['paid', 'manual_verified'], true)) {
+                $driverModel = new DriverModel();
+                /** @var \App\Modules\Trips\Entities\Driver|null $driver */
+                $driver = $driverModel->find($booking->driver_id);
+                if ($driver !== null) {
+                    $driverModel->update($driver->id, ['status' => 'on_trip']);
+                }
+            }
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \RuntimeException('Failed to create manual booking.');
+            }
+
+            return redirect()->to(url_to('trips.manager'))
+                ->with('success', 'Manual booking #' . $db->insertID() . ' created successfully.');
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            log_message('error', 'Manual Booking Failed', ['exception' => $e->getMessage()]);
+            return redirect()->back()->withInput()->with('error', 'Failed to create manual booking.');
+        }
+    }
+
+    /**
+     * Force cancel any booking regardless of trip status.
+     */
+    public function forceCancelBooking(): ResponseInterface
+    {
+        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
+            return redirect()->to(url_to('auth.login'));
+        }
+
+        $booking_id = (int) $this->request->getPost('booking_id');
+
+        $bookingModel = new BookingModel();
+        /** @var \App\Modules\Trips\Entities\Booking|null $booking */
+        $booking = $bookingModel->find($booking_id);
+
+        if ($booking === null) {
+            return redirect()->back()->with('error', 'Booking not found.');
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            $booking->trip_status = 'cancelled';
+
+            if (in_array($booking->payment_status, ['paid', 'manual_verified'], true)) {
+                $booking->payment_status = 'refund_requested';
+            }
+
+            $bookingModel->update($booking->id, $booking);
+
+            // Release driver
+            $driverModel = new DriverModel();
+            /** @var \App\Modules\Trips\Entities\Driver|null $driver */
+            $driver = $driverModel->find($booking->driver_id);
+            if ($driver !== null) {
+                $driver->status = 'available';
+                $driverModel->update($driver->id, $driver);
+            }
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \RuntimeException('Failed to force cancel booking.');
+            }
+
+            return redirect()->to(url_to('trips.manager'))
+                ->with('success', 'Booking #' . $booking_id . ' has been force cancelled.');
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            log_message('error', 'Force Cancel Failed', ['booking_id' => $booking_id, 'exception' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to cancel booking.');
+        }
+    }
+
+    /**
+     * Override payment status on a booking (mark as paid manually).
+     */
+    public function overridePaymentStatus(): ResponseInterface
+    {
+        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
+            return redirect()->to(url_to('auth.login'));
+        }
+
+        $rules = [
+            'booking_id'       => 'required|integer',
+            'payment_status'   => 'required|in_list[pending,paid,failed,manual_verified,refunded]',
+            'paystack_reference' => 'permit_empty|string',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $booking_id = (int) $this->request->getPost('booking_id');
+
+        $bookingModel = new BookingModel();
+        /** @var \App\Modules\Trips\Entities\Booking|null $booking */
+        $booking = $bookingModel->find($booking_id);
+
+        if ($booking === null) {
+            return redirect()->back()->with('error', 'Booking not found.');
+        }
+
+        $booking->payment_status = (string) $this->request->getPost('payment_status');
+
+        $reference = (string) $this->request->getPost('paystack_reference');
+        if (! empty($reference)) {
+            $booking->paystack_reference = $reference;
+        }
+
+        $bookingModel->update($booking->id, $booking);
+
+        return redirect()->to(url_to('trips.manager'))
+            ->with('success', 'Booking #' . $booking_id . ' payment status updated to ' . $booking->payment_status . '.');
+    }
 }
