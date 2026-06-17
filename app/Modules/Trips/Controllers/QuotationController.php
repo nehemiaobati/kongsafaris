@@ -28,7 +28,7 @@ class QuotationController extends BaseController
 
         // Get active vehicles and drivers
         $vehicles = $vehicleModel->where('status', 'active')->findAll();
-        
+
         // Find drivers and join with user details to get their names
         $db = \Config\Database::connect();
         $drivers = $db->table('drivers')
@@ -75,7 +75,7 @@ class QuotationController extends BaseController
 
         $vehicle_id = (int)$this->request->getPost('vehicle_id');
         $driver_id  = (int)$this->request->getPost('driver_id');
-        
+
         $p_lat = (float)$this->request->getPost('pickup_latitude');
         $p_lng = (float)$this->request->getPost('pickup_longitude');
         $d_lat = (float)$this->request->getPost('dropoff_latitude');
@@ -86,7 +86,7 @@ class QuotationController extends BaseController
 
         /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
         $vehicle = $vehicleModel->find($vehicle_id);
-        
+
         /** @var \App\Modules\Trips\Entities\Driver|null $driver */
         $driver = $driverModel->find($driver_id);
 
@@ -100,8 +100,8 @@ class QuotationController extends BaseController
             ]);
         }
 
-        // Fetch distance from Google Distance Matrix API
-        $distance_km = $this->_getGoogleDistance($p_lat, $p_lng, $d_lat, $d_lng);
+        // Fetch distance via GeocodingService (Google API with Haversine fallback)
+        $distance_km = service('geocodingService')->getDistance($p_lat, $p_lng, $d_lat, $d_lng);
 
         // Calculate Pricing using Service Library
         $pricingService = new PricingService();
@@ -115,63 +115,6 @@ class QuotationController extends BaseController
             'errors'     => [],
             'csrf_token' => csrf_hash(),
         ]);
-    }
-
-    /**
-     * --- Helper Methods ---
-     */
-    
-    /**
-     * Compute distance between coordinates using Google Matrix API or Haversine fallback.
-     */
-    private function _getGoogleDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
-    {
-        $apiKey = env('GoogleMaps.APIKey');
-        if (! empty($apiKey)) {
-            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$lat1},{$lng1}&destinations={$lat2},{$lng2}&key={$apiKey}";
-            
-            try {
-                $client = \Config\Services::curlrequest();
-                $response = $client->get($url, [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
-                    'timeout' => 5,
-                ]);
-
-                if ($response->getStatusCode() === 200) {
-                    $data = json_decode($response->getBody(), true);
-                    if (isset($data['rows'][0]['elements'][0]['distance']['value'])) {
-                        // Value returns in meters, convert to Km
-                        return (float)$data['rows'][0]['elements'][0]['distance']['value'] / 1000.0;
-                    }
-                }
-            } catch (\Throwable $t) {
-                log_message('error', 'Google Distance API Request Failed: ' . $t->getMessage());
-            }
-        }
-
-        // Fallback: Haversine distance * 1.3 (approximation of road routing distance)
-        return $this->_calculateHaversineDistance($lat1, $lng1, $lat2, $lng2) * 1.3;
-    }
-
-    /**
-     * Calculates distance using the Haversine formula
-     */
-    private function _calculateHaversineDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
-    {
-        $earthRadius = 6371.0; // in kilometers
-
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lng2 - $lng1);
-
-        $a = sin($dLat / 2) * sin($dLat / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon / 2) * sin($dLon / 2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $earthRadius * $c;
     }
 
     /**
@@ -232,7 +175,7 @@ class QuotationController extends BaseController
 
         try {
             $booking->trip_status = 'cancelled';
-            
+
             // If already paid, request a refund
             if (in_array($booking->payment_status, ['paid', 'manual_verified'], true)) {
                 $booking->payment_status = 'refund_requested';
@@ -261,7 +204,6 @@ class QuotationController extends BaseController
             }
 
             return redirect()->to(url_to('trips.customer.dashboard'))->with('success', $msg);
-
         } catch (\Throwable $e) {
             $db->transRollback();
             log_message('error', 'Customer Booking Cancellation Failure: ' . $e->getMessage());

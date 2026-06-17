@@ -308,8 +308,8 @@ class CreateSystemTables extends Migration
                 'null'       => false,
             ],
             'payment_status' => [
-                'type'       => 'ENUM',
-                'constraint' => ['pending', 'paid', 'failed', 'manual_verified'],
+                'type'       => 'VARCHAR',
+                'constraint' => 25,
                 'default'    => 'pending',
                 'null'       => false,
             ],

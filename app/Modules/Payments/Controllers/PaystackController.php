@@ -9,7 +9,6 @@ use App\Modules\Trips\Models\BookingModel;
 use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Models\DriverModel;
 use App\Modules\Trips\Entities\Booking;
-use App\Modules\Trips\Libraries\PricingService;
 use App\Modules\Auth\Models\UserModel;
 use App\Modules\Payments\Libraries\PaystackService;
 use App\Modules\Notifications\Libraries\EmailService;
@@ -49,7 +48,7 @@ class PaystackController extends BaseController
         $driver_id       = (int)$this->request->getPost('driver_id');
         $pickup_address  = (string)$this->request->getPost('pickup_address');
         $dropoff_address = (string)$this->request->getPost('dropoff_address');
-        
+
         $p_lat = (float)$this->request->getPost('pickup_latitude');
         $p_lng = (float)$this->request->getPost('pickup_longitude');
         $d_lat = (float)$this->request->getPost('dropoff_latitude');
@@ -61,7 +60,7 @@ class PaystackController extends BaseController
 
         /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
         $vehicle = $vehicleModel->find($vehicle_id);
-        
+
         /** @var \App\Modules\Trips\Entities\Driver|null $driver */
         $driver = $driverModel->find($driver_id);
 
@@ -75,10 +74,9 @@ class PaystackController extends BaseController
             ]);
         }
 
-        // Calculate pricing
-        $distance_km = $this->_getGoogleDistance($p_lat, $p_lng, $d_lat, $d_lng);
-        $pricingService = new PricingService();
-        $pricing = $pricingService->calculateQuote($vehicle, $driver, $distance_km);
+        // Calculate pricing via GeocodingService and PricingService
+        $distance_km = service('geocodingService')->getDistance($p_lat, $p_lng, $d_lat, $d_lng);
+        $pricing = service('pricingService')->calculateQuote($vehicle, $driver, $distance_km);
 
         $customer_id = session()->get('userId');
         $email = session()->get('email') ?? 'customer@kongsafaris.com';
@@ -216,7 +214,7 @@ class PaystackController extends BaseController
         }
 
         $bookingModel = new BookingModel();
-        
+
         // Idempotency: Check if this reference was already processed
         $existing = $bookingModel->where('paystack_reference', $reference)->first();
         if ($existing !== null) {
@@ -286,64 +284,10 @@ class PaystackController extends BaseController
             }
 
             return $booking_id;
-
         } catch (\Throwable $e) {
             $db->transRollback();
             log_message('critical', 'Callback Booking Insertion Exception: ' . $e->getMessage());
             return 0;
         }
-    }
-
-    /**
-     * Compute distance between coordinates using Google Matrix API or Haversine fallback.
-     */
-    private function _getGoogleDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
-    {
-        $apiKey = env('GoogleMaps.APIKey');
-        if (! empty($apiKey)) {
-            $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$lat1},{$lng1}&destinations={$lat2},{$lng2}&key={$apiKey}";
-            
-            try {
-                $client = \Config\Services::curlrequest();
-                $response = $client->get($url, [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
-                    'timeout' => 5,
-                ]);
-
-                if ($response->getStatusCode() === 200) {
-                    $data = json_decode($response->getBody(), true);
-                    if (isset($data['rows'][0]['elements'][0]['distance']['value'])) {
-                        // Value returns in meters, convert to Km
-                        return (float)$data['rows'][0]['elements'][0]['distance']['value'] / 1000.0;
-                    }
-                }
-            } catch (\Throwable $t) {
-                log_message('error', 'Google Distance API Request Failed: ' . $t->getMessage());
-            }
-        }
-
-        // Fallback: Haversine distance * 1.3 (approximation of road routing distance)
-        return $this->_calculateHaversineDistance($lat1, $lng1, $lat2, $lng2) * 1.3;
-    }
-
-    /**
-     * Calculates distance using the Haversine formula
-     */
-    private function _calculateHaversineDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
-    {
-        $earthRadius = 6371.0; // in kilometers
-
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lng2 - $lng1);
-
-        $a = sin($dLat / 2) * sin($dLat / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon / 2) * sin($dLon / 2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $earthRadius * $c;
     }
 }
