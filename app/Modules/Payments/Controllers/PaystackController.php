@@ -218,7 +218,25 @@ class PaystackController extends BaseController
         // Idempotency: Check if this reference was already processed
         $existing = $bookingModel->where('paystack_reference', $reference)->first();
         if ($existing !== null) {
+            // If found, ensure it is marked paid and return
+            if ($existing->payment_status !== 'paid') {
+                $existing->payment_status = 'paid';
+                $bookingModel->update($existing->id, ['payment_status' => 'paid']);
+            }
             return (int)$existing->id;
+        }
+
+        // Upsert by booking_id when available: manager-initiated payments reuse an existing row
+        $booking_id_from_meta = isset($metadata['booking_id']) ? (int)$metadata['booking_id'] : 0;
+        if ($booking_id_from_meta > 0) {
+            $booking = $bookingModel->find($booking_id_from_meta);
+            if ($booking !== null) {
+                $bookingModel->update($booking->id, [
+                    'paystack_reference' => $reference,
+                    'payment_status' => 'paid',
+                ]);
+                return (int)$booking->id;
+            }
         }
 
         $db = \Config\Database::connect();

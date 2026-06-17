@@ -232,6 +232,159 @@ class ManagerDashboardController extends BaseController
         }
     }
 
+    /**
+     * Allow manager to cancel a pending trip (same safe logic as customer).
+     */
+    public function cancelBooking(): ResponseInterface
+    {
+        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
+            return redirect()->to(url_to('auth.login'));
+        }
+
+        $booking_id = (int) $this->request->getPost('booking_id');
+
+        $bookingModel = new BookingModel();
+        /** @var \App\Modules\Trips\Entities\Booking|null $booking */
+        $booking = $bookingModel->find($booking_id);
+
+        if ($booking === null) {
+            return redirect()->back()->with('error', 'Booking not found.');
+        }
+
+        if ($booking->trip_status !== 'pending') {
+            return redirect()->back()->with('error', 'Only pending trips can be cancelled.');
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            $new_trip_status = 'cancelled';
+            $new_payment_status = in_array($booking->payment_status, ['paid', 'manual_verified'], true) ? 'refund_requested' : $booking->payment_status;
+
+            $bookingModel->update($booking->id, [
+                'trip_status' => $new_trip_status,
+                'payment_status' => $new_payment_status,
+            ]);
+
+            // Release driver if assigned
+            $driverModel = new DriverModel();
+            if (!empty($booking->driver_id)) {
+                $driverModel->update((int)$booking->driver_id, ['status' => 'available']);
+            }
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \RuntimeException('Failed to cancel booking.');
+            }
+
+            return redirect()->to(url_to('trips.manager'))
+                ->with('success', 'Booking #' . $booking_id . ' has been cancelled.');
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            log_message('error', 'Manager Cancel Booking Failure', [
+                'booking_id' => $booking_id,
+                'trip_status' => $booking->trip_status,
+                'payment_status' => $booking->payment_status,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return redirect()->back()->with('error', 'Failed to cancel booking: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Allow manager to initiate payment collection for pending bookings (or retry failed).
+     */
+    public function initiatePayment(): ResponseInterface
+    {
+        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
+            return redirect()->to(url_to('auth.login'));
+        }
+
+        $rules = [
+            'booking_id' => 'required|integer',
+            'provider'   => 'required|in_list[card,mpesa,airtel]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->with('errors', $this->validator->getErrors());
+        }
+
+        $booking_id = (int) $this->request->getPost('booking_id');
+        $provider   = (string) $this->request->getPost('provider');
+
+        $bookingModel = new BookingModel();
+        /** @var \App\Modules\Trips\Entities\Booking|null $booking */
+        $booking = $bookingModel->find($booking_id);
+
+        if ($booking === null) {
+            return redirect()->back()->with('error', 'Booking not found.');
+        }
+
+        if (! in_array($booking->payment_status, ['pending', 'failed'], true)) {
+            return redirect()->back()->with('error', 'Payment can only be collected for pending or failed payments.');
+        }
+
+        $vehicleModel = new VehicleModel();
+        $driverModel  = new DriverModel();
+
+        /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
+        $vehicle = $vehicleModel->find((int)$booking->vehicle_id);
+        /** @var \App\Modules\Trips\Entities\Driver|null $driver */
+        $driver = $driverModel->find((int)$booking->driver_id);
+
+        if ($vehicle === null || $driver === null) {
+            return redirect()->back()->with('error', 'Vehicle or driver configuration missing for this booking.');
+        }
+
+        $customer_id = (int)$booking->customer_id;
+        $userModel   = new \App\Modules\Auth\Models\UserModel();
+        /** @var \App\Modules\Auth\Entities\User|null $customer */
+        $customer = $userModel->find($customer_id);
+        $email    = $customer !== null ? (string)$customer->email : 'customer@kongsafaris.com';
+
+        $paystackService = new \App\Modules\Payments\Libraries\PaystackService();
+
+        $metadata = [
+            'customer_id'         => $customer_id,
+            'booking_id'          => $booking_id,
+            'vehicle_id'          => $booking->vehicle_id,
+            'driver_id'           => $booking->driver_id,
+            'pickup_address'      => $booking->pickup_address,
+            'dropoff_address'     => $booking->dropoff_address,
+            'pickup_latitude'     => $booking->pickup_latitude,
+            'pickup_longitude'    => $booking->pickup_longitude,
+            'dropoff_latitude'    => $booking->dropoff_latitude,
+            'dropoff_longitude'   => $booking->dropoff_longitude,
+            'distance_km'         => $booking->distance_km,
+            'base_booking_fee'    => $booking->base_booking_fee,
+            'per_km_fuel_cost'    => $booking->per_km_fuel_cost,
+            'maintenance_reserve' => $booking->maintenance_reserve,
+            'driver_allowance'    => $booking->driver_allowance,
+            'total_price'         => $booking->total_price,
+        ];
+
+        if ($provider === 'card') {
+            $init = $paystackService->initializeTransaction((float)$booking->total_price, $email, $metadata);
+        } else {
+            $init = $paystackService->initializeMobileMoneyCharge((float)$booking->total_price, $email, $provider, $metadata);
+        }
+
+        if (! $init['status']) {
+            return redirect()->back()->with('error', 'Payment initialization failed: ' . ($init['message'] ?? 'Unknown error.'));
+        }
+
+        // All providers now return a hosted checkout URL — redirect there for the complete payment flow
+        if (! empty($init['authorization_url'])) {
+            return redirect()->to($init['authorization_url']);
+        }
+
+        return redirect()->to(url_to('trips.manager'))
+            ->with('error', 'Payment initialized but no redirect URL was returned. Please try again or contact support.');
+    }
+
     // --- Admin Override Tools ---
 
     /**

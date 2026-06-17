@@ -8,7 +8,7 @@
         <div class="card blueprint-card p-4 h-100">
             <h5 class="fw-bold text-accent mb-3">⛽ Fuel Price Admin</h5>
             <p class="text-secondary small">Set the global price per liter used by the Dynamic Pricing Engine.</p>
-            
+
             <form action="<?= url_to('trips.fuel.update') ?>" method="POST">
                 <?= csrf_field() ?>
                 <div class="form-floating mb-3">
@@ -104,13 +104,13 @@
                                 <tr>
                                     <td><strong>#<?= esc($booking->id) ?></strong></td>
                                     <td>
-                                         <div class="small">
-                                             🧑‍✈️ <strong><?= esc($booking->first_name . ' ' . $booking->last_name) ?></strong>
-                                             <button type="button" class="btn btn-link btn-sm p-0 ms-1 edit-booking-driver-btn" data-booking-id="<?= $booking->id ?>" data-driver-id="<?= $booking->driver_id ?>" title="Change Driver">✏️</button>
-                                             <br>
-                                             🚐 <span class="text-secondary"><?= esc($booking->model) ?> (<?= esc($booking->plate_number) ?>)</span>
-                                         </div>
-                                     </td>
+                                        <div class="small">
+                                            🧑‍✈️ <strong><?= esc($booking->first_name . ' ' . $booking->last_name) ?></strong>
+                                            <button type="button" class="btn btn-link btn-sm p-0 ms-1 edit-booking-driver-btn" data-booking-id="<?= $booking->id ?>" data-driver-id="<?= $booking->driver_id ?>" title="Change Driver">✏️</button>
+                                            <br>
+                                            🚐 <span class="text-secondary"><?= esc($booking->model) ?> (<?= esc($booking->plate_number) ?>)</span>
+                                        </div>
+                                    </td>
                                     <td>
                                         <div class="small text-truncate" style="max-width: 260px;">
                                             🟢 <strong>From:</strong> <?= esc($booking->pickup_address) ?><br>
@@ -144,11 +144,30 @@
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end">
-                                        <?php if ($booking->trip_status === 'active'): ?>
-                                            <button class="btn btn-primary btn-sm px-3 track-btn" data-id="<?= $booking->id ?>" data-pickup-lat="<?= $booking->pickup_latitude ?>" data-pickup-lng="<?= $booking->pickup_longitude ?>" data-dropoff-lat="<?= $booking->dropoff_latitude ?>" data-dropoff-lng="<?= $booking->dropoff_longitude ?>">🛰️ Live Track</button>
-                                        <?php else: ?>
-                                            <button class="btn btn-outline-secondary btn-sm" disabled>Offline</button>
-                                        <?php endif; ?>
+                                        <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                            <?php if ($booking->trip_status === 'pending'): ?>
+                                                <form action="<?= url_to('trips.manager.cancel') ?>" method="POST" class="d-inline" onsubmit="return confirm('Cancel booking #<?= $booking->id ?>?');">
+                                                    <?= csrf_field() ?>
+                                                    <input type="hidden" name="booking_id" value="<?= $booking->id ?>">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
+                                                </form>
+                                            <?php endif; ?>
+
+                                            <?php if ($booking->trip_status !== 'cancelled' && in_array($booking->payment_status, ['pending', 'failed'], true)): ?>
+                                                <button class="btn btn-success btn-sm collect-payment-btn"
+                                                    data-id="<?= $booking->id ?>"
+                                                    data-total="<?= number_format($booking->total_price, 2) ?>"
+                                                    data-customer="<?= esc($booking->first_name . ' ' . $booking->last_name) ?>">
+                                                    💳 Collect Payment
+                                                </button>
+                                            <?php endif; ?>
+
+                                            <?php if ($booking->trip_status === 'active'): ?>
+                                                <button class="btn btn-primary btn-sm px-3 track-btn" data-id="<?= $booking->id ?>" data-pickup-lat="<?= $booking->pickup_latitude ?>" data-pickup-lng="<?= $booking->pickup_longitude ?>" data-dropoff-lat="<?= $booking->dropoff_latitude ?>" data-dropoff-lng="<?= $booking->dropoff_longitude ?>">🛰️ Live Track</button>
+                                            <?php else: ?>
+                                                <button class="btn btn-outline-secondary btn-sm" disabled>Offline</button>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -156,7 +175,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <?php if (isset($pager)): ?>
                 <div class="d-flex justify-content-center mt-3">
                     <?= $pager->links('default', 'bootstrap5') ?>
@@ -200,7 +219,7 @@
                                                     <button type="submit" class="btn btn-danger btn-sm">💸 Refund via Paystack</button>
                                                 </form>
                                             <?php endif; ?>
-                                            
+
                                             <!-- Manual Refund -->
                                             <form action="<?= url_to('trips.manager.refund') ?>" method="POST">
                                                 <?= csrf_field() ?>
@@ -224,7 +243,7 @@
                 <h6 class="fw-bold text-accent mb-0">🚐 Registered Vehicles</h6>
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addVehicleModal">+ Add Vehicle</button>
             </div>
-            
+
             <div class="table-responsive">
                 <table class="table table-dark table-striped align-middle">
                     <thead>
@@ -273,7 +292,7 @@
                 <h6 class="fw-bold text-accent mb-0">🧑‍✈️ Registered Drivers</h6>
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDriverModal">+ Add Driver</button>
             </div>
-            
+
             <div class="table-responsive">
                 <table class="table table-dark table-striped align-middle">
                     <thead>
@@ -535,6 +554,46 @@
     </div>
 </div>
 
+<!-- Collect Payment Modal -->
+<div class="modal fade" id="collectPaymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border border-secondary">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title fw-bold text-accent">💳 Collect Payment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<?= url_to('trips.manager.initiate_payment') ?>" method="POST">
+                <?= csrf_field() ?>
+                <input type="hidden" name="booking_id" id="pay_b_id">
+                <div class="modal-body p-4">
+                    <p class="text-secondary small">Choose a payment channel to collect pending payment for this booking.</p>
+                    <div class="form-floating mb-3">
+                        <select class="form-select bg-dark border-secondary text-light" name="provider" id="pay_provider" required>
+                            <option value="mpesa" selected>Safaricom M-Pesa (STK Push)</option>
+                            <option value="airtel">Airtel Money (STK Push)</option>
+                            <option value="card">Credit Card / Debit Card (Paystack Page)</option>
+                        </select>
+                        <label class="text-secondary">Select Provider</label>
+                    </div>
+                    <div class="p-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Customer:</span>
+                            <strong id="payCustomer">—</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Amount Due:</span>
+                            <strong class="text-accent" id="payTotal">$0.00</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="submit" class="btn btn-success">Initiate Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Geolocation Live Tracking Modal -->
 <div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -576,7 +635,7 @@
                 const pLng = parseFloat(this.getAttribute("data-pickup-lng"));
                 const dLat = parseFloat(this.getAttribute("data-dropoff-lat"));
                 const dLng = parseFloat(this.getAttribute("data-dropoff-lng"));
-                
+
                 openTrackingModal(bookingId, pLat, pLng, dLat, dLng);
             });
         });
@@ -591,7 +650,7 @@
                 document.getElementById("edit_v_margin").value = this.getAttribute("data-margin");
                 document.getElementById("edit_v_reserve").value = this.getAttribute("data-reserve");
                 document.getElementById("edit_v_status").value = this.getAttribute("data-status");
-                
+
                 const modal = new bootstrap.Modal(document.getElementById("editVehicleModal"));
                 modal.show();
             });
@@ -604,7 +663,7 @@
                 document.getElementById("edit_d_license").value = this.getAttribute("data-license");
                 document.getElementById("edit_d_allowance").value = this.getAttribute("data-allowance");
                 document.getElementById("edit_d_status").value = this.getAttribute("data-status");
-                
+
                 const modal = new bootstrap.Modal(document.getElementById("editDriverModal"));
                 modal.show();
             });
@@ -615,8 +674,20 @@
             btn.addEventListener("click", function() {
                 document.getElementById("assign_b_id").value = this.getAttribute("data-booking-id");
                 document.getElementById("assign_d_id").value = this.getAttribute("data-driver-id");
-                
+
                 const modal = new bootstrap.Modal(document.getElementById("assignDriverModal"));
+                modal.show();
+            });
+        });
+
+        // Collect payment buttons mapper
+        document.querySelectorAll(".collect-payment-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.getElementById("pay_b_id").value = this.getAttribute("data-id");
+                document.getElementById("payCustomer").innerText = this.getAttribute("data-customer");
+                document.getElementById("payTotal").innerText = "$" + this.getAttribute("data-total");
+
+                const modal = new bootstrap.Modal(document.getElementById("collectPaymentModal"));
                 modal.show();
             });
         });
@@ -628,36 +699,74 @@
 
         if (intervalId) clearInterval(intervalId);
 
-        const center = { lat: pLat, lng: pLng };
+        const center = {
+            lat: pLat,
+            lng: pLng
+        };
 
         trackingMap = new google.maps.Map(document.getElementById("trackingMap"), {
             zoom: 13,
             center: center,
-            styles: [
-                { elementType: "geometry", stylers: [{ color: "#1f2721" }] },
-                { elementType: "labels.text.stroke", stylers: [{ color: "#1f2721" }] },
-                { elementType: "labels.text.fill", stylers: [{ color: "#748077" }] },
-                { featureType: "road", elementType: "geometry", stylers: [{ color: "#2d382f" }] },
-                { featureType: "water", elementType: "geometry", stylers: [{ color: "#0d1c13" }] }
+            styles: [{
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#1f2721"
+                    }]
+                },
+                {
+                    elementType: "labels.text.stroke",
+                    stylers: [{
+                        color: "#1f2721"
+                    }]
+                },
+                {
+                    elementType: "labels.text.fill",
+                    stylers: [{
+                        color: "#748077"
+                    }]
+                },
+                {
+                    featureType: "road",
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#2d382f"
+                    }]
+                },
+                {
+                    featureType: "water",
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#0d1c13"
+                    }]
+                }
             ]
         });
 
         pickupMarker = new google.maps.Marker({
-            position: { lat: pLat, lng: pLng },
+            position: {
+                lat: pLat,
+                lng: pLng
+            },
             map: trackingMap,
             title: "Pickup",
             icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
         });
 
         dropoffMarker = new google.maps.Marker({
-            position: { lat: dLat, lng: dLng },
+            position: {
+                lat: dLat,
+                lng: dLng
+            },
             map: trackingMap,
             title: "Dropoff",
             icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
         });
 
         driverMarker = new google.maps.Marker({
-            position: { lat: pLat, lng: pLng },
+            position: {
+                lat: pLat,
+                lng: pLng
+            },
             map: trackingMap,
             title: "Driver Location",
             icon: "https://maps.google.com/mapfiles/kml/pal2/icon47.png"
@@ -677,45 +786,52 @@
 
         document.getElementById("trackingModal").addEventListener("hidden.bs.modal", function() {
             clearInterval(intervalId);
-        }, { once: true });
+        }, {
+            once: true
+        });
     }
 
     function loadTrackingCoordinates(bookingId) {
         fetch(`<?= base_url('trips/tracking/coordinates') ?>/${bookingId}`, {
-            headers: { "X-Requested-With": "XMLHttpRequest" }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                const log = document.getElementById("coordinatesLog");
-                log.innerHTML = "";
-                
-                const path = [];
-                data.result.forEach((coord, idx) => {
-                    const lat = parseFloat(coord.latitude);
-                    const lng = parseFloat(coord.longitude);
-                    path.push({ lat: lat, lng: lng });
-
-                    const li = document.createElement("li");
-                    li.className = "list-group-item bg-dark text-light border-secondary border-opacity-25 d-flex justify-content-between align-items-center py-1";
-                    li.innerHTML = `<span>Point ${idx + 1}</span> <small class="text-secondary">${coord.created_at.split(' ')[1]}</small>`;
-                    log.appendChild(li);
-                });
-
-                if (path.length > 0) {
-                    pathPolyline.setPath(path);
-                    const latest = path[path.length - 1];
-                    driverMarker.setPosition(latest);
-                    trackingMap.setCenter(latest); // Center tracking map on driver's latest coordinates
-                } else {
-                    const li = document.createElement("li");
-                    li.className = "list-group-item bg-dark text-muted";
-                    li.innerText = "No movement updates logged yet.";
-                    log.appendChild(li);
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
                 }
-            }
-        })
-        .catch(err => console.error("Coordinates fetch failed", err));
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    const log = document.getElementById("coordinatesLog");
+                    log.innerHTML = "";
+
+                    const path = [];
+                    data.result.forEach((coord, idx) => {
+                        const lat = parseFloat(coord.latitude);
+                        const lng = parseFloat(coord.longitude);
+                        path.push({
+                            lat: lat,
+                            lng: lng
+                        });
+
+                        const li = document.createElement("li");
+                        li.className = "list-group-item bg-dark text-light border-secondary border-opacity-25 d-flex justify-content-between align-items-center py-1";
+                        li.innerHTML = `<span>Point ${idx + 1}</span> <small class="text-secondary">${coord.created_at.split(' ')[1]}</small>`;
+                        log.appendChild(li);
+                    });
+
+                    if (path.length > 0) {
+                        pathPolyline.setPath(path);
+                        const latest = path[path.length - 1];
+                        driverMarker.setPosition(latest);
+                        trackingMap.setCenter(latest); // Center tracking map on driver's latest coordinates
+                    } else {
+                        const li = document.createElement("li");
+                        li.className = "list-group-item bg-dark text-muted";
+                        li.innerText = "No movement updates logged yet.";
+                        log.appendChild(li);
+                    }
+                }
+            })
+            .catch(err => console.error("Coordinates fetch failed", err));
     }
 </script>
 <?= $this->endSection() ?>

@@ -35,6 +35,8 @@ $routes->group('trips', ['namespace' => 'App\Modules\Trips\Controllers'], static
     $routes->post('manager/manual-booking/create', 'ManagerDashboardController::manualBookingCreate', ['as' => 'trips.manager.manual_booking.create']);
     $routes->post('manager/force-cancel', 'ManagerDashboardController::forceCancelBooking', ['as' => 'trips.manager.force_cancel']);
     $routes->post('manager/override-payment', 'ManagerDashboardController::overridePaymentStatus', ['as' => 'trips.manager.override_payment']);
+    $routes->post('manager/cancel', 'ManagerDashboardController::cancelBooking', ['as' => 'trips.manager.cancel']);
+    $routes->post('manager/initiate-payment', 'ManagerDashboardController::initiatePayment', ['as' => 'trips.manager.initiate_payment']);
 
     // Fleet Vehicles CRUD
     $routes->post('vehicles/add', 'FleetController::addVehicle', ['as' => 'trips.vehicle.add']);
