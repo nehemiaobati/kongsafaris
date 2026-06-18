@@ -7,27 +7,32 @@
     <div class="col-md-4 mb-3">
         <div class="card blueprint-card p-4 h-100">
             <h5 class="fw-bold text-accent mb-3">Fuel Price Admin</h5>
-            <p class="text-secondary small">Set the global price per liter for each fuel type used by the Dynamic Pricing Engine.</p>
+            <p class="text-secondary small mb-3">Set the global price per liter for each fuel type used by the Dynamic Pricing Engine.</p>
 
-            <form action="<?= url_to('trips.fuel.update') ?>" method="POST" class="mb-3">
-                <?= csrf_field() ?>
-                <input type="hidden" name="fuel_type" value="petrol">
-                <div class="form-floating mb-2">
-                    <input type="number" step="0.01" min="0.01" class="form-control bg-dark border-secondary text-light" id="petrolFuelInput" name="price_per_liter" value="<?= esc($currentPetrolRate) ?>" required>
-                    <label for="petrolFuelInput" class="text-secondary">Petrol Price per Liter (USD)</label>
+            <div class="row g-2">
+                <div class="col-12">
+                    <form action="<?= url_to('trips.fuel.update') ?>" method="POST">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="fuel_type" value="petrol">
+                        <div class="form-floating mb-2">
+                            <input type="number" step="0.01" min="0.01" class="form-control bg-dark border-secondary text-light" id="petrolFuelInput" name="price_per_liter" value="<?= esc($currentPetrolRate) ?>" required>
+                            <label for="petrolFuelInput" class="text-secondary">Petrol ($/L)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Update Petrol</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 btn-sm">Update Petrol Price</button>
-            </form>
-
-            <form action="<?= url_to('trips.fuel.update') ?>" method="POST">
-                <?= csrf_field() ?>
-                <input type="hidden" name="fuel_type" value="diesel">
-                <div class="form-floating mb-2">
-                    <input type="number" step="0.01" min="0.01" class="form-control bg-dark border-secondary text-light" id="dieselFuelInput" name="price_per_liter" value="<?= esc($currentDieselRate) ?>" required>
-                    <label for="dieselFuelInput" class="text-secondary">Diesel Price per Liter (USD)</label>
+                <div class="col-12">
+                    <form action="<?= url_to('trips.fuel.update') ?>" method="POST">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="fuel_type" value="diesel">
+                        <div class="form-floating mb-2">
+                            <input type="number" step="0.01" min="0.01" class="form-control bg-dark border-secondary text-light" id="dieselFuelInput" name="price_per_liter" value="<?= esc($currentDieselRate) ?>" required>
+                            <label for="dieselFuelInput" class="text-secondary">Diesel ($/L)</label>
+                        </div>
+                        <button type="submit" class="btn btn-outline-warning w-100">Update Diesel</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-outline-warning w-100 btn-sm">Update Diesel Price</button>
-            </form>
+            </div>
         </div>
     </div>
 

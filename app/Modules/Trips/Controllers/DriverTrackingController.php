@@ -86,17 +86,11 @@ class DriverTrackingController extends BaseController
         $db->transStart();
 
         try {
-            $booking->trip_status = $status;
-            $bookingModel->update($booking->id, $booking);
+            $bookingModel->update($booking->id, ['trip_status' => $status]);
 
             if ($status === 'completed') {
                 $driverModel = new DriverModel();
-                /** @var \App\Modules\Trips\Entities\Driver|null $driver */
-                $driver = $driverModel->find($booking->driver_id);
-                if ($driver !== null) {
-                    $driver->status = 'available';
-                    $driverModel->update($driver->id, $driver);
-                }
+                $driverModel->update($booking->driver_id, ['status' => 'available']);
             }
 
             $db->transComplete();
