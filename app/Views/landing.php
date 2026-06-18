@@ -490,7 +490,7 @@
         <!-- Maasai Mara -->
         <div class="col-lg-3 col-sm-6">
             <div class="card dest-card">
-                <img src="<?= base_url('assets/img/safari-hero.png') ?>" alt="Maasai Mara National Reserve">
+                <img src="<?= base_url('assets/img/dest-maasai-mara.png') ?>" alt="Maasai Mara National Reserve">
                 <div class="dest-content">
                     <h5 class="fw-bold text-white mb-0">Maasai Mara</h5>
                     <p class="text-muted small mb-0">Savanna wilderness & Wildebeest Migration</p>
@@ -500,7 +500,7 @@
         <!-- Amboseli -->
         <div class="col-lg-3 col-sm-6">
             <div class="card dest-card">
-                <img src="<?= base_url('assets/img/fleet-safari-van.png') ?>" alt="Amboseli National Park">
+                <img src="<?= base_url('assets/img/dest-amboseli.png') ?>" alt="Amboseli National Park">
                 <div class="dest-content">
                     <h5 class="fw-bold text-white mb-0">Amboseli</h5>
                     <p class="text-muted small mb-0">Elephants and Mount Kilimanjaro views</p>
@@ -510,7 +510,7 @@
         <!-- Lake Nakuru -->
         <div class="col-lg-3 col-sm-6">
             <div class="card dest-card">
-                <img src="<?= base_url('assets/img/fleet-luxury-suv.png') ?>" alt="Lake Nakuru">
+                <img src="<?= base_url('assets/img/dest-lake-nakuru.png') ?>" alt="Lake Nakuru">
                 <div class="dest-content">
                     <h5 class="fw-bold text-white mb-0">Lake Nakuru</h5>
                     <p class="text-muted small mb-0">Flamingos, rhinos and scenic viewpoints</p>
@@ -520,7 +520,7 @@
         <!-- Tsavo -->
         <div class="col-lg-3 col-sm-6">
             <div class="card dest-card">
-                <img src="<?= base_url('assets/img/fleet-land-cruiser.png') ?>" alt="Tsavo National Park">
+                <img src="<?= base_url('assets/img/dest-tsavo.png') ?>" alt="Tsavo National Park">
                 <div class="dest-content">
                     <h5 class="fw-bold text-white mb-0">Tsavo East & West</h5>
                     <p class="text-muted small mb-0">Red dust elephants and lava landscapes</p>
@@ -662,24 +662,7 @@
 <?= $this->section('scripts') ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    e.preventDefault();
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // 2. IntersectionObserver for scroll reveal animations
+        // 1. IntersectionObserver for scroll reveal animations
         const revealElements = document.querySelectorAll('.reveal-on-scroll');
         const revealObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -700,7 +683,7 @@
 
         revealElements.forEach(el => revealObserver.observe(el));
 
-        // 3. Counter Animation Function
+        // 2. Counter Animation Function
         function triggerCounter(counter) {
             const target = parseInt(counter.getAttribute('data-target'), 10);
             const duration = 1500; // ms

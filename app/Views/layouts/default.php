@@ -229,16 +229,16 @@
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="#fleet">Our Fleet</a>
+                            <a class="nav-link" href="<?= base_url('#fleet') ?>">Our Fleet</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#destinations">Destinations</a>
+                            <a class="nav-link" href="<?= base_url('#destinations') ?>">Destinations</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#how-it-works">How It Works</a>
+                            <a class="nav-link" href="<?= base_url('#how-it-works') ?>">How It Works</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#faq">FAQ</a>
+                            <a class="nav-link" href="<?= base_url('#faq') ?>">FAQ</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -284,18 +284,18 @@
                     <h6 class="text-white fw-bold mb-3">Quick Links</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-2"><a href="<?= base_url() ?>" class="text-muted text-decoration-none hover-link">Home</a></li>
-                        <li class="mb-2"><a href="#fleet" class="text-muted text-decoration-none hover-link">Our Fleet</a></li>
-                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Destinations</a></li>
-                        <li class="mb-2"><a href="#how-it-works" class="text-muted text-decoration-none hover-link">How It Works</a></li>
+                        <li class="mb-2"><a href="<?= base_url('#fleet') ?>" class="text-muted text-decoration-none hover-link">Our Fleet</a></li>
+                        <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Destinations</a></li>
+                        <li class="mb-2"><a href="<?= base_url('#how-it-works') ?>" class="text-muted text-decoration-none hover-link">How It Works</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h6 class="text-white fw-bold mb-3">Top Destinations</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Maasai Mara National Reserve</a></li>
-                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Amboseli National Park</a></li>
-                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Lake Nakuru</a></li>
-                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Tsavo East & West</a></li>
+                        <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Maasai Mara National Reserve</a></li>
+                        <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Amboseli National Park</a></li>
+                        <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Lake Nakuru</a></li>
+                        <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Tsavo East & West</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
@@ -334,6 +334,29 @@
                     input.value = newHash;
                 });
             };
+
+            // Global smart smooth scroll handler for base_url('#hash') links
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (!this.href) return;
+                    try {
+                        const url = new URL(this.href, window.location.href);
+                        if (url.pathname === window.location.pathname && url.hash) {
+                            const targetElement = document.querySelector(url.hash);
+                            if (targetElement) {
+                                e.preventDefault();
+                                targetElement.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                                history.pushState(null, '', url.hash);
+                            }
+                        }
+                    } catch (err) {
+                        // Ignore invalid URLs
+                    }
+                });
+            });
         });
     </script>
 
