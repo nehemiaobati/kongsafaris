@@ -42,24 +42,30 @@ class ReportController extends BaseController
 
         $reportService = new ReportService();
 
-        $summary       = $reportService->getOverallSummary($start_date, $end_date);
-        $byVehicle     = $reportService->getRevenueByVehicle($start_date, $end_date);
-        $byDriver      = $reportService->getRevenueByDriver($start_date, $end_date);
-        $trend         = $reportService->getRevenueTrend($start_date, $end_date);
-        $fuelTrend     = $reportService->getFuelCostTrend();
+        $summary               = $reportService->getOverallSummary($start_date, $end_date);
+        $byVehicle             = $reportService->getRevenueByVehicle($start_date, $end_date);
+        $byDriver              = $reportService->getRevenueByDriver($start_date, $end_date);
+        $trend                 = $reportService->getRevenueTrend($start_date, $end_date);
+        $fuelTrend             = $reportService->getFuelCostTrend();
+        $completedAnalysis     = $reportService->getCompletedTripsAnalysis($start_date, $end_date);
+        $uncompletedAnalysis   = $reportService->getUncompletedTripsAnalysis($start_date, $end_date);
+        $refundAnalysis        = $reportService->getRefundAnalysis($start_date, $end_date);
 
         return view('App\Modules\Trips\Views\reports', [
-            'pageTitle'       => 'Reports & Analytics | Kong Safaris',
-            'metaDescription' => 'View revenue reports, vehicle profitability, and fuel cost trends.',
-            'canonicalUrl'    => url_to('trips.reports'),
-            'robotsTag'       => 'noindex, nofollow',
-            'start_date'      => $start_date,
-            'end_date'        => $end_date,
-            'summary'         => $summary,
-            'by_vehicle'      => $byVehicle,
-            'by_driver'       => $byDriver,
-            'trend'           => $trend,
-            'fuel_trend'      => $fuelTrend,
+            'pageTitle'             => 'Reports & Analytics | Kong Safaris',
+            'metaDescription'       => 'View revenue reports, vehicle profitability, and fuel cost trends.',
+            'canonicalUrl'          => url_to('trips.reports'),
+            'robotsTag'             => 'noindex, nofollow',
+            'start_date'            => $start_date,
+            'end_date'              => $end_date,
+            'summary'               => $summary,
+            'by_vehicle'            => $byVehicle,
+            'by_driver'             => $byDriver,
+            'trend'                 => $trend,
+            'fuel_trend'            => $fuelTrend,
+            'completed_analysis'    => $completedAnalysis,
+            'uncompleted_analysis'  => $uncompletedAnalysis,
+            'refund_analysis'       => $refundAnalysis,
         ]);
     }
 
@@ -90,17 +96,17 @@ class ReportController extends BaseController
 
         foreach ($rows as $row) {
             $net = (float) $row['gross_revenue']
-                 - (float) $row['total_fuel']
-                 - (float) $row['total_maintenance']
-                 - (float) $row['total_allowances'];
+                - (float) $row['total_fuel']
+                - (float) $row['total_maintenance']
+                - (float) $row['total_allowances'];
 
             $csv .= '"' . $row['model'] . '","' . $row['plate_number'] . '",'
-                  . $row['trip_count'] . ',' . round((float) $row['total_km'], 2) . ','
-                  . round((float) $row['gross_revenue'], 2) . ','
-                  . round((float) $row['total_fuel'], 2) . ','
-                  . round((float) $row['total_maintenance'], 2) . ','
-                  . round((float) $row['total_allowances'], 2) . ','
-                  . round($net, 2) . "\n";
+                . $row['trip_count'] . ',' . round((float) $row['total_km'], 2) . ','
+                . round((float) $row['gross_revenue'], 2) . ','
+                . round((float) $row['total_fuel'], 2) . ','
+                . round((float) $row['total_maintenance'], 2) . ','
+                . round((float) $row['total_allowances'], 2) . ','
+                . round($net, 2) . "\n";
         }
 
         return $this->response

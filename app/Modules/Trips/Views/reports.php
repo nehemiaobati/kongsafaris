@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h2 class="fw-bold text-accent mb-1">Reports & Analytics</h2>
-        <p class="text-muted small mb-0">Revenue summaries, vehicle profitability, and fuel cost trends.</p>
+        <p class="text-muted small mb-0">Revenue summaries, realized/unrealized gains, vehicle profitability, and fuel cost trends.</p>
     </div>
     <div class="d-flex gap-2">
         <a href="<?= url_to('trips.reports.csv') ?>?start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="btn btn-outline-secondary btn-sm">Export CSV</a>
@@ -30,6 +30,101 @@
             <button type="submit" class="btn btn-primary w-100">Filter</button>
         </div>
     </form>
+</div>
+
+<!-- New Analysis Cards -->
+<div class="row g-3 mb-4">
+    <!-- Completed Trips (Realized Gains) -->
+    <div class="col-sm-6 col-lg-4">
+        <div class="card blueprint-card p-3 h-100 border-success border-opacity-25">
+            <h6 class="text-success fw-bold text-uppercase small mb-2">Completed Trips (Realized Gains)</h6>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Trips</span>
+                <strong><?= esc($completed_analysis['completed_trips'] ?? 0) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Gross Revenue</span>
+                <strong class="text-accent">$<?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Costs</span>
+                <strong class="text-warning">$<?= number_format((float)($completed_analysis['completed_total_costs'] ?? 0), 2) ?></strong>
+            </div>
+            <hr class="my-2 border-secondary">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-success fw-bold">Net Profit</span>
+                <span class="fs-5 fw-bold text-success">$<?= number_format((float)($completed_analysis['completed_net_profit'] ?? 0), 2) ?></span>
+            </div>
+            <div class="d-flex justify-content-between small mt-2 text-muted">
+                <span>Avg distance</span>
+                <span><?= number_format((float)($completed_analysis['avg_distance'] ?? 0), 1) ?> Km</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uncompleted Trips (Unrealized Gains) -->
+    <div class="col-sm-6 col-lg-4">
+        <div class="card blueprint-card p-3 h-100 border-warning border-opacity-25">
+            <h6 class="text-warning fw-bold text-uppercase small mb-2">Uncompleted Trips (Unrealized Gains)</h6>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Uncompleted</span>
+                <strong><?= esc($uncompleted_analysis['uncompleted_trips'] ?? 0) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Cancelled</span>
+                <strong class="text-danger"><?= esc($uncompleted_analysis['cancelled_trips'] ?? 0) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Pending</span>
+                <strong class="text-warning"><?= esc($uncompleted_analysis['pending_trips'] ?? 0) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Active</span>
+                <strong class="text-info"><?= esc($uncompleted_analysis['active_trips'] ?? 0) ?></strong>
+            </div>
+            <hr class="my-2 border-secondary">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-warning fw-bold">At-Risk Revenue</span>
+                <span class="fs-5 fw-bold text-warning">$<?= number_format((float)($uncompleted_analysis['at_risk_revenue'] ?? 0), 2) ?></span>
+            </div>
+            <div class="d-flex justify-content-between small mt-2 text-muted">
+                <span>Potential lost</span>
+                <span>$<?= number_format((float)($uncompleted_analysis['unrealized_potential_revenue'] ?? 0), 2) ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refunds -->
+    <div class="col-sm-6 col-lg-4">
+        <div class="card blueprint-card p-3 h-100 border-danger border-opacity-25">
+            <h6 class="text-danger fw-bold text-uppercase small mb-2">Refunds (Realized Losses)</h6>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Refunded Trips</span>
+                <strong><?= esc($refund_analysis['refunded_trips'] ?? 0) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Refunded</span>
+                <strong class="text-danger">$<?= number_format((float)($refund_analysis['total_refunded'] ?? 0), 2) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Avg Refund</span>
+                <strong>$<?= number_format((float)($refund_analysis['avg_refund_amount'] ?? 0), 2) ?></strong>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Pending Requests</span>
+                <strong class="text-warning"><?= esc($refund_analysis['pending_refund_requests'] ?? 0) ?></strong>
+            </div>
+            <hr class="my-2 border-secondary">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-danger fw-bold">Refund Rate</span>
+                <span class="fs-5 fw-bold text-danger"><?= number_format((float)($refund_analysis['refund_rate'] ?? 0), 2) ?>%</span>
+            </div>
+            <div class="d-flex justify-content-between small mt-2 text-muted">
+                <span>Of gross revenue</span>
+                <span><?= number_format((float)($refund_analysis['refund_rate'] ?? 0), 2) ?>%</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Summary Cards -->
@@ -86,6 +181,51 @@
             <h5 class="fw-bold mb-3">Fuel Price Trend</h5>
             <canvas id="fuelChart" height="200"></canvas>
         </div>
+    </div>
+</div>
+
+<!-- Completed Trips Detail Table -->
+<div class="card blueprint-card p-4 mb-4">
+    <h5 class="fw-bold text-success mb-3">Completed Trips Detail (Realized Gains)</h5>
+    <div class="table-responsive">
+        <table class="table table-dark table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Trips Completed</td>
+                    <td><strong><?= esc($completed_analysis['completed_trips'] ?? 0) ?></strong></td>
+                </tr>
+                <tr>
+                    <td>Total Distance</td>
+                    <td><strong><?= number_format((float)($completed_analysis['completed_distance'] ?? 0), 2) ?> Km</strong></td>
+                </tr>
+                <tr>
+                    <td>Gross Revenue</td>
+                    <td><strong class="text-accent">$<?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong></td>
+                </tr>
+                <tr>
+                    <td>Total Costs (Fuel + Maint + Allowance)</td>
+                    <td><strong class="text-warning">$<?= number_format((float)($completed_analysis['completed_total_costs'] ?? 0), 2) ?></strong></td>
+                </tr>
+                <tr>
+                    <td>Net Profit (Realized)</td>
+                    <td><strong class="text-success">$<?= number_format((float)($completed_analysis['completed_net_profit'] ?? 0), 2) ?></strong></td>
+                </tr>
+                <tr>
+                    <td>Average Trip Distance</td>
+                    <td><strong><?= number_format((float)($completed_analysis['avg_distance'] ?? 0), 1) ?> Km</strong></td>
+                </tr>
+                <tr>
+                    <td>Average Trip Value</td>
+                    <td><strong>$<?= number_format((float)($completed_analysis['avg_trip_value'] ?? 0), 2) ?></strong></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
