@@ -1,5 +1,35 @@
 <?= $this->extend('layouts/default') ?>
 
+<?= $this->section('styles') ?>
+<style>
+    /* Google Autocomplete Suggestions Dark Mode Override */
+    .pac-container {
+        background-color: #1a231b !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
+        font-family: inherit !important;
+    }
+    .pac-item {
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        color: #f1f3f2 !important;
+        padding: 8px 12px !important;
+    }
+    .pac-item:hover {
+        background-color: rgba(212, 175, 55, 0.1) !important;
+    }
+    .pac-item-query {
+        color: #ffffff !important;
+    }
+    .pac-matched {
+        color: var(--safari-accent) !important;
+    }
+    .pac-icon {
+        filter: invert(1);
+    }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <div class="row">
     <!-- Map Column -->

@@ -1,5 +1,17 @@
 <?= $this->extend('layouts/default') ?>
 
+<?= $this->section('styles') ?>
+<style>
+    @keyframes pulse-opacity {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+    .animate-pulse {
+        animation: pulse-opacity 1.5s infinite ease-in-out;
+    }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <div class="row">
     <!-- Active Trip Map Route Column (visible when there is an active trip) -->

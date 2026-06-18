@@ -168,6 +168,11 @@
         .hover-link:hover {
             color: var(--safari-accent) !important;
         }
+        :focus-visible {
+            outline: 2px solid var(--safari-accent) !important;
+            outline-offset: 3px !important;
+            border-radius: 4px;
+        }
     </style>
 
     <!-- Yield additional styles -->
@@ -175,6 +180,7 @@
 </head>
 
 <body>
+    <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 bg-primary text-white p-2" style="z-index: 9999;">Skip to main content</a>
 
     <!-- Header Navigation -->
     <nav class="navbar navbar-expand-lg sticky-top navbar-dark">
@@ -260,7 +266,7 @@
     </nav>
 
     <!-- Main Content wrapper -->
-    <main class="py-4">
+    <main id="main-content" class="py-4">
         <div class="container">
             <!-- Global Flash Messages -->
             <?= $this->include('partials/flash_messages') ?>

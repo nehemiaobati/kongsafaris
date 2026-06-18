@@ -1,5 +1,49 @@
 <?= $this->extend('layouts/default') ?>
 
+<?= $this->section('styles') ?>
+<style>
+    /* Premium Tabs styling */
+    .nav-tabs .nav-link {
+        border: 1px solid transparent;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        color: #8c9c90 !important;
+        font-weight: 600;
+        transition: all 0.2s ease-in-out;
+        background: transparent;
+    }
+    .nav-tabs .nav-link:hover {
+        border-color: rgba(212, 175, 55, 0.15) rgba(212, 175, 55, 0.15) transparent;
+        color: #ffffff !important;
+    }
+    .nav-tabs .nav-link.active {
+        background-color: rgba(30, 47, 32, 0.5) !important;
+        border-color: rgba(212, 175, 55, 0.3) rgba(212, 175, 55, 0.3) transparent !important;
+        color: var(--safari-accent) !important;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(212, 175, 55, 0.05) !important;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .modal-content {
+        background: #121813 !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(212, 175, 55, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    }
+    .modal-header {
+        background: rgba(30, 47, 32, 0.2);
+    }
+    @keyframes pulse-opacity {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+    .animate-pulse {
+        animation: pulse-opacity 1.5s infinite ease-in-out;
+    }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <!-- Top Info Sections -->
 <div class="row mb-4">

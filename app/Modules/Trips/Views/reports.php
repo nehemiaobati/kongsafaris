@@ -1,5 +1,14 @@
 <?= $this->extend('layouts/default') ?>
 
+<?= $this->section('styles') ?>
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(212, 175, 55, 0.05) !important;
+        transition: background-color 0.2s ease-in-out;
+    }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>

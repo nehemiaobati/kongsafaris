@@ -1,5 +1,21 @@
 <?= $this->extend('layouts/default') ?>
 
+<?= $this->section('styles') ?>
+<style>
+    @keyframes pulse-opacity {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+    .animate-pulse {
+        animation: pulse-opacity 1.5s infinite ease-in-out;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(212, 175, 55, 0.05) !important;
+        transition: background-color 0.2s ease-in-out;
+    }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <div class="row mb-4 align-items-center">
     <div class="col-sm-8">
@@ -13,7 +29,7 @@
 
 <div class="card blueprint-card p-4">
     <div class="table-responsive">
-        <table class="table table-dark table-striped table-hover align-middle">
+        <table class="table table-dark table-striped table-hover align-middle mb-0">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -29,8 +45,12 @@
                 <?php if (empty($bookings)): ?>
                     <tr>
                         <td colspan="7" class="text-center text-muted py-5">
-                            <span class="fs-1"></span>
-                            <p class="mt-2 mb-0">No paid safari bookings found on your account.</p>
+                            <div class="py-4">
+                                <div class="mb-3 fs-1" aria-hidden="true">🗺️</div>
+                                <h5 class="text-white fw-bold mb-1">No Bookings Found</h5>
+                                <p class="text-secondary small mb-3">You haven't booked any safari trips yet. Start your adventure today!</p>
+                                <a href="<?= url_to('trips.quote') ?>" class="btn btn-primary btn-sm px-4">Get a Quote</a>
+                            </div>
                         </td>
                     </tr>
                 <?php else: ?>
