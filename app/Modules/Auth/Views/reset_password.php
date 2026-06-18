@@ -5,7 +5,7 @@
     <div class="col-md-5">
         <div class="card blueprint-card p-4">
             <div class="text-center mb-4">
-                <span class="fs-1">🔐</span>
+                <span class="fs-1"></span>
                 <h2 class="mt-2 fw-bold text-accent">Reset Password</h2>
                 <p class="text-muted">Enter your new password</p>
             </div>

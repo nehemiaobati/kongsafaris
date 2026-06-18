@@ -9,9 +9,10 @@ use CodeIgniter\Entity\Entity;
 class FuelRate extends Entity
 {
     protected $dates = ['created_at'];
-    
+
     protected $casts = [
         'id'              => 'integer',
+        'fuel_type'       => 'string',
         'price_per_liter' => 'float',
         'updated_by'      => 'integer',
     ];

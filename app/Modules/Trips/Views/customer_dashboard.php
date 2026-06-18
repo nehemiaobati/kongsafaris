@@ -3,11 +3,11 @@
 <?= $this->section('content') ?>
 <div class="row mb-4 align-items-center">
     <div class="col-sm-8">
-        <h2 class="fw-bold text-accent mb-1">📋 My Safaris & Booking History</h2>
+        <h2 class="fw-bold text-accent mb-1">My Safaris & Booking History</h2>
         <p class="text-muted small mb-0">Monitor your paid bookings, real-time trip progress, and cancellation refunds.</p>
     </div>
     <div class="col-sm-4 text-sm-end mt-3 mt-sm-0">
-        <a href="<?= url_to('trips.quote') ?>" class="btn btn-primary px-4">🦁 Book a New Safari</a>
+        <a href="<?= url_to('trips.quote') ?>" class="btn btn-primary px-4">Book a New Safari</a>
     </div>
 </div>
 
@@ -29,7 +29,7 @@
                 <?php if (empty($bookings)): ?>
                     <tr>
                         <td colspan="7" class="text-center text-muted py-5">
-                            <span class="fs-1">📭</span>
+                            <span class="fs-1"></span>
                             <p class="mt-2 mb-0">No paid safari bookings found on your account.</p>
                         </td>
                     </tr>
@@ -39,14 +39,14 @@
                             <td><strong>#<?= esc($booking->id) ?></strong></td>
                             <td>
                                 <div class="small">
-                                    🧑‍✈️ <strong><?= esc($booking->first_name . ' ' . $booking->last_name) ?></strong><br>
-                                    🚐 <span class="text-secondary"><?= esc($booking->model) ?></span>
+                                    <strong><?= esc($booking->first_name . ' ' . $booking->last_name) ?></strong><br>
+                                    <span class="text-secondary"><?= esc($booking->model) ?></span>
                                 </div>
                             </td>
                             <td>
                                 <div class="small text-truncate" style="max-width: 250px;">
-                                    🟢 <strong>From:</strong> <?= esc($booking->pickup_address) ?><br>
-                                    🔴 <strong>To:</strong> <?= esc($booking->dropoff_address) ?>
+                                    <strong>From:</strong> <?= esc($booking->pickup_address) ?><br>
+                                    <strong>To:</strong> <?= esc($booking->dropoff_address) ?>
                                 </div>
                             </td>
                             <td>

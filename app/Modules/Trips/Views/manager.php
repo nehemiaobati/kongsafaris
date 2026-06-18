@@ -6,16 +6,27 @@
     <!-- Fuel Rate Administration Card -->
     <div class="col-md-4 mb-3">
         <div class="card blueprint-card p-4 h-100">
-            <h5 class="fw-bold text-accent mb-3">⛽ Fuel Price Admin</h5>
-            <p class="text-secondary small">Set the global price per liter used by the Dynamic Pricing Engine.</p>
+            <h5 class="fw-bold text-accent mb-3">Fuel Price Admin</h5>
+            <p class="text-secondary small">Set the global price per liter for each fuel type used by the Dynamic Pricing Engine.</p>
+
+            <form action="<?= url_to('trips.fuel.update') ?>" method="POST" class="mb-3">
+                <?= csrf_field() ?>
+                <input type="hidden" name="fuel_type" value="petrol">
+                <div class="form-floating mb-2">
+                    <input type="number" step="0.01" min="0.01" class="form-control bg-dark border-secondary text-light" id="petrolFuelInput" name="price_per_liter" value="<?= esc($currentPetrolRate) ?>" required>
+                    <label for="petrolFuelInput" class="text-secondary">Petrol Price per Liter (USD)</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-sm">Update Petrol Price</button>
+            </form>
 
             <form action="<?= url_to('trips.fuel.update') ?>" method="POST">
                 <?= csrf_field() ?>
-                <div class="form-floating mb-3">
-                    <input type="number" step="0.01" min="0.01" class="form-control bg-dark border-secondary text-light" id="fuelInput" name="price_per_liter" value="<?= esc($currentFuelRate) ?>" required>
-                    <label for="fuelInput" class="text-secondary">Price per Liter (USD)</label>
+                <input type="hidden" name="fuel_type" value="diesel">
+                <div class="form-floating mb-2">
+                    <input type="number" step="0.01" min="0.01" class="form-control bg-dark border-secondary text-light" id="dieselFuelInput" name="price_per_liter" value="<?= esc($currentDieselRate) ?>" required>
+                    <label for="dieselFuelInput" class="text-secondary">Diesel Price per Liter (USD)</label>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Update Fuel Price</button>
+                <button type="submit" class="btn btn-outline-warning w-100 btn-sm">Update Diesel Price</button>
             </form>
         </div>
     </div>
@@ -23,7 +34,7 @@
     <!-- Fleet Status Summary -->
     <div class="col-md-8 mb-3">
         <div class="card blueprint-card p-4 h-100">
-            <h5 class="fw-bold text-accent mb-3">🦁 Fleet Operations Overview</h5>
+            <h5 class="fw-bold text-accent mb-3">Fleet Operations Overview</h5>
             <div class="row g-3">
                 <div class="col-sm-3">
                     <div class="p-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded text-center">
@@ -47,8 +58,14 @@
                 </div>
                 <div class="col-sm-3">
                     <div class="p-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded text-center">
-                        <span class="text-secondary small">Global Fuel</span>
-                        <h2 class="fw-bold mt-1 text-accent">$<?= number_format($currentFuelRate, 2) ?></h2>
+                        <span class="text-secondary small">Petrol Rate</span>
+                        <h2 class="fw-bold mt-1 text-accent">$<?= number_format($currentPetrolRate, 2) ?></h2>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="p-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded text-center">
+                        <span class="text-secondary small">Diesel Rate</span>
+                        <h2 class="fw-bold mt-1 text-warning">$<?= number_format($currentDieselRate, 2) ?></h2>
                     </div>
                 </div>
             </div>
@@ -60,21 +77,21 @@
 <div class="card blueprint-card p-4 mb-4">
     <ul class="nav nav-tabs mb-4 border-secondary border-opacity-25" id="managerTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active text-light fw-bold" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings-panel" type="button" role="tab">📋 Bookings Log</button>
+            <button class="nav-link active text-light fw-bold" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings-panel" type="button" role="tab">Bookings Log</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link text-light fw-bold position-relative" id="refunds-tab" data-bs-toggle="tab" data-bs-target="#refunds-panel" type="button" role="tab">
-                💸 Refund Requests
+                Refund Requests
                 <?php if (!empty($refundRequests)): ?>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= count($refundRequests) ?></span>
                 <?php endif; ?>
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link text-light fw-bold" id="vehicles-tab" data-bs-toggle="tab" data-bs-target="#vehicles-panel" type="button" role="tab">🚐 Manage Vehicles</button>
+            <button class="nav-link text-light fw-bold" id="vehicles-tab" data-bs-toggle="tab" data-bs-target="#vehicles-panel" type="button" role="tab">Manage Vehicles</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link text-light fw-bold" id="drivers-tab" data-bs-toggle="tab" data-bs-target="#drivers-panel" type="button" role="tab">🧑‍✈️ Manage Drivers</button>
+            <button class="nav-link text-light fw-bold" id="drivers-tab" data-bs-toggle="tab" data-bs-target="#drivers-panel" type="button" role="tab">Manage Drivers</button>
         </li>
     </ul>
 
@@ -105,16 +122,16 @@
                                     <td><strong>#<?= esc($booking->id) ?></strong></td>
                                     <td>
                                         <div class="small">
-                                            🧑‍✈️ <strong><?= esc($booking->first_name . ' ' . $booking->last_name) ?></strong>
-                                            <button type="button" class="btn btn-link btn-sm p-0 ms-1 edit-booking-driver-btn" data-booking-id="<?= $booking->id ?>" data-driver-id="<?= $booking->driver_id ?>" title="Change Driver">✏️</button>
+                                            <strong><?= esc($booking->first_name . ' ' . $booking->last_name) ?></strong>
+                                            <button type="button" class="btn btn-link btn-sm p-0 ms-1 edit-booking-driver-btn" data-booking-id="<?= $booking->id ?>" data-driver-id="<?= $booking->driver_id ?>" title="Change Driver">Edit</button>
                                             <br>
-                                            🚐 <span class="text-secondary"><?= esc($booking->model) ?> (<?= esc($booking->plate_number) ?>)</span>
+                                            <span class="text-secondary"><?= esc($booking->model) ?> (<?= esc($booking->plate_number) ?>)</span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="small text-truncate" style="max-width: 260px;">
-                                            🟢 <strong>From:</strong> <?= esc($booking->pickup_address) ?><br>
-                                            🔴 <strong>To:</strong> <?= esc($booking->dropoff_address) ?>
+                                            <strong>From:</strong> <?= esc($booking->pickup_address) ?><br>
+                                            <strong>To:</strong> <?= esc($booking->dropoff_address) ?>
                                         </div>
                                     </td>
                                     <td>
@@ -158,12 +175,12 @@
                                                     data-id="<?= $booking->id ?>"
                                                     data-total="<?= number_format($booking->total_price, 2) ?>"
                                                     data-customer="<?= esc($booking->first_name . ' ' . $booking->last_name) ?>">
-                                                    💳 Collect Payment
+                                                    Collect Payment
                                                 </button>
                                             <?php endif; ?>
 
                                             <?php if ($booking->trip_status === 'active'): ?>
-                                                <button class="btn btn-primary btn-sm px-3 track-btn" data-id="<?= $booking->id ?>" data-pickup-lat="<?= $booking->pickup_latitude ?>" data-pickup-lng="<?= $booking->pickup_longitude ?>" data-dropoff-lat="<?= $booking->dropoff_latitude ?>" data-dropoff-lng="<?= $booking->dropoff_longitude ?>">🛰️ Live Track</button>
+                                                <button class="btn btn-primary btn-sm px-3 track-btn" data-id="<?= $booking->id ?>" data-pickup-lat="<?= $booking->pickup_latitude ?>" data-pickup-lng="<?= $booking->pickup_longitude ?>" data-dropoff-lat="<?= $booking->dropoff_latitude ?>" data-dropoff-lng="<?= $booking->dropoff_longitude ?>">Live Track</button>
                                             <?php else: ?>
                                                 <button class="btn btn-outline-secondary btn-sm" disabled>Offline</button>
                                             <?php endif; ?>
@@ -216,7 +233,7 @@
                                                     <?= csrf_field() ?>
                                                     <input type="hidden" name="booking_id" value="<?= $refund->id ?>">
                                                     <input type="hidden" name="action" value="refund_paystack">
-                                                    <button type="submit" class="btn btn-danger btn-sm">💸 Refund via Paystack</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm">Refund via Paystack</button>
                                                 </form>
                                             <?php endif; ?>
 
@@ -240,7 +257,7 @@
         <!-- 3. Vehicles Tab -->
         <div class="tab-pane fade" id="vehicles-panel" role="tabpanel">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-accent mb-0">🚐 Registered Vehicles</h6>
+                <h6 class="fw-bold text-accent mb-0">Registered Vehicles</h6>
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addVehicleModal">+ Add Vehicle</button>
             </div>
 
@@ -250,6 +267,7 @@
                         <tr>
                             <th>Plate</th>
                             <th>Model</th>
+                            <th>Fuel Type</th>
                             <th>Fuel efficiency</th>
                             <th>Margin/Km</th>
                             <th>Reserve/Km</th>
@@ -262,6 +280,7 @@
                             <tr>
                                 <td><strong><?= esc($v->plate_number) ?></strong></td>
                                 <td><?= esc($v->model) ?></td>
+                                <td><span class="badge bg-<?= $v->fuel_type === 'diesel' ? 'warning text-dark' : 'secondary' ?>"><?= esc(ucfirst($v->fuel_type)) ?></span></td>
                                 <td><?= esc($v->fuel_efficiency) ?> Km/L</td>
                                 <td>$<?= esc($v->target_profit_margin_per_km) ?></td>
                                 <td>$<?= esc($v->maintenance_reserve_per_km) ?></td>
@@ -289,7 +308,7 @@
         <!-- 4. Drivers Tab -->
         <div class="tab-pane fade" id="drivers-panel" role="tabpanel">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-accent mb-0">🧑‍✈️ Registered Drivers</h6>
+                <h6 class="fw-bold text-accent mb-0">Registered Drivers</h6>
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDriverModal">+ Add Driver</button>
             </div>
 
@@ -340,7 +359,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent">🚐 Add Fleet Vehicle</h5>
+                <h5 class="modal-title fw-bold text-accent">Add Fleet Vehicle</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= url_to('trips.vehicle.add') ?>" method="POST">
@@ -367,6 +386,13 @@
                         <label class="text-secondary">Maintenance Reserve per Km (USD)</label>
                     </div>
                     <div class="form-floating mb-3">
+                        <select class="form-select bg-dark border-secondary text-light" name="fuel_type">
+                            <option value="petrol" selected>Petrol</option>
+                            <option value="diesel">Diesel</option>
+                        </select>
+                        <label class="text-secondary">Fuel Type</label>
+                    </div>
+                    <div class="form-floating mb-3">
                         <select class="form-select bg-dark border-secondary text-light" name="status">
                             <option value="active" selected>Active</option>
                             <option value="maintenance">Maintenance</option>
@@ -388,7 +414,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent">🚐 Edit Vehicle</h5>
+                <h5 class="modal-title fw-bold text-accent">Edit Vehicle</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= url_to('trips.vehicle.edit') ?>" method="POST">
@@ -416,6 +442,13 @@
                         <label class="text-secondary">Maintenance Reserve / Km (USD)</label>
                     </div>
                     <div class="form-floating mb-3">
+                        <select class="form-select bg-dark border-secondary text-light" name="fuel_type" id="edit_v_fuel_type">
+                            <option value="petrol">Petrol</option>
+                            <option value="diesel">Diesel</option>
+                        </select>
+                        <label class="text-secondary">Fuel Type</label>
+                    </div>
+                    <div class="form-floating mb-3">
                         <select class="form-select bg-dark border-secondary text-light" name="status" id="edit_v_status">
                             <option value="active">Active</option>
                             <option value="maintenance">Maintenance</option>
@@ -437,7 +470,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent">🧑‍✈️ Register Driver</h5>
+                <h5 class="modal-title fw-bold text-accent">Register Driver</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= url_to('trips.driver.add') ?>" method="POST">
@@ -489,7 +522,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent">🧑‍✈️ Edit Driver Details</h5>
+                <h5 class="modal-title fw-bold text-accent">Edit Driver Details</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= url_to('trips.driver.edit') ?>" method="POST">
@@ -526,7 +559,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent">🧑‍✈️ Assign Driver</h5>
+                <h5 class="modal-title fw-bold text-accent">Assign Driver</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= url_to('trips.manager.assign_driver') ?>" method="POST">
@@ -559,7 +592,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent">💳 Collect Payment</h5>
+                <h5 class="modal-title fw-bold text-accent">Collect Payment</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= url_to('trips.manager.initiate_payment') ?>" method="POST">
@@ -599,7 +632,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent" id="trackingModalLabel">🛰️ Real-time Geolocation Path Tracking</h5>
+                <h5 class="modal-title fw-bold text-accent" id="trackingModalLabel">Real-time Geolocation Path Tracking</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -649,6 +682,7 @@
                 document.getElementById("edit_v_fuel").value = this.getAttribute("data-fuel");
                 document.getElementById("edit_v_margin").value = this.getAttribute("data-margin");
                 document.getElementById("edit_v_reserve").value = this.getAttribute("data-reserve");
+                document.getElementById("edit_v_fuel_type").value = this.getAttribute("data-fuel-type");
                 document.getElementById("edit_v_status").value = this.getAttribute("data-status");
 
                 const modal = new bootstrap.Modal(document.getElementById("editVehicleModal"));

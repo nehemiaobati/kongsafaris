@@ -6,25 +6,25 @@
     <div class="col-lg-7 mb-4">
         <div class="card blueprint-card h-100 p-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold mb-0 text-accent">🗺️ Safari Route Map</h5>
+                <h5 class="fw-bold mb-0 text-accent">Safari Route Map</h5>
                 <span class="text-secondary small">Click the map directly to drop pin markers.</span>
             </div>
-            
+
             <!-- Map pinning selector -->
             <div class="card bg-dark bg-opacity-50 border-secondary border-opacity-25 p-2 mb-3 rounded">
-                <span class="text-secondary small d-block mb-1">📍 Map Pin Placement Mode:</span>
+                <span class="text-secondary small d-block mb-1">Map Pin Placement Mode:</span>
                 <div class="d-flex gap-3">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pin_mode" id="pinPickup" value="pickup" checked>
-                        <label class="form-check-label text-light small" for="pinPickup">Pin Pickup Location 🟢</label>
+                        <label class="form-check-label text-light small" for="pinPickup">Pin Pickup Location</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pin_mode" id="pinDropoff" value="dropoff">
-                        <label class="form-check-label text-light small" for="pinDropoff">Pin Destination 🔴</label>
+                        <label class="form-check-label text-light small" for="pinDropoff">Pin Destination</label>
                     </div>
                 </div>
             </div>
-            
+
             <div id="bookingMap" style="min-height: 440px; border-radius: 12px; background-color: #222;"></div>
         </div>
     </div>
@@ -32,7 +32,7 @@
     <!-- Booking Form & Quote Details Column -->
     <div class="col-lg-5 mb-4">
         <div class="card blueprint-card p-4 h-100">
-            <h4 class="fw-bold text-accent mb-1">🦁 Request a Safari Quote</h4>
+            <h4 class="fw-bold text-accent mb-1">Request a Safari Quote</h4>
             <p class="text-muted small mb-4">Select vehicle and destinations to get instant dynamic pricing.</p>
 
             <form id="quoteForm" autocomplete="off">
@@ -83,7 +83,7 @@
 
                 <!-- Live Price Summary -->
                 <div id="priceSummary" class="p-3 mb-4 rounded bg-success bg-opacity-10 border border-success border-opacity-25" style="display: none;">
-                    <h6 class="fw-bold text-accent mb-3">🏷️ Cost Summary</h6>
+                    <h6 class="fw-bold text-accent mb-3">Cost Summary</h6>
                     <div class="d-flex justify-content-between small mb-1">
                         <span>Distance:</span>
                         <strong id="summaryDistance">0.00 Km</strong>
@@ -122,7 +122,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-light border border-secondary">
             <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title fw-bold text-accent" id="paymentModalLabel">💳 Complete Payment</h5>
+                <h5 class="modal-title fw-bold text-accent" id="paymentModalLabel">Complete Payment</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
@@ -155,22 +155,58 @@
 <script>
     let map, directionsService, directionsRenderer;
     let pickupAutocomplete, dropoffAutocomplete;
-    let pickupMarker = null, dropoffMarker = null;
+    let pickupMarker = null,
+        dropoffMarker = null;
     let currentBookingId = null;
 
     function initBookingInterface() {
-        const center = { lat: -1.2921, lng: 36.8219 };
-        
+        const center = {
+            lat: -1.2921,
+            lng: 36.8219
+        };
+
         map = new google.maps.Map(document.getElementById("bookingMap"), {
             zoom: 12,
             center: center,
-            styles: [
-                { elementType: "geometry", stylers: [{ color: "#1f2721" }] },
-                { elementType: "labels.text.stroke", stylers: [{ color: "#1f2721" }] },
-                { elementType: "labels.text.fill", stylers: [{ color: "#748077" }] },
-                { featureType: "road", elementType: "geometry", stylers: [{ color: "#2d382f" }] },
-                { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212b23" }] },
-                { featureType: "water", elementType: "geometry", stylers: [{ color: "#0d1c13" }] }
+            styles: [{
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#1f2721"
+                    }]
+                },
+                {
+                    elementType: "labels.text.stroke",
+                    stylers: [{
+                        color: "#1f2721"
+                    }]
+                },
+                {
+                    elementType: "labels.text.fill",
+                    stylers: [{
+                        color: "#748077"
+                    }]
+                },
+                {
+                    featureType: "road",
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#2d382f"
+                    }]
+                },
+                {
+                    featureType: "road",
+                    elementType: "geometry.stroke",
+                    stylers: [{
+                        color: "#212b23"
+                    }]
+                },
+                {
+                    featureType: "water",
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#0d1c13"
+                    }]
+                }
             ]
         });
 
@@ -198,7 +234,10 @@
 
                 if (pickupMarker) pickupMarker.setMap(null);
                 pickupMarker = new google.maps.Marker({
-                    position: { lat: lat, lng: lng },
+                    position: {
+                        lat: lat,
+                        lng: lng
+                    },
                     map: map,
                     title: "Pickup",
                     icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
@@ -218,7 +257,10 @@
 
                 if (dropoffMarker) dropoffMarker.setMap(null);
                 dropoffMarker = new google.maps.Marker({
-                    position: { lat: lat, lng: lng },
+                    position: {
+                        lat: lat,
+                        lng: lng
+                    },
                     map: map,
                     title: "Destination",
                     icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
@@ -238,7 +280,7 @@
                 document.getElementById("p_lat").value = lat;
                 document.getElementById("p_lng").value = lng;
                 document.getElementById("pickupInput").value = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
-                
+
                 if (pickupMarker) pickupMarker.setMap(null);
                 pickupMarker = new google.maps.Marker({
                     position: e.latLng,
@@ -251,7 +293,7 @@
                 document.getElementById("d_lat").value = lat;
                 document.getElementById("d_lng").value = lng;
                 document.getElementById("dropoffInput").value = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
-                
+
                 if (dropoffMarker) dropoffMarker.setMap(null);
                 dropoffMarker = new google.maps.Marker({
                     position: e.latLng,
@@ -315,36 +357,36 @@
         formData.append("csrf_test_name", window.getCSRFToken());
 
         fetch("<?= url_to('trips.quote.calculate') ?>", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            window.updateCSRFToken(data.csrf_token);
-            if (data.status === "success") {
-                document.getElementById("summaryDistance").innerText = data.result.distance_km + " Km";
-                document.getElementById("summaryBase").innerText = "$" + data.result.base_booking_fee.toFixed(2);
-                document.getElementById("summaryFuel").innerText = "$" + data.result.per_km_fuel_cost.toFixed(2);
-                document.getElementById("summaryMaint").innerText = "$" + data.result.maintenance_reserve.toFixed(2);
-                document.getElementById("summaryDriver").innerText = "$" + data.result.driver_allowance.toFixed(2);
-                document.getElementById("summaryTotal").innerText = "$" + data.result.total_price.toFixed(2);
-                
-                document.getElementById("priceSummary").style.display = "block";
-                document.getElementById("bookBtn").removeAttribute("disabled");
-            } else {
-                alert("Error: " + data.message);
-            }
-        })
-        .catch(err => console.error("Calculations failed", err));
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                window.updateCSRFToken(data.csrf_token);
+                if (data.status === "success") {
+                    document.getElementById("summaryDistance").innerText = data.result.distance_km + " Km";
+                    document.getElementById("summaryBase").innerText = "$" + data.result.base_booking_fee.toFixed(2);
+                    document.getElementById("summaryFuel").innerText = "$" + data.result.per_km_fuel_cost.toFixed(2);
+                    document.getElementById("summaryMaint").innerText = "$" + data.result.maintenance_reserve.toFixed(2);
+                    document.getElementById("summaryDriver").innerText = "$" + data.result.driver_allowance.toFixed(2);
+                    document.getElementById("summaryTotal").innerText = "$" + data.result.total_price.toFixed(2);
+
+                    document.getElementById("priceSummary").style.display = "block";
+                    document.getElementById("bookBtn").removeAttribute("disabled");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(err => console.error("Calculations failed", err));
     }
 
     document.getElementById("bookBtn").addEventListener("click", function() {
         const totalText = document.getElementById("summaryTotal").innerText;
         document.getElementById("modalTotal").innerText = totalText;
-        
+
         const paymentModal = new bootstrap.Modal(document.getElementById("paymentModal"));
         paymentModal.show();
     });
@@ -352,7 +394,7 @@
     document.getElementById("payBtn").addEventListener("click", function() {
         const provider = document.getElementById("providerSelect").value;
         const quoteForm = document.getElementById("quoteForm");
-        
+
         const alertDiv = document.getElementById("paymentAlert");
         alertDiv.innerText = "Initializing payment request...";
         alertDiv.className = "alert alert-info py-2 small";
@@ -363,28 +405,28 @@
         formData.append("csrf_test_name", window.getCSRFToken());
 
         fetch("<?= base_url('payments/checkout') ?>", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            window.updateCSRFToken(data.csrf_token);
-            if (data.status === "success" && data.result.authorization_url) {
-                alertDiv.innerText = "Redirecting to complete authentication...";
-                window.location.href = data.result.authorization_url;
-            } else {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                window.updateCSRFToken(data.csrf_token);
+                if (data.status === "success" && data.result.authorization_url) {
+                    alertDiv.innerText = "Redirecting to complete authentication...";
+                    window.location.href = data.result.authorization_url;
+                } else {
+                    alertDiv.className = "alert alert-danger py-2 small";
+                    alertDiv.innerText = "Error: " + data.message;
+                }
+            })
+            .catch(err => {
                 alertDiv.className = "alert alert-danger py-2 small";
-                alertDiv.innerText = "Error: " + data.message;
-            }
-        })
-        .catch(err => {
-            alertDiv.className = "alert alert-danger py-2 small";
-            alertDiv.innerText = "Connection failed.";
-            console.error(err);
-        });
+                alertDiv.innerText = "Connection failed.";
+                console.error(err);
+            });
     });
 </script>
 <?= $this->endSection() ?>

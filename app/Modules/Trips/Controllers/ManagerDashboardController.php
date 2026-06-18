@@ -44,8 +44,9 @@ class ManagerDashboardController extends BaseController
             ->paginate(10, 'default');
 
         $fuelRateModel = new FuelRateModel();
-        /** @var \App\Modules\Trips\Entities\FuelRate|null $fuelRate */
-        $fuelRate = $fuelRateModel->orderBy('created_at', 'DESC')->first();
+
+        $petrolRate = $fuelRateModel->where('fuel_type', 'petrol')->orderBy('created_at', 'DESC')->first();
+        $dieselRate = $fuelRateModel->where('fuel_type', 'diesel')->orderBy('created_at', 'DESC')->first();
 
         $vehicleModel = new VehicleModel();
         $vehicles = $vehicleModel->findAll();
@@ -69,7 +70,8 @@ class ManagerDashboardController extends BaseController
             'robotsTag'       => 'noindex, nofollow',
             'bookings'        => $bookings,
             'pager'           => $bookingModel->pager,
-            'currentFuelRate' => $fuelRate !== null ? (float) $fuelRate->price_per_liter : 1.45,
+            'currentPetrolRate' => $petrolRate !== null ? (float) $petrolRate->price_per_liter : 1.45,
+            'currentDieselRate' => $dieselRate !== null ? (float) $dieselRate->price_per_liter : 1.35,
             'googleApiKey'    => env('GoogleMaps.APIKey') ?? '',
             'vehicles'        => $vehicles,
             'drivers'         => $drivers,
@@ -87,6 +89,7 @@ class ManagerDashboardController extends BaseController
         }
 
         $rules = [
+            'fuel_type'       => 'required|in_list[petrol,diesel]',
             'price_per_liter' => 'required|numeric|greater_than[0]',
         ];
 
@@ -94,10 +97,12 @@ class ManagerDashboardController extends BaseController
             return redirect()->back()->with('errors', $this->validator->getErrors());
         }
 
+        $fuelType = (string) $this->request->getPost('fuel_type');
         $price = (float) $this->request->getPost('price_per_liter');
 
         $fuelRateModel = new FuelRateModel();
         $rate = new FuelRate([
+            'fuel_type'       => $fuelType,
             'price_per_liter' => $price,
             'updated_by'      => session()->get('userId'),
             'created_at'      => Time::now()->toDateTimeString(),
@@ -106,7 +111,7 @@ class ManagerDashboardController extends BaseController
         $fuelRateModel->insert($rate);
 
         return redirect()->to(url_to('trips.manager'))
-            ->with('success', 'Global fuel rate updated successfully to $' . number_format($price, 2) . ' per liter.');
+            ->with('success', ucfirst($fuelType) . ' fuel rate updated successfully to $' . number_format($price, 2) . ' per liter.');
     }
 
     /**

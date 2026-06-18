@@ -30,6 +30,7 @@ class FleetController extends BaseController
         $rules = [
             'plate_number'                => 'required|is_unique[vehicles.plate_number]',
             'model'                       => 'required|string',
+            'fuel_type'                   => 'required|in_list[petrol,diesel]',
             'fuel_efficiency'             => 'required|numeric|greater_than[0]',
             'target_profit_margin_per_km' => 'required|numeric',
             'maintenance_reserve_per_km'  => 'required|numeric',
@@ -56,6 +57,7 @@ class FleetController extends BaseController
         $rules = [
             'plate_number'                => "required|is_unique[vehicles.plate_number,id,{$id}]",
             'model'                       => 'required|string',
+            'fuel_type'                   => 'required|in_list[petrol,diesel]',
             'fuel_efficiency'             => 'required|numeric|greater_than[0]',
             'target_profit_margin_per_km' => 'required|numeric',
             'maintenance_reserve_per_km'  => 'required|numeric',

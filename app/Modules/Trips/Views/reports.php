@@ -3,11 +3,11 @@
 <?= $this->section('content') ?>
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
-        <h2 class="fw-bold text-accent mb-1">📊 Reports & Analytics</h2>
+        <h2 class="fw-bold text-accent mb-1">Reports & Analytics</h2>
         <p class="text-muted small mb-0">Revenue summaries, vehicle profitability, and fuel cost trends.</p>
     </div>
     <div class="d-flex gap-2">
-        <a href="<?= url_to('trips.reports.csv') ?>?start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="btn btn-outline-secondary btn-sm">📥 Export CSV</a>
+        <a href="<?= url_to('trips.reports.csv') ?>?start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" class="btn btn-outline-secondary btn-sm">Export CSV</a>
     </div>
 </div>
 
@@ -76,14 +76,14 @@
     <!-- Revenue Trend Chart -->
     <div class="col-lg-8">
         <div class="card blueprint-card p-4 h-100">
-            <h5 class="fw-bold mb-3">📈 Daily Revenue Trend</h5>
+            <h5 class="fw-bold mb-3">Daily Revenue Trend</h5>
             <canvas id="trendChart" height="200"></canvas>
         </div>
     </div>
     <!-- Fuel Cost Trend Chart -->
     <div class="col-lg-4">
         <div class="card blueprint-card p-4 h-100">
-            <h5 class="fw-bold mb-3">⛽ Fuel Price Trend</h5>
+            <h5 class="fw-bold mb-3">Fuel Price Trend</h5>
             <canvas id="fuelChart" height="200"></canvas>
         </div>
     </div>
@@ -91,7 +91,7 @@
 
 <!-- By Vehicle Table -->
 <div class="card blueprint-card p-4 mb-4">
-    <h5 class="fw-bold text-accent mb-3">🚐 Revenue by Vehicle</h5>
+    <h5 class="fw-bold text-accent mb-3">Revenue by Vehicle</h5>
     <div class="table-responsive">
         <table class="table table-dark table-striped align-middle">
             <thead>
@@ -133,7 +133,7 @@
 
 <!-- By Driver Table -->
 <div class="card blueprint-card p-4 mb-4">
-    <h5 class="fw-bold text-accent mb-3">🧑‍✈️ Revenue by Driver</h5>
+    <h5 class="fw-bold text-accent mb-3">Revenue by Driver</h5>
     <div class="table-responsive">
         <table class="table table-dark table-striped align-middle">
             <thead>

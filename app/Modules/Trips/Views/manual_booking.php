@@ -6,21 +6,21 @@
     <div class="col-lg-7 mb-4">
         <div class="card blueprint-card p-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold mb-0 text-accent">🗺️ Safari Route Map</h5>
+                <h5 class="fw-bold mb-0 text-accent">Safari Route Map</h5>
                 <span class="text-secondary small">Click the map directly to drop pin markers.</span>
             </div>
 
             <!-- Map pinning selector -->
             <div class="card bg-dark bg-opacity-50 border-secondary border-opacity-25 p-2 mb-3 rounded">
-                <span class="text-secondary small d-block mb-1">📍 Map Pin Placement Mode:</span>
+                <span class="text-secondary small d-block mb-1">Map Pin Placement Mode:</span>
                 <div class="d-flex gap-3">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pin_mode" id="pinPickup" value="pickup" checked>
-                        <label class="form-check-label text-light small" for="pinPickup">Pin Pickup Location 🟢</label>
+                        <label class="form-check-label text-light small" for="pinPickup">Pin Pickup Location</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pin_mode" id="pinDropoff" value="dropoff">
-                        <label class="form-check-label text-light small" for="pinDropoff">Pin Destination 🔴</label>
+                        <label class="form-check-label text-light small" for="pinDropoff">Pin Destination</label>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
     <!-- Booking Form Column -->
     <div class="col-lg-5 mb-4">
         <div class="card blueprint-card p-4 h-100">
-            <h4 class="fw-bold text-accent mb-1">🛠️ Manual Booking (Admin Override)</h4>
+            <h4 class="fw-bold text-accent mb-1">Manual Booking (Admin Override)</h4>
             <p class="text-muted small mb-4">Select customer, route, and pricing. Values auto-calculate and can be overridden.</p>
 
             <form id="manualBookingForm" autocomplete="off" action="<?= url_to('trips.manager.manual_booking.create') ?>" method="POST">
@@ -89,7 +89,7 @@
 
                 <!-- Live Price Summary -->
                 <div id="priceSummary" class="p-3 mb-3 rounded bg-success bg-opacity-10 border border-success border-opacity-25" style="display: none;">
-                    <h6 class="fw-bold text-accent mb-3">🏷️ Auto-Calculated Cost</h6>
+                    <h6 class="fw-bold text-accent mb-3">Auto-Calculated Cost</h6>
                     <div class="d-flex justify-content-between small mb-1">
                         <span>Distance:</span>
                         <strong id="summaryDistance">0.00 Km</strong>
@@ -152,7 +152,7 @@
                     </div>
                 </div>
 
-                <button class="w-100 btn btn-lg btn-primary" type="submit" id="createBtn" disabled>🛠️ Create Booking</button>
+                <button class="w-100 btn btn-lg btn-primary" type="submit" id="createBtn" disabled>Create Booking</button>
             </form>
         </div>
     </div>
