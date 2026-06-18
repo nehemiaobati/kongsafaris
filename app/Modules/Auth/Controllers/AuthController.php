@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Controllers;
 
 use App\Controllers\BaseController;
-use App\Modules\Auth\Models\UserModel;
 use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\I18n\Time;
 
 class AuthController extends BaseController
 {
@@ -47,18 +45,16 @@ class AuthController extends BaseController
         $email    = (string) $this->request->getPost('email');
         $password = (string) $this->request->getPost('password');
 
-        $userModel = new UserModel();
+        $result = service('authService')->authenticate($email, $password);
 
-        /** @var \App\Modules\Auth\Entities\User|null $user */
-        $user = $userModel->select('id, email, password_hash, first_name, last_name, role')
-            ->where('email', $email)
-            ->first();
-
-        if ($user === null || ! password_verify($password, $user->password_hash)) {
+        if (! $result['status']) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Invalid email or password.');
+                ->with('error', $result['message']);
         }
+
+        /** @var \App\Modules\Auth\Entities\User $user */
+        $user = $result['user'];
 
         // Establish User Session
         $sessionData = [
@@ -154,53 +150,20 @@ class AuthController extends BaseController
                 ->with('errors', $this->validator->getErrors());
         }
 
-        $userModel = new UserModel();
+        $result = service('authService')->register($this->request->getPost());
 
-        $user = new \App\Modules\Auth\Entities\User([
-            'email'      => (string) $this->request->getPost('email'),
-            'first_name' => (string) $this->request->getPost('first_name'),
-            'last_name'  => (string) $this->request->getPost('last_name'),
-            'role'       => 'customer',
-        ]);
-        $user->setPassword((string) $this->request->getPost('password'));
-
-        // Generate verification token
-        $verification_token = bin2hex(random_bytes(32));
-        $user->verification_token = $verification_token;
-
-        $userModel->insert($user);
+        if (! $result['status']) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Registration failed. Please try again.');
+        }
 
         // Send verification email
-        try {
-            $emailService = service('emailService');
-            $verifyUrl = site_url('auth/register/verify/' . $verification_token);
-
-            $subject = 'Verify your Kong Safaris account';
-            $body = "
-                <html>
-                <body style='font-family: Arial, sans-serif; background-color: #121813; color: #f1f3f2; padding: 20px;'>
-                    <div style='max-width: 600px; margin: 0 auto; background-color: #1a231b; border: 1px solid #d4af37; border-radius: 10px; padding: 30px;'>
-                        <h2 style='color: #d4af37; text-align: center;'>🦁 KONG SAFARIS</h2>
-                        <hr style='border: 0; border-top: 1px solid #d4af37; opacity: 0.3;'>
-                        <p>Dear " . esc($user->first_name) . ",</p>
-                        <p>Thank you for creating an account. Please click the button below to verify your email address.</p>
-                        <div style='text-align: center; margin: 30px 0;'>
-                            <a href='" . $verifyUrl . "' style='background-color: #d4af37; color: #121813; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;'>Verify Email Address</a>
-                        </div>
-                        <p style='font-size: 0.85em; color: #8c9c90;'>If you did not create this account, please ignore this email.</p>
-                        <p style='font-size: 0.9em; color: #8c9c90;'>Best Regards,<br>Kong Safaris Operations Team</p>
-                    </div>
-                </body>
-                </html>
-            ";
-
-            $emailService->sendRawEmail((string) $user->email, $subject, $body);
-        } catch (\Throwable $e) {
-            log_message('error', 'Registration verification email failed', [
-                'user_id' => $userModel->getInsertID(),
-                'exception' => $e->getMessage(),
-            ]);
-        }
+        service('authService')->sendVerificationEmail(
+            (string) $this->request->getPost('email'),
+            (string) $this->request->getPost('first_name'),
+            $result['verification_token']
+        );
 
         return redirect()->to(url_to('auth.login'))
             ->with('success', 'Account created! Please check your email to verify your account.');
@@ -215,20 +178,10 @@ class AuthController extends BaseController
             return redirect()->to(url_to('auth.login'))->with('error', 'Invalid verification link.');
         }
 
-        $userModel = new UserModel();
-        /** @var \App\Modules\Auth\Entities\User|null $user */
-        $user = $userModel->where('verification_token', $token)->first();
+        $result = service('authService')->verifyEmail($token);
 
-        if ($user === null) {
-            return redirect()->to(url_to('auth.login'))->with('error', 'Invalid or expired verification link.');
-        }
-
-        $user->verification_token = null;
-        $user->email_verified_at = Time::now()->toDateTimeString();
-        $userModel->update($user->id, $user);
-
-        return redirect()->to(url_to('auth.login'))
-            ->with('success', 'Email verified successfully! You can now log in.');
+        $method = $result['status'] ? 'success' : 'error';
+        return redirect()->to(url_to('auth.login'))->with($method, $result['message']);
     }
 
     // --- Password Reset ---
@@ -263,48 +216,17 @@ class AuthController extends BaseController
 
         $email = (string) $this->request->getPost('email');
 
-        $userModel = new UserModel();
-        /** @var \App\Modules\Auth\Entities\User|null $user */
-        $user = $userModel->where('email', $email)->first();
+        $result = service('authService')->generateResetToken($email);
 
-        // Always return success to prevent email enumeration
-        if ($user === null) {
-            return redirect()->to(url_to('auth.login'))
-                ->with('success', 'If that email exists, a password reset link has been sent.');
-        }
+        // Only send email if user exists (prevents email enumeration)
+        if ($result['user_exists'] && $result['reset_token'] !== null) {
+            $userModel = new \App\Modules\Auth\Models\UserModel();
+            /** @var \App\Modules\Auth\Entities\User|null $user */
+            $user = $userModel->where('email', $email)->first();
 
-        $reset_token = bin2hex(random_bytes(32));
-        $user->reset_token = $reset_token;
-        $user->reset_token_expires_at = Time::now()->addMinutes(60)->toDateTimeString();
-        $userModel->update($user->id, $user);
-
-        // Send reset email
-        try {
-            $resetUrl = site_url('auth/reset-password/' . $reset_token);
-            $emailService = service('emailService');
-
-            $subject = 'Reset your Kong Safaris password';
-            $body = "
-                <html>
-                <body style='font-family: Arial, sans-serif; background-color: #121813; color: #f1f3f2; padding: 20px;'>
-                    <div style='max-width: 600px; margin: 0 auto; background-color: #1a231b; border: 1px solid #d4af37; border-radius: 10px; padding: 30px;'>
-                        <h2 style='color: #d4af37; text-align: center;'>🦁 KONG SAFARIS</h2>
-                        <hr style='border: 0; border-top: 1px solid #d4af37; opacity: 0.3;'>
-                        <p>Dear " . esc($user->first_name) . ",</p>
-                        <p>You requested a password reset. Click the button below to set a new password. This link expires in 60 minutes.</p>
-                        <div style='text-align: center; margin: 30px 0;'>
-                            <a href='" . $resetUrl . "' style='background-color: #d4af37; color: #121813; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;'>Reset Password</a>
-                        </div>
-                        <p style='font-size: 0.85em; color: #8c9c90;'>If you did not request this, please ignore this email.</p>
-                        <p style='font-size: 0.9em; color: #8c9c90;'>Best Regards,<br>Kong Safaris Operations Team</p>
-                    </div>
-                </body>
-                </html>
-            ";
-
-            $emailService->sendRawEmail($email, $subject, $body);
-        } catch (\Throwable $e) {
-            log_message('error', 'Password reset email failed', ['exception' => $e->getMessage()]);
+            if ($user !== null) {
+                service('authService')->sendPasswordResetEmail($email, $user->first_name, $result['reset_token']);
+            }
         }
 
         return redirect()->to(url_to('auth.login'))
@@ -318,16 +240,6 @@ class AuthController extends BaseController
     {
         if (empty($token)) {
             return redirect()->to(url_to('auth.login'))->with('error', 'Invalid reset link.');
-        }
-
-        $userModel = new UserModel();
-        /** @var \App\Modules\Auth\Entities\User|null $user */
-        $user = $userModel->where('reset_token', $token)
-            ->where('reset_token_expires_at >=', Time::now()->toDateTimeString())
-            ->first();
-
-        if ($user === null) {
-            return redirect()->to(url_to('auth.login'))->with('error', 'Invalid or expired reset link.');
         }
 
         return view('App\Modules\Auth\Views\reset_password', [
@@ -352,23 +264,10 @@ class AuthController extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $userModel = new UserModel();
-        /** @var \App\Modules\Auth\Entities\User|null $user */
-        $user = $userModel->where('reset_token', $token)
-            ->where('reset_token_expires_at >=', Time::now()->toDateTimeString())
-            ->first();
+        $result = service('authService')->resetPassword($token, (string) $this->request->getPost('password'));
 
-        if ($user === null) {
-            return redirect()->to(url_to('auth.login'))->with('error', 'Invalid or expired reset link.');
-        }
-
-        $user->setPassword((string) $this->request->getPost('password'));
-        $user->reset_token = null;
-        $user->reset_token_expires_at = null;
-        $userModel->update($user->id, $user);
-
-        return redirect()->to(url_to('auth.login'))
-            ->with('success', 'Password reset successfully! You can now log in with your new password.');
+        $method = $result['status'] ? 'success' : 'error';
+        return redirect()->to(url_to('auth.login'))->with($method, $result['message']);
     }
 
     // --- Customer Profile ---
@@ -382,7 +281,7 @@ class AuthController extends BaseController
             return redirect()->to(url_to('auth.login'));
         }
 
-        $userModel = new UserModel();
+        $userModel = new \App\Modules\Auth\Models\UserModel();
         /** @var \App\Modules\Auth\Entities\User|null $user */
         $user = $userModel->find(session()->get('userId'));
 
@@ -425,22 +324,14 @@ class AuthController extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $userModel = new UserModel();
-        /** @var \App\Modules\Auth\Entities\User|null $user */
-        $user = $userModel->find($userId);
+        $result = service('authService')->updateProfile($userId, $this->request->getPost());
 
-        if ($user === null) {
-            return redirect()->to(url_to('auth.login'))->with('error', 'User not found.');
+        if (! $result['status']) {
+            return redirect()->to(url_to('auth.login'))->with('error', $result['message']);
         }
 
-        $user->first_name = (string) $this->request->getPost('first_name');
-        $user->last_name  = (string) $this->request->getPost('last_name');
-
-        if (! empty($password)) {
-            $user->setPassword($password);
-        }
-
-        $userModel->update($userId, $user);
+        /** @var \App\Modules\Auth\Entities\User $user */
+        $user = $result['user'];
 
         // Update session data
         session()->set('first_name', $user->first_name);

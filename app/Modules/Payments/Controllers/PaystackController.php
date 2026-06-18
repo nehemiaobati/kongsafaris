@@ -10,7 +10,6 @@ use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Models\DriverModel;
 use App\Modules\Trips\Entities\Booking;
 use App\Modules\Auth\Models\UserModel;
-use App\Modules\Payments\Libraries\PaystackService;
 use App\Modules\Notifications\Libraries\EmailService;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -100,7 +99,7 @@ class PaystackController extends BaseController
             'total_price'         => $pricing['total_price'],
         ];
 
-        $paystackService = new PaystackService();
+        $paystackService = service('paystackService');
 
         if ($provider === 'card') {
             $init = $paystackService->initializeTransaction($pricing['total_price'], $email, $metadata);
@@ -141,7 +140,7 @@ class PaystackController extends BaseController
             return redirect()->to(url_to('auth.dashboard'))->with('error', 'Payment reference not found.');
         }
 
-        $paystackService = new PaystackService();
+        $paystackService = service('paystackService');
         $verification = $paystackService->verifyTransaction($reference);
 
         if ($verification['status']) {

@@ -8,7 +8,6 @@ use App\Controllers\BaseController;
 use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Models\DriverModel;
 use App\Modules\Trips\Models\BookingModel;
-use App\Modules\Trips\Libraries\PricingService;
 use App\Modules\Trips\Entities\Booking;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -104,7 +103,7 @@ class QuotationController extends BaseController
         $distance_km = service('geocodingService')->getDistance($p_lat, $p_lng, $d_lat, $d_lng);
 
         // Calculate Pricing using Service Library
-        $pricingService = new PricingService();
+        $pricingService = service('pricingService');
         $pricing = $pricingService->calculateQuote($vehicle, $driver, $distance_km);
         $pricing['distance_km'] = round($distance_km, 2);
 

@@ -12,22 +12,26 @@ class UserModel extends Model
     protected $table = 'users';
     protected $primaryKey = 'id';
     protected $returnType = User::class;
-    
+
     protected $useTimestamps = true;
     protected $useSoftDeletes = true;
-    
+
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
-    
+
     protected $allowedFields = [
         'email',
         'password_hash',
         'first_name',
         'last_name',
         'role',
+        'verification_token',
+        'email_verified_at',
+        'reset_token',
+        'reset_token_expires_at',
     ];
-    
+
     protected $validationRules = [
         'email'      => 'required|valid_email|is_unique[users.email,id,{id}]',
         'first_name' => 'required|min_length[2]|max_length[100]',

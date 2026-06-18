@@ -10,7 +10,6 @@ use App\Modules\Trips\Models\DriverModel;
 use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Models\FuelRateModel;
 use App\Modules\Trips\Entities\FuelRate;
-use App\Modules\Payments\Libraries\PaystackService;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 
@@ -345,7 +344,7 @@ class ManagerDashboardController extends BaseController
         $customer = $userModel->find($customer_id);
         $email    = $customer !== null ? (string)$customer->email : 'customer@kongsafaris.com';
 
-        $paystackService = new \App\Modules\Payments\Libraries\PaystackService();
+        $paystackService = service('paystackService');
 
         $metadata = [
             'customer_id'         => $customer_id,
