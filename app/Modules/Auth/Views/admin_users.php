@@ -70,8 +70,8 @@
                             <td class="small text-muted"><?= date('M d, Y', strtotime($u->created_at)) ?></td>
                             <td class="text-end">
                                 <div class="d-flex gap-2 justify-content-end">
-                                    <a href="<?= url_to('auth.admin.edit_user', [$u->id]) ?>" class="btn btn-outline-info btn-sm">Edit</a>
-                                    <form action="<?= url_to('auth.admin.delete_user', [$u->id]) ?>" method="POST" onsubmit="return confirm('Delete user? This cannot be undone.');">
+                                    <a href="<?= url_to('auth.admin.edit_user', $u->id) ?>" class="btn btn-outline-info btn-sm">Edit</a>
+                                    <form action="<?= url_to('auth.admin.delete_user', $u->id) ?>" method="POST" onsubmit="return confirm('Delete user? This cannot be undone.');">
                                         <?= csrf_field() ?>
                                         <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
                                     </form>

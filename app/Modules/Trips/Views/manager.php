@@ -115,6 +115,11 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link text-light fw-bold" id="drivers-tab" data-bs-toggle="tab" data-bs-target="#drivers-panel" type="button" role="tab">Manage Drivers</button>
         </li>
+        <?php if (session()->get('role') === 'admin'): ?>
+            <li class="nav-item" role="presentation">
+                <a href="<?= url_to('auth.admin.users') ?>" class="nav-link text-light fw-bold">User Management</a>
+            </li>
+        <?php endif; ?>
     </ul>
 
     <div class="tab-content" id="managerTabContent">
@@ -184,7 +189,9 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="d-flex gap-2 justify-content-end flex-wrap">
-                                            <button class="btn btn-outline-info btn-sm edit-booking-btn" data-id="<?= $booking->id ?>" data-pickup="<?= esc($booking->pickup_address) ?>" data-dropoff="<?= esc($booking->dropoff_address) ?>" data-vehicle="<?= $booking->vehicle_id ?>" data-driver="<?= $booking->driver_id ?>" data-distance="<?= $booking->distance_km ?>" data-price="<?= $booking->total_price ?>" data-payment="<?= $booking->payment_status ?>" data-trip="<?= $booking->trip_status ?>">Edit</button>
+                                            <?php if ($booking->trip_status === 'pending'): ?>
+                                                <button class="btn btn-outline-info btn-sm edit-booking-btn" data-id="<?= $booking->id ?>" data-pickup="<?= esc($booking->pickup_address) ?>" data-dropoff="<?= esc($booking->dropoff_address) ?>" data-vehicle="<?= $booking->vehicle_id ?>" data-driver="<?= $booking->driver_id ?>" data-distance="<?= $booking->distance_km ?>" data-price="<?= $booking->total_price ?>" data-payment="<?= $booking->payment_status ?>" data-trip="<?= $booking->trip_status ?>">Edit</button>
+                                            <?php endif; ?>
                                             <?php if ($booking->trip_status === 'pending'): ?>
                                                 <form action="<?= url_to('trips.manager.cancel') ?>" method="POST" class="d-inline" onsubmit="return confirm('Cancel booking #<?= $booking->id ?>?');">
                                                     <?= csrf_field() ?>
