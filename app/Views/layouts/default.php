@@ -8,6 +8,7 @@
     <!-- SEO Meta Tags -->
     <title><?= esc($pageTitle ?? 'Kong Safaris Fleet & Booking System') ?></title>
     <meta name="description" content="<?= esc($metaDescription ?? 'Manage pricing, booking, and real-time fleet tracking for Kong Safaris.') ?>">
+    <meta name="keywords" content="<?= esc($metaKeywords ?? 'safari, transport, booking, fleet, kenya') ?>">
     <link rel="canonical" href="<?= esc($canonicalUrl ?? current_url()) ?>">
     <meta name="robots" content="<?= esc($robotsTag ?? 'noindex, nofollow') ?>">
 
@@ -20,14 +21,14 @@
     <meta property="og:url" content="<?= esc($canonicalUrl ?? current_url()) ?>">
     <meta property="og:title" content="<?= esc($pageTitle ?? 'Kong Safaris Fleet & Booking System') ?>">
     <meta property="og:description" content="<?= esc($metaDescription ?? 'Manage pricing, booking, and real-time fleet tracking for Kong Safaris.') ?>">
-    <meta property="og:image" content="<?= esc($metaImage ?? base_url('assets/img/safari-cover.jpg')) ?>">
+    <meta property="og:image" content="<?= esc($metaImage ?? base_url('assets/img/safari-hero.png')) ?>">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="<?= esc($canonicalUrl ?? current_url()) ?>">
     <meta name="twitter:title" content="<?= esc($pageTitle ?? 'Kong Safaris Fleet & Booking System') ?>">
     <meta name="twitter:description" content="<?= esc($metaDescription ?? 'Manage pricing, booking, and real-time fleet tracking for Kong Safaris.') ?>">
-    <meta name="twitter:image" content="<?= esc($metaImage ?? base_url('assets/img/safari-cover.jpg')) ?>">
+    <meta name="twitter:image" content="<?= esc($metaImage ?? base_url('assets/img/safari-hero.png')) ?>">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,6 +37,23 @@
 
     <!-- Bootstrap 5 CSS (Local example asset) -->
     <link rel="stylesheet" href="<?= base_url('bootstrap-5.3.8-examples/assets/dist/css/bootstrap.min.css') ?>">
+
+    <!-- JSON-LD Structured Data for Google Rich Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TravelAgency",
+      "name": "Kong Safaris",
+      "image": "<?= base_url('assets/img/safari-hero.png') ?>",
+      "description": "<?= esc($metaDescription ?? 'Manage pricing, booking, and real-time fleet tracking for Kong Safaris.') ?>",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nairobi",
+        "addressCountry": "KE"
+      },
+      "priceRange": "$$"
+    }
+    </script>
 
     <!-- Custom theme variables & micro-animations -->
     <style>
@@ -144,10 +162,11 @@
             opacity: 0.85;
         }
 
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--safari-accent);
-            box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+        .hover-link {
+            transition: color 0.2s ease-in-out;
+        }
+        .hover-link:hover {
+            color: var(--safari-accent) !important;
         }
     </style>
 
@@ -208,6 +227,19 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?= url_to('auth.profile') ?>">Profile</a>
                         </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#fleet">Our Fleet</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#destinations">Destinations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#how-it-works">How It Works</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#faq">FAQ</a>
+                        </li>
                     <?php endif; ?>
                 </ul>
 
@@ -239,10 +271,48 @@
     </main>
 
     <!-- Footer -->
-    <footer>
-        <div class="container text-center">
-            <p class="mb-1">&copy; <?= date('Y') ?> Kong Safaris Ltd. All rights reserved.</p>
-            <small class="text-muted">Dynamic Fleet Pricing, Tracking & Booking Operations</small>
+    <footer class="py-5">
+        <div class="container">
+            <div class="row g-4 text-start mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-accent fw-bold mb-3">🦁 KONG SAFARIS</h5>
+                    <p class="small text-muted">
+                        Providing premium safari vehicle rentals, customized tour transport, and real-time fleet operations management across Kenya. Reimagining wild adventures with safety and ease.
+                    </p>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="<?= base_url() ?>" class="text-muted text-decoration-none hover-link">Home</a></li>
+                        <li class="mb-2"><a href="#fleet" class="text-muted text-decoration-none hover-link">Our Fleet</a></li>
+                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Destinations</a></li>
+                        <li class="mb-2"><a href="#how-it-works" class="text-muted text-decoration-none hover-link">How It Works</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">Top Destinations</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Maasai Mara National Reserve</a></li>
+                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Amboseli National Park</a></li>
+                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Lake Nakuru</a></li>
+                        <li class="mb-2"><a href="#destinations" class="text-muted text-decoration-none hover-link">Tsavo East & West</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">Contact Us</h6>
+                    <ul class="list-unstyled small text-muted">
+                        <li class="mb-2">📍 Nairobi, Kenya</li>
+                        <li class="mb-2">📞 +254 700 000000</li>
+                        <li class="mb-2">✉️ info@kongsafaris.com</li>
+                        <li class="mb-2">🕒 Mon - Sat: 8:00 AM - 6:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary opacity-25 mb-4">
+            <div class="text-center">
+                <p class="mb-1 text-muted">&copy; <?= date('Y') ?> Kong Safaris Ltd. All rights reserved.</p>
+                <small class="text-muted">Dynamic Fleet Pricing, Tracking & Booking Operations</small>
+            </div>
         </div>
     </footer>
 
