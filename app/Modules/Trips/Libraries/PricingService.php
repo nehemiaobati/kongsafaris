@@ -7,10 +7,18 @@ namespace App\Modules\Trips\Libraries;
 use App\Modules\Trips\Entities\Vehicle;
 use App\Modules\Trips\Entities\Driver;
 use App\Modules\Trips\Models\FuelRateModel;
+use App\Modules\Trips\Models\SystemSettingModel;
 
 class PricingService
 {
-    private float $base_booking_fee = 50.00; // Configurable base booking fee
+    private float $base_booking_fee;
+
+    public function __construct()
+    {
+        $settingModel = new SystemSettingModel();
+        $setting = $settingModel->where('setting_key', 'base_booking_fee')->first();
+        $this->base_booking_fee = $setting !== null ? (float) $setting->setting_value : 50.00;
+    }
 
     /**
      * Calculate quotation pricing details based on vehicle, driver, and distance.

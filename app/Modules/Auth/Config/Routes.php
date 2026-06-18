@@ -12,8 +12,16 @@ use CodeIgniter\Router\RouteCollection;
 $routes->group('auth', ['namespace' => 'App\Modules\Auth\Controllers'], static function ($routes) {
     // Login
     $routes->get('login', 'AuthController::loginView', ['as' => 'auth.login']);
-    $routes->post('login', 'AuthController::login', ['as' => 'auth.login.submit', 'filter' => 'throttle:5,60']);
+    $routes->post('login', 'AuthController::login', ['as' => 'auth.login.submit', 'filter' => 'throttle:1,60']);
     $routes->get('logout', 'AuthController::logout', ['as' => 'auth.logout']);
+
+    // Admin User Management (admin role only)
+    $routes->get('admin/users', 'AdminController::users', ['as' => 'auth.admin.users']);
+    $routes->get('admin/users/create', 'AdminController::createUserView', ['as' => 'auth.admin.create_user']);
+    $routes->post('admin/users/create', 'AdminController::createUser', ['as' => 'auth.admin.create_user.submit']);
+    $routes->get('admin/users/edit/(:num)', 'AdminController::editUserView/$1', ['as' => 'auth.admin.edit_user']);
+    $routes->post('admin/users/edit/(:num)', 'AdminController::editUser/$1', ['as' => 'auth.admin.edit_user.submit']);
+    $routes->post('admin/users/delete/(:num)', 'AdminController::deleteUser/$1', ['as' => 'auth.admin.delete_user']);
     $routes->get('dashboard', 'AuthController::dashboard', ['as' => 'auth.dashboard']);
 
     // Registration & Email Verification

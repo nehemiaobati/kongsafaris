@@ -9,6 +9,7 @@ use App\Modules\Trips\Models\BookingModel;
 use App\Modules\Trips\Models\DriverModel;
 use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Models\FuelRateModel;
+use App\Modules\Trips\Models\SystemSettingModel;
 use App\Modules\Trips\Entities\FuelRate;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
@@ -63,6 +64,10 @@ class ManagerDashboardController extends BaseController
             ->where('payment_status', 'refund_requested')
             ->findAll();
 
+        // System settings
+        $settingModel = new SystemSettingModel();
+        $baseFeeSetting = $settingModel->where('setting_key', 'base_booking_fee')->first();
+
         return view('App\Modules\Trips\Views\manager', [
             'pageTitle'       => 'Manager Panel | Kong Safaris Operations',
             'metaDescription' => 'Monitor fleet operations, pricing, bookings, and active trips.',
@@ -76,6 +81,7 @@ class ManagerDashboardController extends BaseController
             'vehicles'        => $vehicles,
             'drivers'         => $drivers,
             'refundRequests'  => $refundRequests,
+            'base_booking_fee' => $baseFeeSetting !== null ? (float) $baseFeeSetting->setting_value : 50.00,
         ]);
     }
 
@@ -605,5 +611,43 @@ class ManagerDashboardController extends BaseController
 
         return redirect()->to(url_to('trips.manager'))
             ->with('success', 'Booking #' . $booking_id . ' payment status updated to ' . $booking->payment_status . '.');
+    }
+
+    /**
+     * Update system settings (base booking fee, etc).
+     */
+    public function updateSystemSettings(): ResponseInterface
+    {
+        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
+            return redirect()->to(url_to('auth.login'));
+        }
+
+        $rules = [
+            'base_booking_fee' => 'required|numeric|greater_than_equal_to[0]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->with('errors', $this->validator->getErrors());
+        }
+
+        $fee = (float) $this->request->getPost('base_booking_fee');
+
+        $settingModel = new SystemSettingModel();
+        $setting = $settingModel->where('setting_key', 'base_booking_fee')->first();
+
+        if ($setting !== null) {
+            $setting->setting_value = (string) number_format($fee, 2, '.', '');
+            $settingModel->update($setting->id, $setting);
+        } else {
+            $settingModel->insert([
+                'setting_key'   => 'base_booking_fee',
+                'setting_value' => (string) number_format($fee, 2, '.', ''),
+                'updated_by'    => session()->get('userId'),
+                'updated_at'    => Time::now()->toDateTimeString(),
+            ]);
+        }
+
+        return redirect()->to(url_to('trips.manager'))
+            ->with('success', 'Base booking fee updated to $' . number_format($fee, 2) . '.');
     }
 }

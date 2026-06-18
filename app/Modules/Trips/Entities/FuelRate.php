@@ -16,4 +16,6 @@ class FuelRate extends Entity
         'price_per_liter' => 'float',
         'updated_by'      => 'integer',
     ];
+
+    protected $hidden = ['updated_by'];
 }
