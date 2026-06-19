@@ -32,6 +32,7 @@
 
                 <div class="text-center text-muted small mt-2">
                     <p class="mb-0">Demo Credentials:</p>
+                    <code class="text-accent">admin@kongsafaris.com</code> / <code class="text-accent">admin123</code><br>
                     <code class="text-accent">manager@kongsafaris.com</code> / <code class="text-accent">manager123</code><br>
                     <code class="text-accent">driver@kongsafaris.com</code> / <code class="text-accent">driver123</code><br>
                     <code class="text-accent">customer@kongsafaris.com</code> / <code class="text-accent">customer123</code>
