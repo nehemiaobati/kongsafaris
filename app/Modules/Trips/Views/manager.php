@@ -636,7 +636,7 @@
                 <h5 class="modal-title fw-bold text-accent">Edit Booking</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="<?= url_to('trips.manager.cancel') ?>" method="POST">
+            <form action="<?= url_to('trips.manager.update_booking') ?>" method="POST">
                 <?= csrf_field() ?>
                 <input type="hidden" name="booking_id" id="edit_b_id">
                 <div class="modal-body p-4">
@@ -692,6 +692,7 @@
                                     <option value="paid">Paid</option>
                                     <option value="failed">Failed</option>
                                     <option value="manual_verified">Manual Verified</option>
+                                    <option value="refund_requested">Refund Requested</option>
                                     <option value="refunded">Refunded</option>
                                 </select>
                                 <label class="text-secondary">Payment Status</label>

@@ -36,6 +36,7 @@ $routes->group('trips', ['namespace' => 'App\Modules\Trips\Controllers'], static
     $routes->post('manager/force-cancel', 'ManagerDashboardController::forceCancelBooking', ['as' => 'trips.manager.force_cancel']);
     $routes->post('manager/override-payment', 'ManagerDashboardController::overridePaymentStatus', ['as' => 'trips.manager.override_payment']);
     $routes->post('manager/cancel', 'ManagerDashboardController::cancelBooking', ['as' => 'trips.manager.cancel']);
+    $routes->post('manager/update-booking', 'ManagerDashboardController::updateBooking', ['as' => 'trips.manager.update_booking']);
     $routes->post('manager/initiate-payment', 'ManagerDashboardController::initiatePayment', ['as' => 'trips.manager.initiate_payment']);
     $routes->post('manager/update-settings', 'ManagerDashboardController::updateSystemSettings', ['as' => 'trips.manager.update_settings']);
 
