@@ -12,7 +12,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->group('auth', ['namespace' => 'App\Modules\Auth\Controllers'], static function ($routes) {
     // Login (public)
     $routes->get('login', 'AuthController::loginView', ['as' => 'auth.login']);
-    $routes->post('login', 'AuthController::login', ['as' => 'auth.login.submit', 'filter' => 'throttle:1,60']);
+    $routes->post('login', 'AuthController::login', ['as' => 'auth.login.submit', 'filter' => 'throttle:60,60']);
     $routes->get('logout', 'AuthController::logout', ['as' => 'auth.logout']);
 
     // Admin User Management (admin role only)

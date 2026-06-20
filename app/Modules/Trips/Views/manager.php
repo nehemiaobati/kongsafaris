@@ -764,422 +764,460 @@
             </form>
         </div>
     </div>
+</div>
 
-    <!-- Collect Payment Modal -->
-    <div class="modal fade" id="collectPaymentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-light border border-secondary">
-                <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title fw-bold text-accent">Collect Payment</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="<?= url_to('trips.manager.initiate_payment') ?>" method="POST">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="booking_id" id="pay_b_id">
-                    <div class="modal-body p-4">
-                        <p class="text-secondary small">Choose a payment channel to collect pending payment for this booking.</p>
-                        <div class="form-floating mb-3">
-                            <select class="form-select bg-dark border-secondary text-light" name="provider" id="pay_provider" required>
-                                <option value="mpesa" selected>Safaricom M-Pesa (STK Push)</option>
-                                <option value="airtel">Airtel Money (STK Push)</option>
-                                <option value="card">Credit Card / Debit Card (Paystack Page)</option>
-                            </select>
-                            <label class="text-secondary">Select Provider</label>
-                        </div>
-                        <div class="p-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded">
-                            <div class="d-flex justify-content-between small mb-1">
-                                <span>Customer:</span>
-                                <strong id="payCustomer">—</strong>
-                            </div>
-                            <div class="d-flex justify-content-between small mb-1">
-                                <span>Amount Due:</span>
-                                <strong class="text-accent" id="payTotal">$0.00</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top border-secondary">
-                        <button type="submit" class="btn btn-success">Initiate Payment</button>
-                    </div>
-                </form>
+<!-- Collect Payment Modal -->
+<div class="modal fade" id="collectPaymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border border-secondary">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title fw-bold text-accent">Collect Payment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form action="<?= url_to('trips.manager.initiate_payment') ?>" method="POST">
+                <?= csrf_field() ?>
+                <input type="hidden" name="booking_id" id="pay_b_id">
+                <div class="modal-body p-4">
+                    <p class="text-secondary small">Choose a payment channel to collect pending payment for this booking.</p>
+                    <div class="form-floating mb-3">
+                        <select class="form-select bg-dark border-secondary text-light" name="provider" id="pay_provider" required>
+                            <option value="mpesa" selected>Safaricom M-Pesa (STK Push)</option>
+                            <option value="airtel">Airtel Money (STK Push)</option>
+                            <option value="card">Credit Card / Debit Card (Paystack Page)</option>
+                        </select>
+                        <label class="text-secondary">Select Provider</label>
+                    </div>
+                    <div class="p-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Customer:</span>
+                            <strong id="payCustomer">—</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>Amount Due:</span>
+                            <strong class="text-accent" id="payTotal">$0.00</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="submit" class="btn btn-success">Initiate Payment</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <!-- Geolocation Live Tracking Modal -->
-    <div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content bg-dark text-light border border-secondary">
-                <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title fw-bold text-accent" id="trackingModalLabel">Real-time Geolocation Path Tracking</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-3">
-                    <div class="row">
-                        <div class="col-md-9 mb-3">
-                            <div id="trackingMap" style="height: 480px; border-radius: 12px; background-color: #222;"></div>
-                        </div>
-                        <div class="col-md-3">
-                            <h6 class="fw-bold text-accent mb-3">Trip Activity Log</h6>
-                            <ul id="coordinatesLog" class="list-group list-group-flush bg-dark overflow-auto small" style="max-height: 420px;">
-                                <li class="list-group-item bg-dark text-muted">Awaiting location feeds...</li>
-                            </ul>
-                        </div>
-                    </div>
+<!-- Geolocation Live Tracking Modal -->
+<div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border border-secondary">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title fw-bold text-accent" id="trackingModalLabel">Live Tracking</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div id="trackingMap" style="height: 480px; border-radius: 12px; background-color: #222;"></div>
+                <div id="trackingStatus" class="d-flex justify-content-between align-items-center mt-3 px-2 small text-secondary">
+                    <span>0 coordinates</span>
+                    <span>Awaiting driver GPS...</span>
+                    <span>Active</span>
                 </div>
             </div>
         </div>
     </div>
-    <?= $this->endSection() ?>
+</div>
+<?= $this->endSection() ?>
 
-    <?= $this->section('scripts') ?>
-    <script>
-        // ============================================
-        // UI Button Bindings (independent of Google Maps)
-        // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Vehicles edit buttons mapper
-            document.querySelectorAll(".edit-vehicle-btn").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    document.getElementById("edit_v_id").value = this.getAttribute("data-id");
-                    document.getElementById("edit_v_plate").value = this.getAttribute("data-plate");
-                    document.getElementById("edit_v_model").value = this.getAttribute("data-model");
-                    document.getElementById("edit_v_fuel").value = this.getAttribute("data-fuel");
-                    document.getElementById("edit_v_margin").value = this.getAttribute("data-margin");
-                    document.getElementById("edit_v_reserve").value = this.getAttribute("data-reserve");
-                    document.getElementById("edit_v_fuel_type").value = this.getAttribute("data-fuel-type");
-                    document.getElementById("edit_v_status").value = this.getAttribute("data-status");
+<?= $this->section('scripts') ?>
+<script>
+    // ============================================
+    // UI Button Bindings (independent of Google Maps)
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Vehicles edit buttons mapper
+        document.querySelectorAll(".edit-vehicle-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.getElementById("edit_v_id").value = this.getAttribute("data-id");
+                document.getElementById("edit_v_plate").value = this.getAttribute("data-plate");
+                document.getElementById("edit_v_model").value = this.getAttribute("data-model");
+                document.getElementById("edit_v_fuel").value = this.getAttribute("data-fuel");
+                document.getElementById("edit_v_margin").value = this.getAttribute("data-margin");
+                document.getElementById("edit_v_reserve").value = this.getAttribute("data-reserve");
+                document.getElementById("edit_v_fuel_type").value = this.getAttribute("data-fuel-type");
+                document.getElementById("edit_v_status").value = this.getAttribute("data-status");
 
-                    const modal = new bootstrap.Modal(document.getElementById("editVehicleModal"));
-                    modal.show();
-                });
+                const modal = new bootstrap.Modal(document.getElementById("editVehicleModal"));
+                modal.show();
             });
+        });
 
-            // Drivers edit buttons mapper
-            document.querySelectorAll(".edit-driver-btn").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    document.getElementById("edit_d_id").value = this.getAttribute("data-id");
-                    document.getElementById("edit_d_license").value = this.getAttribute("data-license");
-                    document.getElementById("edit_d_allowance").value = this.getAttribute("data-allowance");
-                    document.getElementById("edit_d_status").value = this.getAttribute("data-status");
+        // Drivers edit buttons mapper
+        document.querySelectorAll(".edit-driver-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.getElementById("edit_d_id").value = this.getAttribute("data-id");
+                document.getElementById("edit_d_license").value = this.getAttribute("data-license");
+                document.getElementById("edit_d_allowance").value = this.getAttribute("data-allowance");
+                document.getElementById("edit_d_status").value = this.getAttribute("data-status");
 
-                    const modal = new bootstrap.Modal(document.getElementById("editDriverModal"));
-                    modal.show();
-                });
+                const modal = new bootstrap.Modal(document.getElementById("editDriverModal"));
+                modal.show();
             });
+        });
 
-            // Booking drivers edit buttons mapper
-            document.querySelectorAll(".edit-booking-driver-btn").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    document.getElementById("assign_b_id").value = this.getAttribute("data-booking-id");
-                    document.getElementById("assign_d_id").value = this.getAttribute("data-driver-id");
+        // Booking drivers edit buttons mapper
+        document.querySelectorAll(".edit-booking-driver-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.getElementById("assign_b_id").value = this.getAttribute("data-booking-id");
+                document.getElementById("assign_d_id").value = this.getAttribute("data-driver-id");
 
-                    const modal = new bootstrap.Modal(document.getElementById("assignDriverModal"));
-                    modal.show();
-                });
+                const modal = new bootstrap.Modal(document.getElementById("assignDriverModal"));
+                modal.show();
             });
+        });
 
-            function resolvePinnedAddress(text, lat, lng) {
-                if (!text.includes("Pinned Location") || lat === null || lng === null) {
-                    return Promise.resolve(text);
-                }
-                const formData = new FormData();
-                formData.append("latitude", lat);
-                formData.append("longitude", lng);
-                formData.append("csrf_test_name", window.getCSRFToken());
-
-                return fetch("<?= url_to('trips.geocode.reverse') ?>", {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        window.updateCSRFToken(data.csrf_token);
-                        if (data.status === "success" && data.result.address) {
-                            return data.result.address;
-                        }
-                        return text;
-                    })
-                    .catch(() => text);
+        function resolvePinnedAddress(text, lat, lng) {
+            if (!text.includes("Pinned Location") || lat === null || lng === null) {
+                return Promise.resolve(text);
             }
+            const formData = new FormData();
+            formData.append("latitude", lat);
+            formData.append("longitude", lng);
+            formData.append("csrf_test_name", window.getCSRFToken());
 
-            // Booking edit buttons mapper
-            document.querySelectorAll(".edit-booking-btn").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    const pickupText = this.getAttribute("data-pickup") || "";
-                    const dropoffText = this.getAttribute("data-dropoff") || "";
-
-                    const pLat = this.getAttribute("data-pickup-lat");
-                    const pLng = this.getAttribute("data-pickup-lng");
-                    const dLat = this.getAttribute("data-dropoff-lat");
-                    const dLng = this.getAttribute("data-dropoff-lng");
-
-                    document.getElementById("edit_b_id").value = this.getAttribute("data-id");
-                    document.getElementById("edit_vehicle_id").value = this.getAttribute("data-vehicle");
-                    document.getElementById("edit_driver_id").value = this.getAttribute("data-driver");
-                    document.getElementById("edit_distance").value = this.getAttribute("data-distance");
-                    document.getElementById("edit_price").value = this.getAttribute("data-price");
-                    document.getElementById("edit_payment_status").value = this.getAttribute("data-payment");
-                    document.getElementById("edit_trip_status").value = this.getAttribute("data-trip");
-
-                    const modal = new bootstrap.Modal(document.getElementById("editBookingModal"));
-
-                    Promise.all([
-                        resolvePinnedAddress(pickupText, pLat, pLng),
-                        resolvePinnedAddress(dropoffText, dLat, dLng)
-                    ]).then(([pickup, dropoff]) => {
-                        document.getElementById("edit_pickup").value = pickup;
-                        document.getElementById("edit_dropoff").value = dropoff;
-                        modal.show();
-                    });
-                });
-            });
-
-            // Collect payment buttons mapper
-            document.querySelectorAll(".collect-payment-btn").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    document.getElementById("pay_b_id").value = this.getAttribute("data-id");
-                    document.getElementById("payCustomer").innerText = this.getAttribute("data-customer");
-                    document.getElementById("payTotal").innerText = "$" + this.getAttribute("data-total");
-
-                    const modal = new bootstrap.Modal(document.getElementById("collectPaymentModal"));
-                    modal.show();
-                });
-            });
-
-            // Live Track button - show modal first, initialize map after modal is visible
-            document.querySelectorAll(".track-btn").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    const bookingId = this.getAttribute("data-id");
-                    const pLat = parseFloat(this.getAttribute("data-pickup-lat"));
-                    const pLng = parseFloat(this.getAttribute("data-pickup-lng"));
-                    const dLat = parseFloat(this.getAttribute("data-dropoff-lat"));
-                    const dLng = parseFloat(this.getAttribute("data-dropoff-lng"));
-
-                    // Store coordinates for map initialization
-                    window._pendingTracking = {
-                        bookingId,
-                        pLat,
-                        pLng,
-                        dLat,
-                        dLng
-                    };
-
-                    if (typeof google === 'undefined') {
-                        // Google Maps not loaded yet - load it dynamically, then show modal
-                        loadGoogleMapsAPI().then(() => {
-                            new bootstrap.Modal(document.getElementById("trackingModal")).show();
-                        }).catch(err => {
-                            console.error("Failed to load Google Maps:", err);
-                            alert("Unable to load map. Please check your internet connection and try again.");
-                            window._pendingTracking = null;
-                        });
-                    } else {
-                        // Maps already loaded - show modal immediately
-                        new bootstrap.Modal(document.getElementById("trackingModal")).show();
-                    }
-                });
-            });
-        });
-
-        // ============================================
-        // Google Maps Dynamic Loader
-        // ============================================
-        let mapsLoaded = false;
-        let mapsLoadPromise = null;
-
-        function loadGoogleMapsAPI() {
-            if (mapsLoaded) return Promise.resolve();
-            if (mapsLoadPromise) return mapsLoadPromise;
-
-            mapsLoadPromise = new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://maps.googleapis.com/maps/api/js?key=<?= esc($googleApiKey) ?>&callback=initManagerTrackingCallback';
-                script.async = true;
-                script.defer = true;
-
-                window.initManagerTrackingCallback = function() {
-                    mapsLoaded = true;
-                    resolve();
-                };
-
-                script.onerror = function() {
-                    reject(new Error("Google Maps API failed to load"));
-                };
-
-                document.head.appendChild(script);
-            });
-
-            return mapsLoadPromise;
-        }
-
-        // ============================================
-        // Tracking Map Initialization (called after Maps loads)
-        // ============================================
-        let trackingMap, pathPolyline, driverMarker, intervalId;
-        let pickupMarker, dropoffMarker;
-
-        function initManagerTrackingCallback() {
-            mapsLoaded = true;
-        }
-
-        // Initialize map AFTER modal is fully visible (required for Google Maps sizing)
-        document.getElementById("trackingModal").addEventListener("shown.bs.modal", function() {
-            if (!window._pendingTracking) return;
-
-            const {
-                bookingId,
-                pLat,
-                pLng,
-                dLat,
-                dLng
-            } = window._pendingTracking;
-            window._pendingTracking = null;
-
-            if (intervalId) clearInterval(intervalId);
-
-            const center = {
-                lat: pLat,
-                lng: pLng
-            };
-
-            trackingMap = new google.maps.Map(document.getElementById("trackingMap"), {
-                zoom: 13,
-                center: center,
-                disableDefaultUI: false,
-                styles: [{
-                        elementType: "geometry",
-                        stylers: [{
-                            color: "#1f2721"
-                        }]
-                    },
-                    {
-                        elementType: "labels.text.stroke",
-                        stylers: [{
-                            color: "#1f2721"
-                        }]
-                    },
-                    {
-                        elementType: "labels.text.fill",
-                        stylers: [{
-                            color: "#748077"
-                        }]
-                    },
-                    {
-                        elementType: "geometry",
-                        stylers: [{
-                            color: "#2d382f"
-                        }]
-                    },
-                    {
-                        featureType: "water",
-                        elementType: "geometry",
-                        stylers: [{
-                            color: "#0d1c13"
-                        }]
-                    }
-                ]
-            });
-
-            pickupMarker = new google.maps.Marker({
-                position: {
-                    lat: pLat,
-                    lng: pLng
-                },
-                map: trackingMap,
-                title: "Pickup",
-                icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
-            });
-
-            dropoffMarker = new google.maps.Marker({
-                position: {
-                    lat: dLat,
-                    lng: dLng
-                },
-                map: trackingMap,
-                title: "Dropoff",
-                icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
-            });
-
-            driverMarker = new google.maps.Marker({
-                position: {
-                    lat: pLat,
-                    lng: pLng
-                },
-                map: trackingMap,
-                title: "Driver Location",
-                icon: "https://maps.google.com/mapfiles/kml/pal2/icon47.png"
-            });
-
-            pathPolyline = new google.maps.Polyline({
-                path: [],
-                geodesic: true,
-                strokeColor: "#d4af37",
-                strokeOpacity: 1.0,
-                strokeWeight: 4,
-                map: trackingMap
-            });
-
-            google.maps.event.trigger(trackingMap, 'resize');
-            trackingMap.setCenter(center);
-
-            loadTrackingCoordinates(bookingId);
-            intervalId = setInterval(() => loadTrackingCoordinates(bookingId), 15000);
-
-            document.getElementById("trackingModal").addEventListener("hidden.bs.modal", function() {
-                clearInterval(intervalId);
-            }, {
-                once: true
-            });
-        });
-
-        function loadTrackingCoordinates(bookingId) {
-            fetch(`<?= base_url('trips/tracking/coordinates') ?>/${bookingId}`, {
+            return fetch("<?= url_to('trips.geocode.reverse') ?>", {
+                    method: "POST",
+                    body: formData,
                     headers: {
                         "X-Requested-With": "XMLHttpRequest"
                     }
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status === "success") {
-                        const log = document.getElementById("coordinatesLog");
-                        log.innerHTML = "";
-
-                        const path = [];
-                        data.result.forEach((coord, idx) => {
-                            const lat = parseFloat(coord.latitude);
-                            const lng = parseFloat(coord.longitude);
-                            path.push({
-                                lat: lat,
-                                lng: lng
-                            });
-
-                            const timeRaw = coord.created_at;
-                            const timeStr = typeof timeRaw === 'string' ? timeRaw : String(timeRaw);
-                            const timePart = timeStr.split(/[ T]/)[1]?.substring(0, 5) || '';
-
-                            const li = document.createElement("li");
-                            li.className = "list-group-item bg-dark text-light border-secondary border-opacity-25 d-flex justify-content-between align-items-center py-1";
-                            li.innerHTML = `<span>Point ${idx + 1}</span> <small class="text-secondary">${timePart}</small>`;
-                            log.appendChild(li);
-                        });
-
-                        if (path.length > 0) {
-                            pathPolyline.setPath(path);
-                            const latest = path[path.length - 1];
-                            driverMarker.setPosition(latest);
-                            trackingMap.setCenter(latest); // Center tracking map on driver's latest coordinates
-                        } else {
-                            const li = document.createElement("li");
-                            li.className = "list-group-item bg-dark text-muted";
-                            li.innerText = "No movement updates logged yet.";
-                            log.appendChild(li);
-                        }
+                    window.updateCSRFToken(data.csrf_token);
+                    if (data.status === "success" && data.result.address) {
+                        return data.result.address;
                     }
+                    return text;
                 })
-                .catch(err => console.error("Coordinates fetch failed", err));
+                .catch(() => text);
         }
-    </script>
-    <?= $this->endSection() ?>
+
+        // Booking edit buttons mapper
+        document.querySelectorAll(".edit-booking-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const pickupText = this.getAttribute("data-pickup") || "";
+                const dropoffText = this.getAttribute("data-dropoff") || "";
+
+                const pLat = this.getAttribute("data-pickup-lat");
+                const pLng = this.getAttribute("data-pickup-lng");
+                const dLat = this.getAttribute("data-dropoff-lat");
+                const dLng = this.getAttribute("data-dropoff-lng");
+
+                document.getElementById("edit_b_id").value = this.getAttribute("data-id");
+                document.getElementById("edit_vehicle_id").value = this.getAttribute("data-vehicle");
+                document.getElementById("edit_driver_id").value = this.getAttribute("data-driver");
+                document.getElementById("edit_distance").value = this.getAttribute("data-distance");
+                document.getElementById("edit_price").value = this.getAttribute("data-price");
+                document.getElementById("edit_payment_status").value = this.getAttribute("data-payment");
+                document.getElementById("edit_trip_status").value = this.getAttribute("data-trip");
+
+                const modal = new bootstrap.Modal(document.getElementById("editBookingModal"));
+
+                Promise.all([
+                    resolvePinnedAddress(pickupText, pLat, pLng),
+                    resolvePinnedAddress(dropoffText, dLat, dLng)
+                ]).then(([pickup, dropoff]) => {
+                    document.getElementById("edit_pickup").value = pickup;
+                    document.getElementById("edit_dropoff").value = dropoff;
+                    modal.show();
+                });
+            });
+        });
+
+        // Collect payment buttons mapper
+        document.querySelectorAll(".collect-payment-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.getElementById("pay_b_id").value = this.getAttribute("data-id");
+                document.getElementById("payCustomer").innerText = this.getAttribute("data-customer");
+                document.getElementById("payTotal").innerText = "$" + this.getAttribute("data-total");
+
+                const modal = new bootstrap.Modal(document.getElementById("collectPaymentModal"));
+                modal.show();
+            });
+        });
+
+        // Live Track button - show modal first, initialize map after modal is visible
+        document.querySelectorAll(".track-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const bookingId = this.getAttribute("data-id");
+                const pLat = parseFloat(this.getAttribute("data-pickup-lat"));
+                const pLng = parseFloat(this.getAttribute("data-pickup-lng"));
+                const dLat = parseFloat(this.getAttribute("data-dropoff-lat"));
+                const dLng = parseFloat(this.getAttribute("data-dropoff-lng"));
+
+                // Store coordinates for map initialization
+                window._pendingTracking = {
+                    bookingId,
+                    pLat,
+                    pLng,
+                    dLat,
+                    dLng
+                };
+
+                if (typeof google === 'undefined') {
+                    // Google Maps not loaded yet - load it dynamically, then show modal
+                    loadGoogleMapsAPI().then(() => {
+                        new bootstrap.Modal(document.getElementById("trackingModal")).show();
+                    }).catch(err => {
+                        console.error("Failed to load Google Maps:", err);
+                        alert("Unable to load map. Please check your internet connection and try again.");
+                        window._pendingTracking = null;
+                    });
+                } else {
+                    // Maps already loaded - show modal immediately
+                    new bootstrap.Modal(document.getElementById("trackingModal")).show();
+                }
+            });
+        });
+    });
+
+    // ============================================
+    // Google Maps Dynamic Loader
+    // ============================================
+    let mapsLoaded = false;
+    let mapsLoadPromise = null;
+
+    function loadGoogleMapsAPI() {
+        if (mapsLoaded) return Promise.resolve();
+        if (mapsLoadPromise) return mapsLoadPromise;
+
+        mapsLoadPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=<?= esc($googleApiKey) ?>&callback=initManagerTrackingCallback';
+            script.async = true;
+            script.defer = true;
+
+            window.initManagerTrackingCallback = function() {
+                mapsLoaded = true;
+                resolve();
+            };
+
+            script.onerror = function() {
+                reject(new Error("Google Maps API failed to load"));
+            };
+
+            document.head.appendChild(script);
+        });
+
+        return mapsLoadPromise;
+    }
+
+    // ============================================
+    // Tracking Map Initialization (called after Maps loads)
+    // ============================================
+    let trackingMap, pathPolyline, driverMarker, intervalId;
+    let pickupMarker, dropoffMarker;
+
+    // Initialize map AFTER modal is fully visible (required for Google Maps sizing)
+    document.getElementById("trackingModal").addEventListener("shown.bs.modal", function() {
+        if (!window._pendingTracking) return;
+
+        const {
+            bookingId,
+            pLat,
+            pLng,
+            dLat,
+            dLng
+        } = window._pendingTracking;
+        window._pendingTracking = null;
+
+        if (intervalId) clearInterval(intervalId);
+
+        const center = {
+            lat: pLat,
+            lng: pLng
+        };
+
+        trackingMap = new google.maps.Map(document.getElementById("trackingMap"), {
+            zoom: 13,
+            center: center,
+            disableDefaultUI: false,
+            styles: [{
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#1f2721"
+                    }]
+                },
+                {
+                    elementType: "labels.text.stroke",
+                    stylers: [{
+                        color: "#1f2721"
+                    }]
+                },
+                {
+                    elementType: "labels.text.fill",
+                    stylers: [{
+                        color: "#748077"
+                    }]
+                },
+                {
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#2d382f"
+                    }]
+                },
+                {
+                    featureType: "water",
+                    elementType: "geometry",
+                    stylers: [{
+                        color: "#0d1c13"
+                    }]
+                }
+            ]
+        });
+
+        pickupMarker = new google.maps.Marker({
+            position: {
+                lat: pLat,
+                lng: pLng
+            },
+            map: trackingMap,
+            title: "Pickup",
+            icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
+        });
+
+        dropoffMarker = new google.maps.Marker({
+            position: {
+                lat: dLat,
+                lng: dLng
+            },
+            map: trackingMap,
+            title: "Dropoff",
+            icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+        });
+
+        driverMarker = new google.maps.Marker({
+            position: {
+                lat: pLat,
+                lng: pLng
+            },
+            map: trackingMap,
+            title: "Driver Location",
+            icon: "https://maps.google.com/mapfiles/kml/pal2/icon47.png"
+        });
+
+        pathPolyline = new google.maps.Polyline({
+            path: [],
+            geodesic: true,
+            strokeColor: "#d4af37",
+            strokeOpacity: 1.0,
+            strokeWeight: 4,
+            map: trackingMap
+        });
+
+        // Draw planned route between pickup and dropoff
+        const directionsService = new google.maps.DirectionsService();
+        directionsService.route({
+            origin: {
+                lat: pLat,
+                lng: pLng
+            },
+            destination: {
+                lat: dLat,
+                lng: dLng
+            },
+            travelMode: google.maps.TravelMode.DRIVING
+        }, (result, status) => {
+            if (status === 'OK') {
+                const routePath = new google.maps.Polyline({
+                    path: result.routes[0].overview_path,
+                    geodesic: true,
+                    strokeColor: '#748077',
+                    strokeOpacity: 0.6,
+                    strokeWeight: 3,
+                    strokePattern: [6, 6],
+                    icons: [{
+                        icon: {
+                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+                        },
+                        offset: '100%'
+                    }],
+                    map: trackingMap
+                });
+            }
+        });
+
+        google.maps.event.trigger(trackingMap, 'resize');
+        trackingMap.setCenter(center);
+
+        loadTrackingCoordinates(bookingId);
+        intervalId = setInterval(() => loadTrackingCoordinates(bookingId), 15000);
+
+        document.getElementById("trackingModal").addEventListener("hidden.bs.modal", function() {
+            clearInterval(intervalId);
+        }, {
+            once: true
+        });
+    });
+
+    function loadTrackingCoordinates(bookingId) {
+        fetch(`<?= base_url('trips/tracking/coordinates') ?>/${bookingId}`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const status = document.getElementById("trackingStatus");
+
+                if (data.status === "success") {
+                    const path = [];
+                    data.result.forEach(coord => {
+                        path.push({
+                            lat: parseFloat(coord.latitude),
+                            lng: parseFloat(coord.longitude)
+                        });
+                    });
+
+                    if (path.length > 0) {
+                        pathPolyline.setPath(path);
+                        const latest = path[path.length - 1];
+                        driverMarker.setPosition(latest);
+                        trackingMap.setCenter(latest);
+
+                        // Compute relative time from last coordinate
+                        const lastRaw = data.result[data.result.length - 1].created_at;
+                        const lastTime = new Date(lastRaw.replace(' ', 'T') + 'Z');
+                        const diffSec = Math.floor((Date.now() - lastTime.getTime()) / 1000);
+                        const ago = diffSec < 60 ? `${diffSec}s ago` : `${Math.floor(diffSec / 60)}m ago`;
+
+                        status.innerHTML = `
+                            <span>${path.length} coordinate${path.length !== 1 ? 's' : ''}</span>
+                            <span class="text-accent">Last: ${ago}</span>
+                            <span>Driver moving</span>
+                        `;
+                    } else {
+                        status.innerHTML = `
+                            <span>0 coordinates</span>
+                            <span class="text-warning">No GPS yet</span>
+                            <span>Active</span>
+                        `;
+                    }
+                } else {
+                    status.innerHTML = `
+                        <span>--</span>
+                        <span class="text-danger">Fetch error</span>
+                        <span>Active</span>
+                    `;
+                }
+            })
+            .catch(err => {
+                console.error("Coordinates fetch failed", err);
+                document.getElementById("trackingStatus").innerHTML = `
+                    <span>--</span>
+                    <span class="text-danger">Connection lost</span>
+                    <span>Active</span>
+                `;
+            });
+    }
+</script>
+<?= $this->endSection() ?>
