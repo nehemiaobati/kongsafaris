@@ -5,185 +5,122 @@ declare(strict_types=1);
 namespace App\Modules\Trips\Controllers;
 
 use App\Controllers\BaseController;
-use App\Modules\Trips\Models\VehicleModel;
-use App\Modules\Trips\Models\DriverModel;
-use App\Modules\Trips\Models\BookingModel;
-use App\Modules\Trips\Libraries\QuotationService;
+use App\Modules\Trips\Libraries\BookingService;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
- * QuotationController
+ * BookingController
  *
- * Handles customer-facing booking screen, quote calculation,
- * and customer-initiated cancellations. Delegates business logic
- * to QuotationService and external services.
+ * Handles booking lifecycle operations delegated to BookingService.
+ * Controllers handle only validation + redirect logic.
  *
  * @package App\Modules\Trips\Controllers
  * @author Senior Developer
  * @since 1.0.0
  */
-class QuotationController extends BaseController
+class BookingController extends BaseController
 {
-    private QuotationService $quotationService;
+    private BookingService $bookingService;
 
     public function __construct()
     {
-        $this->quotationService = service('quotationService');
+        $this->bookingService = service('bookingService');
     }
 
     /**
-     * Display customer booking screen.
+     * Process manual booking creation by manager.
      */
-    public function index(): string|ResponseInterface
-    {
-        if (! session()->get('isLoggedIn')) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
-        $vehicles = $this->quotationService->getActiveVehicles();
-        $drivers  = $this->quotationService->getAvailableDrivers();
-
-        return view('App\Modules\Trips\Views\quote', [
-            'pageTitle'       => 'Book Your Safari | Kong Safaris',
-            'metaDescription' => 'Request a dynamic quote and book a safari vehicle with Kong Safaris.',
-            'canonicalUrl'    => url_to('trips.quote'),
-            'robotsTag'       => 'noindex, nofollow',
-            'vehicles'        => $vehicles,
-            'drivers'         => $drivers,
-            'googleApiKey'    => env('GoogleMaps.APIKey') ?? '',
-        ]);
-    }
-
-    /**
-     * AJAX endpoint to calculate dynamic pricing details.
-     */
-    public function calculate(): ResponseInterface
+    public function manualBookingCreate(): ResponseInterface
     {
         $rules = [
-            'vehicle_id'        => 'required|integer',
-            'driver_id'         => 'required|integer',
+            'customer_id'     => 'required|integer',
+            'vehicle_id'      => 'required|integer',
+            'driver_id'       => 'required|integer',
+            'pickup_address'  => 'required|string',
+            'dropoff_address' => 'required|string',
             'pickup_latitude'   => 'required|numeric',
             'pickup_longitude'  => 'required|numeric',
             'dropoff_latitude'  => 'required|numeric',
             'dropoff_longitude' => 'required|numeric',
+            'distance_km'       => 'required|numeric|greater_than[0]',
+            'total_price'       => 'required|numeric|greater_than[0]',
+            'payment_status'    => 'required|in_list[pending,paid,manual_verified]',
         ];
 
         if (! $this->validate($rules)) {
-            return $this->response->setJSON([
-                'status'     => 'validation_error',
-                'message'    => 'Invalid coordinates, vehicle or driver parameters.',
-                'result'     => [],
-                'errors'     => $this->validator->getErrors(),
-                'csrf_token' => csrf_hash(),
-            ]);
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $vehicleId = (int) $this->request->getPost('vehicle_id');
-        $driverId  = (int) $this->request->getPost('driver_id');
+        $result = $this->bookingService->createManualBooking($this->request->getPost());
 
-        $pLat = (float) $this->request->getPost('pickup_latitude');
-        $pLng = (float) $this->request->getPost('pickup_longitude');
-        $dLat = (float) $this->request->getPost('dropoff_latitude');
-        $dLng = (float) $this->request->getPost('dropoff_longitude');
-
-        $vehicleModel = new VehicleModel();
-        $driverModel  = new DriverModel();
-
-        /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
-        $vehicle = $vehicleModel->find($vehicleId);
-        /** @var \App\Modules\Trips\Entities\Driver|null $driver */
-        $driver = $driverModel->find($driverId);
-
-        if ($vehicle === null || $driver === null) {
-            return $this->response->setJSON([
-                'status'     => 'error',
-                'message'    => 'Vehicle or driver configurations not found.',
-                'result'     => [],
-                'errors'     => [],
-                'csrf_token' => csrf_hash(),
-            ]);
+        if (! $result['status']) {
+            return redirect()->back()->withInput()->with('error', $result['message']);
         }
 
-        $distanceKm = service('geocodingService')->getDistance($pLat, $pLng, $dLat, $dLng);
-        $pricing    = service('pricingService')->calculateQuote($vehicle, $driver, $distanceKm);
-        $pricing['distance_km'] = round($distanceKm, 2);
-
-        return $this->response->setJSON([
-            'status'     => 'success',
-            'message'    => 'Quote calculated successfully.',
-            'result'     => $pricing,
-            'errors'     => [],
-            'csrf_token' => csrf_hash(),
-        ]);
+        return redirect()->to(url_to('trips.manager'))->with('success', $result['message']);
     }
 
     /**
-     * Render the customer dashboard listing paid and refundable bookings.
-     */
-    public function customerDashboard(): string|ResponseInterface
-    {
-        if (! session()->get('isLoggedIn') || session()->get('role') !== 'customer') {
-            return redirect()->to(url_to('auth.login'));
-        }
-
-        $bookings = $this->quotationService->getCustomerBookings((int) session()->get('userId'));
-
-        return view('App\Modules\Trips\Views\customer_dashboard', [
-            'pageTitle'       => 'My Bookings | Kong Safaris',
-            'metaDescription' => 'Review your paid bookings, cancel trips, and request refunds.',
-            'canonicalUrl'    => url_to('trips.customer.dashboard'),
-            'robotsTag'       => 'noindex, nofollow',
-            'bookings'        => $bookings,
-        ]);
-    }
-
-    /**
-     * Reverse geocode coordinates to readable address (AJAX).
-     */
-    public function reverseGeocode(): ResponseInterface
-    {
-        if (! session()->get('isLoggedIn')) {
-            return $this->response->setJSON([
-                'status'     => 'error',
-                'message'    => 'Unauthorized.',
-                'result'     => [],
-                'errors'     => [],
-                'csrf_token' => csrf_hash(),
-            ]);
-        }
-
-        $lat = (float) $this->request->getPost('latitude');
-        $lng = (float) $this->request->getPost('longitude');
-
-        $address = service('geocodingService')->reverseGeocode($lat, $lng);
-
-        return $this->response->setJSON([
-            'status'     => 'success',
-            'message'    => 'Reverse geocoded.',
-            'result'     => ['address' => $address],
-            'errors'     => [],
-            'csrf_token' => csrf_hash(),
-        ]);
-    }
-
-    /**
-     * Cancel a customer's own pending booking.
+     * Cancel a pending trip (manager action).
      */
     public function cancelBooking(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || session()->get('role') !== 'customer') {
-            return redirect()->to(url_to('auth.login'));
-        }
+        $bookingId = (int) $this->request->getPost('booking_id');
 
-        $bookingId  = (int) $this->request->getPost('booking_id');
-        $customerId = (int) session()->get('userId');
-
-        $result = $this->quotationService->cancelCustomerBooking($bookingId, $customerId);
+        $result = $this->bookingService->cancelBooking($bookingId);
 
         if (! $result['status']) {
             return redirect()->back()->with('error', $result['message']);
         }
 
-        return redirect()->to(url_to('trips.customer.dashboard'))->with('success', $result['message']);
+        return redirect()->to(url_to('trips.manager'))->with('success', $result['message']);
+    }
+
+    /**
+     * Force cancel any booking regardless of trip status.
+     */
+    public function forceCancelBooking(): ResponseInterface
+    {
+        $bookingId = (int) $this->request->getPost('booking_id');
+
+        $result = $this->bookingService->cancelBooking($bookingId, true);
+
+        if (! $result['status']) {
+            return redirect()->back()->with('error', $result['message']);
+        }
+
+        return redirect()->to(url_to('trips.manager'))->with('success', $result['message']);
+    }
+
+    /**
+     * Update booking details from the Edit Booking modal.
+     */
+    public function updateBooking(): ResponseInterface
+    {
+        $rules = [
+            'booking_id'       => 'required|integer',
+            'pickup_address'   => 'required|string',
+            'dropoff_address'  => 'required|string',
+            'vehicle_id'       => 'required|integer',
+            'driver_id'        => 'required|integer',
+            'distance_km'      => 'required|numeric|greater_than[0]',
+            'total_price'      => 'required|numeric|greater_than[0]',
+            'payment_status'   => 'required|in_list[pending,paid,failed,manual_verified,refund_requested,refunded]',
+            'trip_status'      => 'required|in_list[pending,active,completed,cancelled]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $bookingId = (int) $this->request->getPost('booking_id');
+
+        $result = $this->bookingService->updateBooking($bookingId, $this->request->getPost());
+
+        if (! $result['status']) {
+            return redirect()->back()->with('error', $result['message']);
+        }
+
+        return redirect()->to(url_to('trips.manager'))->with('success', $result['message']);
     }
 }
