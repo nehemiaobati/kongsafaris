@@ -816,7 +816,7 @@
                 <div class="modal-body p-3">
                     <div class="row">
                         <div class="col-md-9 mb-3">
-                            <div id="trackingMap" style="min-height: 480px; border-radius: 12px; background-color: #222;"></div>
+                            <div id="trackingMap" style="height: 480px; border-radius: 12px; background-color: #222;"></div>
                         </div>
                         <div class="col-md-3">
                             <h6 class="fw-bold text-accent mb-3">Trip Activity Log</h6>
@@ -832,25 +832,11 @@
     <?= $this->endSection() ?>
 
     <?= $this->section('scripts') ?>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?= esc($googleApiKey) ?>&callback=initManagerTracking" defer></script>
     <script>
-        let trackingMap, pathPolyline, driverMarker, intervalId;
-        let pickupMarker, dropoffMarker;
-
-        function initManagerTracking() {
-            const buttons = document.querySelectorAll(".track-btn");
-            buttons.forEach(btn => {
-                btn.addEventListener("click", function() {
-                    const bookingId = this.getAttribute("data-id");
-                    const pLat = parseFloat(this.getAttribute("data-pickup-lat"));
-                    const pLng = parseFloat(this.getAttribute("data-pickup-lng"));
-                    const dLat = parseFloat(this.getAttribute("data-dropoff-lat"));
-                    const dLng = parseFloat(this.getAttribute("data-dropoff-lng"));
-
-                    openTrackingModal(bookingId, pLat, pLng, dLat, dLng);
-                });
-            });
-
+        // ============================================
+        // UI Button Bindings (independent of Google Maps)
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
             // Vehicles edit buttons mapper
             document.querySelectorAll(".edit-vehicle-btn").forEach(btn => {
                 btn.addEventListener("click", function() {
@@ -962,11 +948,95 @@
                     modal.show();
                 });
             });
+
+            // Live Track button - show modal first, initialize map after modal is visible
+            document.querySelectorAll(".track-btn").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const bookingId = this.getAttribute("data-id");
+                    const pLat = parseFloat(this.getAttribute("data-pickup-lat"));
+                    const pLng = parseFloat(this.getAttribute("data-pickup-lng"));
+                    const dLat = parseFloat(this.getAttribute("data-dropoff-lat"));
+                    const dLng = parseFloat(this.getAttribute("data-dropoff-lng"));
+
+                    // Store coordinates for map initialization
+                    window._pendingTracking = {
+                        bookingId,
+                        pLat,
+                        pLng,
+                        dLat,
+                        dLng
+                    };
+
+                    if (typeof google === 'undefined') {
+                        // Google Maps not loaded yet - load it dynamically, then show modal
+                        loadGoogleMapsAPI().then(() => {
+                            new bootstrap.Modal(document.getElementById("trackingModal")).show();
+                        }).catch(err => {
+                            console.error("Failed to load Google Maps:", err);
+                            alert("Unable to load map. Please check your internet connection and try again.");
+                            window._pendingTracking = null;
+                        });
+                    } else {
+                        // Maps already loaded - show modal immediately
+                        new bootstrap.Modal(document.getElementById("trackingModal")).show();
+                    }
+                });
+            });
+        });
+
+        // ============================================
+        // Google Maps Dynamic Loader
+        // ============================================
+        let mapsLoaded = false;
+        let mapsLoadPromise = null;
+
+        function loadGoogleMapsAPI() {
+            if (mapsLoaded) return Promise.resolve();
+            if (mapsLoadPromise) return mapsLoadPromise;
+
+            mapsLoadPromise = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=<?= esc($googleApiKey) ?>&callback=initManagerTrackingCallback';
+                script.async = true;
+                script.defer = true;
+
+                window.initManagerTrackingCallback = function() {
+                    mapsLoaded = true;
+                    resolve();
+                };
+
+                script.onerror = function() {
+                    reject(new Error("Google Maps API failed to load"));
+                };
+
+                document.head.appendChild(script);
+            });
+
+            return mapsLoadPromise;
         }
 
-        function openTrackingModal(bookingId, pLat, pLng, dLat, dLng) {
-            const trackingModal = new bootstrap.Modal(document.getElementById("trackingModal"));
-            trackingModal.show();
+        // ============================================
+        // Tracking Map Initialization (called after Maps loads)
+        // ============================================
+        let trackingMap, pathPolyline, driverMarker, intervalId;
+        let pickupMarker, dropoffMarker;
+
+        function initManagerTrackingCallback() {
+            mapsLoaded = true;
+        }
+
+        // Initialize map AFTER modal is fully visible (required for Google Maps sizing)
+        document.getElementById("trackingModal").addEventListener("shown.bs.modal", function() {
+            if (!window._pendingTracking) return;
+
+            const {
+                bookingId,
+                pLat,
+                pLng,
+                dLat,
+                dLng
+            } = window._pendingTracking;
+            window._pendingTracking = null;
 
             if (intervalId) clearInterval(intervalId);
 
@@ -978,6 +1048,7 @@
             trackingMap = new google.maps.Map(document.getElementById("trackingMap"), {
                 zoom: 13,
                 center: center,
+                disableDefaultUI: false,
                 styles: [{
                         elementType: "geometry",
                         stylers: [{
@@ -997,7 +1068,6 @@
                         }]
                     },
                     {
-                        featureType: "road",
                         elementType: "geometry",
                         stylers: [{
                             color: "#2d382f"
@@ -1052,6 +1122,9 @@
                 map: trackingMap
             });
 
+            google.maps.event.trigger(trackingMap, 'resize');
+            trackingMap.setCenter(center);
+
             loadTrackingCoordinates(bookingId);
             intervalId = setInterval(() => loadTrackingCoordinates(bookingId), 15000);
 
@@ -1060,7 +1133,7 @@
             }, {
                 once: true
             });
-        }
+        });
 
         function loadTrackingCoordinates(bookingId) {
             fetch(`<?= base_url('trips/tracking/coordinates') ?>/${bookingId}`, {
@@ -1083,9 +1156,13 @@
                                 lng: lng
                             });
 
+                            const timeRaw = coord.created_at;
+                            const timeStr = typeof timeRaw === 'string' ? timeRaw : String(timeRaw);
+                            const timePart = timeStr.split(/[ T]/)[1]?.substring(0, 5) || '';
+
                             const li = document.createElement("li");
                             li.className = "list-group-item bg-dark text-light border-secondary border-opacity-25 d-flex justify-content-between align-items-center py-1";
-                            li.innerHTML = `<span>Point ${idx + 1}</span> <small class="text-secondary">${coord.created_at.split(' ')[1]}</small>`;
+                            li.innerHTML = `<span>Point ${idx + 1}</span> <small class="text-secondary">${timePart}</small>`;
                             log.appendChild(li);
                         });
 

@@ -23,7 +23,7 @@ $routes->group('trips', ['namespace' => 'App\Modules\Trips\Controllers'], static
     $routes->get('driver', 'DriverTrackingController::driverWorkspace', ['as' => 'trips.driver', 'filter' => 'auth:driver']);
     $routes->post('driver/status', 'DriverTrackingController::updateTripStatus', ['as' => 'trips.driver.status', 'filter' => 'auth:driver']);
     $routes->post('tracking/update', 'DriverTrackingController::updateLocation', ['as' => 'trips.tracking.update', 'filter' => 'auth:driver,throttle:1,60']);
-    $routes->get('tracking/coordinates/(:num)', 'DriverTrackingController::getCoordinates/$1', ['as' => 'trips.tracking.coordinates', 'filter' => 'auth:driver']);
+    $routes->get('tracking/coordinates/(:num)', 'DriverTrackingController::getCoordinates/$1', ['as' => 'trips.tracking.coordinates', 'filter' => 'auth:driver,manager,admin']);
 
     // Manager dashboard (manager/admin role)
     $routes->get('manager', 'ManagerDashboardController::index', ['as' => 'trips.manager', 'filter' => 'auth:manager,admin']);
