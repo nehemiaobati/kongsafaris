@@ -29,7 +29,7 @@ class PaystackService
     public function initializeTransaction(float $price, string $email, array $metadata): array
     {
         $reference = 'KONG_P_' . bin2hex(random_bytes(6));
-        $callback_url = base_url('payments/callback');
+        $callback_url = url_to('payments.callback');
 
         $payload = [
             'email'        => $email,
@@ -67,7 +67,6 @@ class PaystackService
                 'status'  => false,
                 'message' => $body['message'] ?? 'Failed to initialize Paystack transaction.',
             ];
-
         } catch (\Throwable $e) {
             log_message('error', 'Paystack Transaction Init Error: ' . $e->getMessage());
             return [
@@ -94,7 +93,7 @@ class PaystackService
     public function initializeMobileMoneyCharge(float $price, string $email, string $provider, array $metadata): array
     {
         $reference = 'KONG_P_' . bin2hex(random_bytes(6));
-        $callback_url = base_url('payments/callback');
+        $callback_url = url_to('payments.callback');
 
         // Embed the custom filters inside the metadata payload
         $metadata['custom_filters'] = [
@@ -138,7 +137,6 @@ class PaystackService
                 'status'  => false,
                 'message' => $body['message'] ?? 'Failed to initialize mobile money transaction.',
             ];
-
         } catch (\Throwable $e) {
             log_message('error', 'Paystack Mobile Money Init Error: ' . $e->getMessage());
             return [
@@ -188,7 +186,6 @@ class PaystackService
                 'status'  => false,
                 'message' => $body['message'] ?? 'Transaction was not successfully paid.',
             ];
-
         } catch (\Throwable $e) {
             log_message('error', 'Paystack Verify Transaction Error: ' . $e->getMessage());
             return [
@@ -239,7 +236,6 @@ class PaystackService
                 'status'  => false,
                 'message' => $body['message'] ?? 'Refund initialization failed on payment processor.',
             ];
-
         } catch (\Throwable $e) {
             log_message('error', 'Paystack Refund Request Failure: ' . $e->getMessage());
             return [

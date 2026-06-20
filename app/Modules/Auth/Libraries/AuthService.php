@@ -127,7 +127,12 @@ class AuthService
         $user->reset_token_expires_at = Time::now()->addMinutes(60)->toDateTimeString();
         $this->userModel->update($user->id, $user);
 
-        return ['status' => true, 'reset_token' => $reset_token, 'user_exists' => true];
+        return [
+            'status'      => true,
+            'reset_token' => $reset_token,
+            'user_exists' => true,
+            'first_name'  => $user->first_name,
+        ];
     }
 
     /**
@@ -184,6 +189,19 @@ class AuthService
         $this->userModel->update($user_id, $user);
 
         return ['status' => true, 'message' => 'Profile updated successfully.', 'user' => $user];
+    }
+
+    /**
+     * Retrieve a user by ID.
+     *
+     * @param int $userId
+     *
+     * @return \App\Modules\Auth\Entities\User|null
+     */
+    public function getUserById(int $userId): ?\App\Modules\Auth\Entities\User
+    {
+        /** @var \App\Modules\Auth\Entities\User|null $user */
+        return $this->userModel->find($userId);
     }
 
     /**

@@ -13,6 +13,7 @@ use CodeIgniter\I18n\Time;
  * ReportController
  *
  * Exports reporting dashboards and CSV data for manager/admin roles.
+ * Uses the consolidated ReportService (3 queries instead of 8).
  *
  * @package App\Modules\Trips\Controllers
  * @author Senior Developer
@@ -21,7 +22,7 @@ use CodeIgniter\I18n\Time;
 class ReportController extends BaseController
 {
     /**
-     * Display reporting dashboard with Chart.js visualizations.
+     * Display reporting dashboard.
      */
     public function index(): string|ResponseInterface
     {
@@ -29,43 +30,34 @@ class ReportController extends BaseController
             return redirect()->to(url_to('auth.login'));
         }
 
-        $start_date = (string) $this->request->getGet('start_date');
-        $end_date   = (string) $this->request->getGet('end_date');
+        $startDate = (string) $this->request->getGet('start_date');
+        $endDate   = (string) $this->request->getGet('end_date');
 
-        // Default to last 30 days
-        if (empty($start_date)) {
-            $start_date = Time::now()->subDays(30)->toDateString();
+        if (empty($startDate)) {
+            $startDate = Time::now()->subDays(30)->toDateString();
         }
-        if (empty($end_date)) {
-            $end_date = Time::now()->toDateString();
+        if (empty($endDate)) {
+            $endDate = Time::now()->toDateString();
         }
 
         $reportService = new ReportService();
-
-        $summary               = $reportService->getOverallSummary($start_date, $end_date);
-        $byVehicle             = $reportService->getRevenueByVehicle($start_date, $end_date);
-        $byDriver              = $reportService->getRevenueByDriver($start_date, $end_date);
-        $trend                 = $reportService->getRevenueTrend($start_date, $end_date);
-        $fuelTrend             = $reportService->getFuelCostTrend();
-        $completedAnalysis     = $reportService->getCompletedTripsAnalysis($start_date, $end_date);
-        $uncompletedAnalysis   = $reportService->getUncompletedTripsAnalysis($start_date, $end_date);
-        $refundAnalysis        = $reportService->getRefundAnalysis($start_date, $end_date);
+        $reportData = $reportService->getAllReportData($startDate, $endDate);
 
         return view('App\Modules\Trips\Views\reports', [
             'pageTitle'             => 'Reports & Analytics | Kong Safaris',
             'metaDescription'       => 'View revenue reports, vehicle profitability, and fuel cost trends.',
             'canonicalUrl'          => url_to('trips.reports'),
             'robotsTag'             => 'noindex, nofollow',
-            'start_date'            => $start_date,
-            'end_date'              => $end_date,
-            'summary'               => $summary,
-            'by_vehicle'            => $byVehicle,
-            'by_driver'             => $byDriver,
-            'trend'                 => $trend,
-            'fuel_trend'            => $fuelTrend,
-            'completed_analysis'    => $completedAnalysis,
-            'uncompleted_analysis'  => $uncompletedAnalysis,
-            'refund_analysis'       => $refundAnalysis,
+            'start_date'            => $startDate,
+            'end_date'              => $endDate,
+            'summary'               => $reportData['summary'],
+            'by_vehicle'            => $reportData['by_vehicle'],
+            'by_driver'             => $reportData['by_driver'],
+            'trend'                 => $reportData['trend'],
+            'fuel_trend'            => $reportData['fuel_trend'],
+            'completed_analysis'    => $reportData['completed_analysis'],
+            'uncompleted_analysis'  => $reportData['uncompleted_analysis'],
+            'refund_analysis'       => $reportData['refund_analysis'],
         ]);
     }
 
@@ -78,20 +70,19 @@ class ReportController extends BaseController
             return redirect()->to(url_to('auth.login'));
         }
 
-        $start_date = (string) $this->request->getGet('start_date');
-        $end_date   = (string) $this->request->getGet('end_date');
+        $startDate = (string) $this->request->getGet('start_date');
+        $endDate   = (string) $this->request->getGet('end_date');
 
-        if (empty($start_date)) {
-            $start_date = Time::now()->subDays(30)->toDateString();
+        if (empty($startDate)) {
+            $startDate = Time::now()->subDays(30)->toDateString();
         }
-        if (empty($end_date)) {
-            $end_date = Time::now()->toDateString();
+        if (empty($endDate)) {
+            $endDate = Time::now()->toDateString();
         }
 
         $reportService = new ReportService();
-        $rows = $reportService->getRevenueByVehicle($start_date, $end_date);
+        $rows = $reportService->getRevenueByVehicle($startDate, $endDate);
 
-        // Build CSV
         $csv = "Vehicle Model,Plate Number,Trips,Distance (Km),Gross Revenue,Fuel Cost,Maintenance,Allowances,Net Profit\n";
 
         foreach ($rows as $row) {
@@ -109,9 +100,11 @@ class ReportController extends BaseController
                 . round($net, 2) . "\n";
         }
 
+        $filename = 'kong-safaris-report-' . $startDate . '-to-' . $endDate . '.csv';
+
         return $this->response
-            ->setHeader('Content-Type', 'text/csv')
-            ->setHeader('Content-Disposition', 'attachment; filename="kong-safaris-report-' . $start_date . '-to-' . $end_date . '.csv"')
+            ->setHeader('Content-Type', 'text/csv; charset=utf-8')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
             ->setBody($csv);
     }
 }

@@ -14,7 +14,7 @@ class SystemSettingModel extends Model
     protected $returnType = SystemSetting::class;
 
     protected $useTimestamps = true;
-    protected $createdField  = 'updated_at';
+    protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
     protected $allowedFields = [

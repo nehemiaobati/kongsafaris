@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Config;
 
 use CodeIgniter\Config\AutoloadConfig;
@@ -39,11 +41,11 @@ class Autoload extends AutoloadConfig
      */
     public $psr4 = [
         APP_NAMESPACE => APPPATH,
-            'App\Modules\Auth' => APPPATH . 'Modules/Auth',
-                'App\Modules\Trips' => APPPATH . 'Modules/Trips',
-                'App\Modules\Payments' => APPPATH . 'Modules/Payments',
-                'App\Modules\Notifications' => APPPATH . 'Modules/Notifications',
-        ];
+        'App\Modules\Auth' => APPPATH . 'Modules/Auth',
+        'App\Modules\Trips' => APPPATH . 'Modules/Trips',
+        'App\Modules\Payments' => APPPATH . 'Modules/Payments',
+        'App\Modules\Notifications' => APPPATH . 'Modules/Notifications',
+    ];
 
     /**
      * -------------------------------------------------------------------

@@ -216,13 +216,11 @@ class AuthController extends BaseController
 
         // Only send email if user exists (prevents email enumeration)
         if ($result['user_exists'] && $result['reset_token'] !== null) {
-            $userModel = new \App\Modules\Auth\Models\UserModel();
-            /** @var \App\Modules\Auth\Entities\User|null $user */
-            $user = $userModel->where('email', $email)->first();
-
-            if ($user !== null) {
-                service('authService')->sendPasswordResetEmail($email, $user->first_name, $result['reset_token']);
-            }
+            service('authService')->sendPasswordResetEmail(
+                $email,
+                $result['first_name'] ?? 'Valued Customer',
+                $result['reset_token']
+            );
         }
 
         return redirect()->to(url_to('auth.login'))
@@ -273,9 +271,7 @@ class AuthController extends BaseController
      */
     public function profileView(): string|ResponseInterface
     {
-        $userModel = new \App\Modules\Auth\Models\UserModel();
-        /** @var \App\Modules\Auth\Entities\User|null $user */
-        $user = $userModel->find(session()->get('userId'));
+        $user = service('authService')->getUserById((int) session()->get('userId'));
 
         if ($user === null) {
             return redirect()->to(url_to('auth.login'))->with('error', 'User not found.');
