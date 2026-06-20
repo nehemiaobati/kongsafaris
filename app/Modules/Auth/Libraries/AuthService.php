@@ -6,7 +6,7 @@ namespace App\Modules\Auth\Libraries;
 
 use App\Modules\Auth\Models\UserModel;
 use App\Modules\Auth\Entities\User;
-use CodeIgniter\HTTP\ResponseInterface;
+use App\Modules\Notifications\Libraries\EmailTemplateService;
 use CodeIgniter\I18n\Time;
 
 /**
@@ -22,10 +22,12 @@ use CodeIgniter\I18n\Time;
 class AuthService
 {
     private UserModel $userModel;
+    private EmailTemplateService $emailTemplateService;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
+        $this->emailTemplateService = new EmailTemplateService();
     }
 
     /**
@@ -200,7 +202,7 @@ class AuthService
             $verifyUrl = site_url('auth/register/verify/' . $token);
             $subject = 'Verify your Kong Safaris account';
 
-            $body = $this->_buildVerificationEmailBody($first_name, $verifyUrl);
+            $body = $this->emailTemplateService->renderVerificationEmail($first_name, $verifyUrl);
             $emailService->sendRawEmail($email, $subject, $body);
         } catch (\Throwable $e) {
             log_message('error', 'Registration verification email failed', [
@@ -225,60 +227,10 @@ class AuthService
             $resetUrl = site_url('auth/reset-password/' . $token);
             $subject = 'Reset your Kong Safaris password';
 
-            $body = $this->_buildPasswordResetEmailBody($first_name, $resetUrl);
+            $body = $this->emailTemplateService->renderPasswordResetEmail($first_name, $resetUrl);
             $emailService->sendRawEmail($email, $subject, $body);
         } catch (\Throwable $e) {
             log_message('error', 'Password reset email failed', ['exception' => $e->getMessage()]);
         }
-    }
-
-    // --- Private Helper Methods ---
-
-    /**
-     * Build verification email HTML.
-     */
-    private function _buildVerificationEmailBody(string $first_name, string $verifyUrl): string
-    {
-        return "
-            <html>
-            <body style='font-family: Arial, sans-serif; background-color: #121813; color: #f1f3f2; padding: 20px;'>
-                <div style='max-width: 600px; margin: 0 auto; background-color: #1a231b; border: 1px solid #d4af37; border-radius: 10px; padding: 30px;'>
-                    <h2 style='color: #d4af37; text-align: center;'>🦁 KONG SAFARIS</h2>
-                    <hr style='border: 0; border-top: 1px solid #d4af37; opacity: 0.3;'>
-                    <p>Dear " . esc($first_name) . ",</p>
-                    <p>Thank you for creating an account. Please click the button below to verify your email address.</p>
-                    <div style='text-align: center; margin: 30px 0;'>
-                        <a href='" . $verifyUrl . "' style='background-color: #d4af37; color: #121813; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;'>Verify Email Address</a>
-                    </div>
-                    <p style='font-size: 0.85em; color: #8c9c90;'>If you did not create this account, please ignore this email.</p>
-                    <p style='font-size: 0.9em; color: #8c9c90;'>Best Regards,<br>Kong Safaris Operations Team</p>
-                </div>
-            </body>
-            </html>
-        ";
-    }
-
-    /**
-     * Build password reset email HTML.
-     */
-    private function _buildPasswordResetEmailBody(string $first_name, string $resetUrl): string
-    {
-        return "
-            <html>
-            <body style='font-family: Arial, sans-serif; background-color: #121813; color: #f1f3f2; padding: 20px;'>
-                <div style='max-width: 600px; margin: 0 auto; background-color: #1a231b; border: 1px solid #d4af37; border-radius: 10px; padding: 30px;'>
-                    <h2 style='color: #d4af37; text-align: center;'>🦁 KONG SAFARIS</h2>
-                    <hr style='border: 0; border-top: 1px solid #d4af37; opacity: 0.3;'>
-                    <p>Dear " . esc($first_name) . ",</p>
-                    <p>You requested a password reset. Click the button below to set a new password. This link expires in 60 minutes.</p>
-                    <div style='text-align: center; margin: 30px 0;'>
-                        <a href='" . $resetUrl . "' style='background-color: #d4af37; color: #121813; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;'>Reset Password</a>
-                    </div>
-                    <p style='font-size: 0.85em; color: #8c9c90;'>If you did not request this, please ignore this email.</p>
-                    <p style='font-size: 0.9em; color: #8c9c90;'>Best Regards,<br>Kong Safaris Operations Team</p>
-                </div>
-            </body>
-            </html>
-        ";
     }
 }

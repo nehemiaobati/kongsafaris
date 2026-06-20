@@ -7,10 +7,11 @@ namespace App\Modules\Trips\Controllers;
 use App\Controllers\BaseController;
 use App\Modules\Trips\Models\BookingModel;
 use App\Modules\Trips\Models\DriverModel;
-use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Models\FuelRateModel;
 use App\Modules\Trips\Models\SystemSettingModel;
+use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Entities\FuelRate;
+use App\Modules\Trips\Libraries\TripQueryService;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 
@@ -26,57 +27,34 @@ use CodeIgniter\I18n\Time;
  */
 class ManagerDashboardController extends BaseController
 {
+    private TripQueryService $queryService;
+
+    public function __construct()
+    {
+        $this->queryService = service('tripQueryService');
+    }
+
     /**
      * Manager dashboard view listing all bookings with pagination.
      */
     public function index(): string|ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
-        $bookingModel = new BookingModel();
-
-        $bookings = $bookingModel->select('bookings.*, vehicles.plate_number, vehicles.model, users.first_name, users.last_name')
-            ->join('vehicles', 'vehicles.id = bookings.vehicle_id')
-            ->join('drivers', 'drivers.id = bookings.driver_id')
-            ->join('users', 'users.id = drivers.user_id')
-            ->orderBy('bookings.created_at', 'DESC')
-            ->paginate(10, 'default');
-
-        $fuelRateModel = new FuelRateModel();
-
-        $petrolRate = $fuelRateModel->where('fuel_type', 'petrol')->orderBy('created_at', 'DESC')->first();
-        $dieselRate = $fuelRateModel->where('fuel_type', 'diesel')->orderBy('created_at', 'DESC')->first();
-
-        $vehicleModel = new VehicleModel();
-        $vehicles = $vehicleModel->findAll();
-
-        $db = \Config\Database::connect();
-        $drivers = $db->table('drivers')
-            ->select('drivers.id, drivers.license_number, drivers.allowance_flat_rate, drivers.status, users.first_name, users.last_name, users.email')
-            ->join('users', 'users.id = drivers.user_id')
-            ->get()
-            ->getResultArray();
-
-        $refundRequests = $bookingModel->select('bookings.*, users.first_name, users.last_name')
-            ->join('users', 'users.id = bookings.customer_id')
-            ->where('payment_status', 'refund_requested')
-            ->findAll();
-
-        // System settings
-        $settingModel = new SystemSettingModel();
-        $baseFeeSetting = $settingModel->where('setting_key', 'base_booking_fee')->first();
+        $dashboardData = $this->queryService->getDashboardBookings(10);
+        $fuelRates = $this->queryService->getCurrentFuelRates();
+        $vehicles = $this->queryService->getActiveVehicles();
+        $drivers = $this->queryService->getDriversList();
+        $refundRequests = $this->queryService->getRefundRequests();
+        $baseFeeSetting = $this->queryService->getSystemSetting('base_booking_fee');
 
         return view('App\Modules\Trips\Views\manager', [
             'pageTitle'       => 'Manager Panel | Kong Safaris Operations',
             'metaDescription' => 'Monitor fleet operations, pricing, bookings, and active trips.',
             'canonicalUrl'    => url_to('trips.manager'),
             'robotsTag'       => 'noindex, nofollow',
-            'bookings'        => $bookings,
-            'pager'           => $bookingModel->pager,
-            'currentPetrolRate' => $petrolRate !== null ? (float) $petrolRate->price_per_liter : 1.45,
-            'currentDieselRate' => $dieselRate !== null ? (float) $dieselRate->price_per_liter : 1.35,
+            'bookings'        => $dashboardData['bookings'],
+            'pager'           => $dashboardData['pager'],
+            'currentPetrolRate' => $fuelRates['petrol'] ?? 1.45,
+            'currentDieselRate' => $fuelRates['diesel'] ?? 1.35,
             'googleApiKey'    => env('GoogleMaps.APIKey') ?? '',
             'vehicles'        => $vehicles,
             'drivers'         => $drivers,
@@ -90,10 +68,6 @@ class ManagerDashboardController extends BaseController
      */
     public function updateFuelRate(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $rules = [
             'fuel_type'       => 'required|in_list[petrol,diesel]',
             'price_per_liter' => 'required|numeric|greater_than[0]',
@@ -125,10 +99,6 @@ class ManagerDashboardController extends BaseController
      */
     public function processRefund(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $booking_id = (int) $this->request->getPost('booking_id');
         $action     = (string) $this->request->getPost('action');
 
@@ -175,10 +145,6 @@ class ManagerDashboardController extends BaseController
      */
     public function assignDriver(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $rules = [
             'booking_id' => 'required|integer',
             'driver_id'  => 'required|integer',
@@ -247,10 +213,6 @@ class ManagerDashboardController extends BaseController
      */
     public function cancelBooking(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $booking_id = (int) $this->request->getPost('booking_id');
 
         $bookingModel = new BookingModel();
@@ -309,10 +271,6 @@ class ManagerDashboardController extends BaseController
      */
     public function initiatePayment(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $rules = [
             'booking_id' => 'required|integer',
             'provider'   => 'required|in_list[card,mpesa,airtel]',
@@ -395,33 +353,14 @@ class ManagerDashboardController extends BaseController
             ->with('error', 'Payment initialized but no redirect URL was returned. Please try again or contact support.');
     }
 
-    // --- Admin Override Tools ---
-
     /**
      * Display manual booking creation form.
      */
     public function manualBookingView(): string|ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
-        $db = \Config\Database::connect();
-        $customers = $db->table('users')
-            ->select('id, first_name, last_name, email')
-            ->where('role', 'customer')
-            ->orderBy('first_name', 'ASC')
-            ->get()
-            ->getResultArray();
-
-        $vehicleModel = new VehicleModel();
-        $vehicles = $vehicleModel->where('status', 'active')->findAll();
-
-        $drivers = $db->table('drivers')
-            ->select('drivers.id, drivers.status, users.first_name, users.last_name')
-            ->join('users', 'users.id = drivers.user_id')
-            ->get()
-            ->getResultArray();
+        $customers = $this->queryService->getCustomersList();
+        $vehicles = $this->queryService->getVehiclesList();
+        $drivers = $this->queryService->getActiveDriversList();
 
         return view('App\Modules\Trips\Views\manual_booking', [
             'pageTitle'       => 'Manual Booking | Kong Safaris',
@@ -440,10 +379,6 @@ class ManagerDashboardController extends BaseController
      */
     public function manualBookingCreate(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $rules = [
             'customer_id'     => 'required|integer',
             'vehicle_id'      => 'required|integer',
@@ -521,10 +456,6 @@ class ManagerDashboardController extends BaseController
      */
     public function forceCancelBooking(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $booking_id = (int) $this->request->getPost('booking_id');
 
         $bookingModel = new BookingModel();
@@ -579,10 +510,6 @@ class ManagerDashboardController extends BaseController
      */
     public function updateBooking(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $rules = [
             'booking_id'       => 'required|integer',
             'pickup_address'   => 'required|string',
@@ -685,10 +612,6 @@ class ManagerDashboardController extends BaseController
      */
     public function overridePaymentStatus(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $rules = [
             'booking_id'       => 'required|integer',
             'payment_status'   => 'required|in_list[pending,paid,failed,manual_verified,refund_requested,refunded]',
@@ -727,10 +650,6 @@ class ManagerDashboardController extends BaseController
      */
     public function updateSystemSettings(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn') || ! in_array(session()->get('role'), ['manager', 'admin'], true)) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $rules = [
             'base_booking_fee' => 'required|numeric|greater_than_equal_to[0]',
         ];

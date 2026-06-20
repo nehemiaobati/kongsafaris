@@ -76,10 +76,6 @@ class AuthController extends BaseController
      */
     public function dashboard(): string|ResponseInterface
     {
-        if (! session()->get('isLoggedIn')) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $role = session()->get('role');
 
         if ($role === 'customer') {
@@ -277,10 +273,6 @@ class AuthController extends BaseController
      */
     public function profileView(): string|ResponseInterface
     {
-        if (! session()->get('isLoggedIn')) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $userModel = new \App\Modules\Auth\Models\UserModel();
         /** @var \App\Modules\Auth\Entities\User|null $user */
         $user = $userModel->find(session()->get('userId'));
@@ -303,10 +295,6 @@ class AuthController extends BaseController
      */
     public function profileUpdate(): ResponseInterface
     {
-        if (! session()->get('isLoggedIn')) {
-            return redirect()->to(url_to('auth.login'));
-        }
-
         $userId = (int) session()->get('userId');
 
         $rules = [

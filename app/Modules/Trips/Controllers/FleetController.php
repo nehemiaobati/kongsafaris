@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Modules\Trips\Controllers;
 
 use App\Controllers\BaseController;
-use App\Modules\Trips\Models\DriverModel;
 use App\Modules\Trips\Models\VehicleModel;
-use App\Modules\Auth\Models\UserModel;
+use App\Modules\Trips\Models\DriverModel;
+use App\Modules\Trips\Entities\Vehicle;
+use App\Modules\Trips\Entities\Driver;
+use App\Modules\Trips\Libraries\TripQueryService;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\I18n\Time;
 
 /**
  * FleetController
  *
- * Manages vehicle and driver CRUD operations for fleet administration.
- * Access restricted to manager and admin roles.
+ * Handles fleet management: vehicle and driver CRUD operations.
  *
  * @package App\Modules\Trips\Controllers
  * @author Senior Developer
@@ -22,194 +24,170 @@ use CodeIgniter\HTTP\ResponseInterface;
  */
 class FleetController extends BaseController
 {
+    private VehicleModel $vehicleModel;
+    private DriverModel $driverModel;
+    private TripQueryService $queryService;
+
+    public function __construct()
+    {
+        $this->vehicleModel = new VehicleModel();
+        $this->driverModel = new DriverModel();
+        $this->queryService = service('tripQueryService');
+    }
+
     /**
      * Add a new vehicle to the fleet.
      */
     public function addVehicle(): ResponseInterface
     {
         $rules = [
-            'plate_number'                => 'required|is_unique[vehicles.plate_number]',
-            'model'                       => 'required|string',
-            'fuel_type'                   => 'required|in_list[petrol,diesel]',
-            'fuel_efficiency'             => 'required|numeric|greater_than[0]',
-            'target_profit_margin_per_km' => 'required|numeric',
-            'maintenance_reserve_per_km'  => 'required|numeric',
-            'status'                      => 'required|in_list[active,maintenance,inactive]',
+            'plate_number' => 'required|string|is_unique[vehicles.plate_number]',
+            'model'        => 'required|string',
+            'capacity'     => 'required|integer|greater_than[0]',
+            'status'       => 'required|in_list[active,inactive,maintenance]',
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return redirect()->back()->with('errors', $this->validator->getErrors());
         }
 
-        $vehicleModel = new VehicleModel();
-        $vehicle = new \App\Modules\Trips\Entities\Vehicle($this->request->getPost());
-        $vehicleModel->insert($vehicle);
+        $vehicle = new Vehicle([
+            'plate_number' => (string) $this->request->getPost('plate_number'),
+            'model'        => (string) $this->request->getPost('model'),
+            'capacity'     => (int) $this->request->getPost('capacity'),
+            'status'       => (string) $this->request->getPost('status'),
+        ]);
 
-        return redirect()->to(url_to('trips.manager'))->with('success', 'Vehicle added successfully.');
+        $this->vehicleModel->insert($vehicle);
+
+        return redirect()->back()->with('success', 'Vehicle added successfully.');
     }
 
     /**
-     * Edit an existing vehicle.
+     * Update vehicle information.
      */
     public function editVehicle(): ResponseInterface
     {
-        $id = (int) $this->request->getPost('vehicle_id');
         $rules = [
-            'plate_number'                => "required|is_unique[vehicles.plate_number,id,{$id}]",
-            'model'                       => 'required|string',
-            'fuel_type'                   => 'required|in_list[petrol,diesel]',
-            'fuel_efficiency'             => 'required|numeric|greater_than[0]',
-            'target_profit_margin_per_km' => 'required|numeric',
-            'maintenance_reserve_per_km'  => 'required|numeric',
-            'status'                      => 'required|in_list[active,maintenance,inactive]',
+            'vehicle_id'   => 'required|integer',
+            'plate_number' => 'required|string',
+            'model'        => 'required|string',
+            'capacity'     => 'required|integer|greater_than[0]',
+            'status'       => 'required|in_list[active,inactive,maintenance]',
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return redirect()->back()->with('errors', $this->validator->getErrors());
         }
 
-        $vehicleModel = new VehicleModel();
-        $vehicle = $vehicleModel->find($id);
-        if ($vehicle !== null) {
-            $vehicle->fill($this->request->getPost());
-            $vehicleModel->update($id, $vehicle);
+        $vehicle_id = (int) $this->request->getPost('vehicle_id');
+        /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
+        $vehicle = $this->vehicleModel->find($vehicle_id);
+
+        if ($vehicle === null) {
+            return redirect()->back()->with('error', 'Vehicle not found.');
         }
 
-        return redirect()->to(url_to('trips.manager'))->with('success', 'Vehicle updated successfully.');
+        $vehicle->plate_number = (string) $this->request->getPost('plate_number');
+        $vehicle->model = (string) $this->request->getPost('model');
+        $vehicle->capacity = (int) $this->request->getPost('capacity');
+        $vehicle->status = (string) $this->request->getPost('status');
+
+        $this->vehicleModel->update($vehicle_id, $vehicle);
+
+        return redirect()->back()->with('success', 'Vehicle updated successfully.');
     }
 
     /**
-     * Delete a vehicle from the fleet.
+     * Remove a vehicle from the fleet.
      */
     public function deleteVehicle(int $id): ResponseInterface
     {
-        $vehicleModel = new VehicleModel();
-        try {
-            $vehicleModel->delete($id);
-            return redirect()->to(url_to('trips.manager'))->with('success', 'Vehicle deleted successfully.');
-        } catch (\Throwable $e) {
-            return redirect()->back()->with('error', 'Cannot delete vehicle. It may be referenced in bookings.');
+        /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
+        $vehicle = $this->vehicleModel->find($id);
+
+        if ($vehicle === null) {
+            return redirect()->back()->with('error', 'Vehicle not found.');
         }
+
+        $this->vehicleModel->delete($id);
+
+        return redirect()->back()->with('success', 'Vehicle deleted successfully.');
     }
 
     /**
-     * Register a new driver (creates user + driver records).
+     * Register a new driver in the system.
      */
     public function addDriver(): ResponseInterface
     {
         $rules = [
-            'first_name'          => 'required|string',
-            'last_name'           => 'required|string',
-            'email'               => 'required|valid_email|is_unique[users.email]',
-            'password'            => 'required|min_length[6]',
-            'license_number'      => 'required|is_unique[drivers.license_number]',
-            'allowance_flat_rate' => 'required|numeric',
-            'status'              => 'required|in_list[available,on_trip,inactive]',
+            'license_number'     => 'required|string|is_unique[drivers.license_number]',
+            'user_id'            => 'required|integer',
+            'allowance_flat_rate' => 'required|numeric|greater_than_equal_to[0]',
+            'status'             => 'required|in_list[available,on_trip,inactive]',
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return redirect()->back()->with('errors', $this->validator->getErrors());
         }
 
-        $db = \Config\Database::connect();
-        $db->transStart();
+        $driver = new Driver([
+            'license_number'      => (string) $this->request->getPost('license_number'),
+            'user_id'             => (int) $this->request->getPost('user_id'),
+            'allowance_flat_rate' => (float) $this->request->getPost('allowance_flat_rate'),
+            'status'              => (string) $this->request->getPost('status'),
+        ]);
 
-        try {
-            $user = new \App\Modules\Auth\Entities\User([
-                'email'      => $this->request->getPost('email'),
-                'first_name' => $this->request->getPost('first_name'),
-                'last_name'  => $this->request->getPost('last_name'),
-                'role'       => 'driver',
-            ]);
-            $user->setPassword((string) $this->request->getPost('password'));
+        $this->driverModel->insert($driver);
 
-            $userModel = new UserModel();
-            $userModel->insert($user);
-            $userId = $db->insertID();
-
-            $driver = new \App\Modules\Trips\Entities\Driver([
-                'user_id'             => $userId,
-                'license_number'      => $this->request->getPost('license_number'),
-                'allowance_flat_rate' => $this->request->getPost('allowance_flat_rate'),
-                'status'              => $this->request->getPost('status'),
-            ]);
-
-            $driverModel = new DriverModel();
-            $driverModel->insert($driver);
-
-            $db->transComplete();
-
-            if ($db->transStatus() === false) {
-                throw new \RuntimeException('Failed to save driver transactional records.');
-            }
-
-            return redirect()->to(url_to('trips.manager'))->with('success', 'Driver registered successfully.');
-        } catch (\Throwable $e) {
-            $db->transRollback();
-            log_message('error', 'Add Driver Failure', ['exception' => $e->getMessage()]);
-            return redirect()->back()->withInput()->with('error', 'An error occurred while registering the driver.');
-        }
+        return redirect()->back()->with('success', 'Driver added successfully.');
     }
 
     /**
-     * Edit an existing driver record.
+     * Update driver information.
      */
     public function editDriver(): ResponseInterface
     {
-        $id = (int) $this->request->getPost('driver_id');
         $rules = [
-            'license_number'      => "required|is_unique[drivers.license_number,id,{$id}]",
-            'allowance_flat_rate' => 'required|numeric',
-            'status'              => 'required|in_list[available,on_trip,inactive]',
+            'driver_id'          => 'required|integer',
+            'license_number'     => 'required|string',
+            'allowance_flat_rate' => 'required|numeric|greater_than_equal_to[0]',
+            'status'             => 'required|in_list[available,on_trip,inactive]',
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return redirect()->back()->with('errors', $this->validator->getErrors());
         }
 
-        $driverModel = new DriverModel();
-        /** @var \App\Modules\Trips\Entities\Driver|null $driver */
-        $driver = $driverModel->find($id);
-        if ($driver !== null) {
-            $driver->fill($this->request->getPost());
-            $driverModel->update($id, $driver);
-        }
+        $driver_id = (int) $this->request->getPost('driver_id');
+        $driver = $this->driverModel->find($driver_id);
 
-        return redirect()->to(url_to('trips.manager'))->with('success', 'Driver details updated.');
-    }
-
-    /**
-     * Delete a driver and associated user account.
-     */
-    public function deleteDriver(int $id): ResponseInterface
-    {
-        $driverModel = new DriverModel();
-        $db = \Config\Database::connect();
-
-        $driver = $driverModel->find($id);
         if ($driver === null) {
             return redirect()->back()->with('error', 'Driver not found.');
         }
 
-        $db->transStart();
+        $driver->license_number = (string) $this->request->getPost('license_number');
+        $driver->allowance_flat_rate = (float) $this->request->getPost('allowance_flat_rate');
+        $driver->status = (string) $this->request->getPost('status');
 
-        try {
-            $userId = $driver->user_id;
-            $driverModel->delete($driver->id);
+        $this->driverModel->update($driver_id, $driver);
 
-            $userModel = new UserModel();
-            $userModel->delete($userId);
+        return redirect()->back()->with('success', 'Driver updated successfully.');
+    }
 
-            $db->transComplete();
+    /**
+     * Remove a driver from the system.
+     */
+    public function deleteDriver(int $id): ResponseInterface
+    {
+        $driver = $this->driverModel->find($id);
 
-            if ($db->transStatus() === false) {
-                throw new \RuntimeException('Failed to delete driver record transaction.');
-            }
-
-            return redirect()->to(url_to('trips.manager'))->with('success', 'Driver record deleted.');
-        } catch (\Throwable $e) {
-            $db->transRollback();
-            return redirect()->back()->with('error', 'Cannot delete driver. Active references exist.');
+        if ($driver === null) {
+            return redirect()->back()->with('error', 'Driver not found.');
         }
+
+        $this->driverModel->delete($id);
+
+        return redirect()->back()->with('success', 'Driver deleted successfully.');
     }
 }

@@ -49,4 +49,20 @@ class Services extends BaseService
 
         return new \App\Modules\Trips\Libraries\PricingService();
     }
+
+    /**
+     * TripQueryService instance.
+     *
+     * @param bool $getShared
+     *
+     * @return \App\Modules\Trips\Libraries\TripQueryService
+     */
+    public static function tripQueryService(bool $getShared = true): \App\Modules\Trips\Libraries\TripQueryService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('tripQueryService');
+        }
+
+        return new \App\Modules\Trips\Libraries\TripQueryService();
+    }
 }

@@ -32,4 +32,20 @@ class Services extends BaseService
 
         return new \App\Modules\Notifications\Libraries\EmailService();
     }
+
+    /**
+     * EmailTemplateService instance.
+     *
+     * @param bool $getShared
+     *
+     * @return \App\Modules\Notifications\Libraries\EmailTemplateService
+     */
+    public static function emailTemplateService(bool $getShared = true): \App\Modules\Notifications\Libraries\EmailTemplateService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('emailTemplateService');
+        }
+
+        return new \App\Modules\Notifications\Libraries\EmailTemplateService();
+    }
 }
