@@ -10,20 +10,25 @@
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
         font-family: inherit !important;
     }
+
     .pac-item {
         border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
         color: #f1f3f2 !important;
         padding: 8px 12px !important;
     }
+
     .pac-item:hover {
         background-color: rgba(212, 175, 55, 0.1) !important;
     }
+
     .pac-item-query {
         color: #ffffff !important;
     }
+
     .pac-matched {
         color: var(--safari-accent) !important;
     }
+
     .pac-icon {
         filter: invert(1);
     }
@@ -300,6 +305,30 @@
             }
         });
 
+        function resolvePinnedAddress(lat, lng) {
+            const formData = new FormData();
+            formData.append("latitude", lat);
+            formData.append("longitude", lng);
+            formData.append("csrf_test_name", window.getCSRFToken());
+
+            return fetch("<?= url_to('trips.geocode.reverse') ?>", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    window.updateCSRFToken(data.csrf_token);
+                    if (data.status === "success" && data.result.address) {
+                        return data.result.address;
+                    }
+                    return null;
+                })
+                .catch(() => null);
+        }
+
         // Click-to-Pin logic on map
         map.addListener("click", (e) => {
             const lat = e.latLng.lat();
@@ -318,6 +347,11 @@
                     title: "Pickup",
                     icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
                 });
+
+                resolvePinnedAddress(lat, lng).then(addr => {
+                    if (addr) document.getElementById("pickupInput").value = addr;
+                });
+
                 checkAndCalculateRoute();
             } else {
                 document.getElementById("d_lat").value = lat;
@@ -331,6 +365,11 @@
                     title: "Destination",
                     icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
                 });
+
+                resolvePinnedAddress(lat, lng).then(addr => {
+                    if (addr) document.getElementById("dropoffInput").value = addr;
+                });
+
                 checkAndCalculateRoute();
             }
         });

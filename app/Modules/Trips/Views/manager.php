@@ -12,32 +12,46 @@
         transition: all 0.2s ease-in-out;
         background: transparent;
     }
+
     .nav-tabs .nav-link:hover {
         border-color: rgba(212, 175, 55, 0.15) rgba(212, 175, 55, 0.15) transparent;
         color: #ffffff !important;
     }
+
     .nav-tabs .nav-link.active {
         background-color: rgba(30, 47, 32, 0.5) !important;
         border-color: rgba(212, 175, 55, 0.3) rgba(212, 175, 55, 0.3) transparent !important;
         color: var(--safari-accent) !important;
     }
+
     .table-hover tbody tr:hover {
         background-color: rgba(212, 175, 55, 0.05) !important;
         transition: background-color 0.2s ease-in-out;
     }
+
     .modal-content {
         background: #121813 !important;
         backdrop-filter: blur(20px);
         border: 1px solid rgba(212, 175, 55, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
     }
+
     .modal-header {
         background: rgba(30, 47, 32, 0.2);
     }
+
     @keyframes pulse-opacity {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
     }
+
     .animate-pulse {
         animation: pulse-opacity 1.5s infinite ease-in-out;
     }
@@ -213,7 +227,7 @@
                                         <?php if ($booking->payment_status === 'paid'): ?>
                                             <span class="badge bg-success">Paid</span>
                                         <?php elseif ($booking->payment_status === 'refund_requested'): ?>
-                                            <span class="badge bg-info text-dark">Refund Req.</span>
+                                            <span class="badge bg-info text-dark">Refund</span>
                                         <?php elseif ($booking->payment_status === 'refunded'): ?>
                                             <span class="badge bg-secondary">Refunded</span>
                                         <?php else: ?>
@@ -234,7 +248,7 @@
                                     <td class="text-end">
                                         <div class="d-flex gap-2 justify-content-end flex-wrap">
                                             <?php if ($booking->trip_status === 'pending'): ?>
-                                                <button class="btn btn-outline-info btn-sm edit-booking-btn" data-id="<?= $booking->id ?>" data-pickup="<?= esc($booking->pickup_address) ?>" data-dropoff="<?= esc($booking->dropoff_address) ?>" data-vehicle="<?= $booking->vehicle_id ?>" data-driver="<?= $booking->driver_id ?>" data-distance="<?= $booking->distance_km ?>" data-price="<?= $booking->total_price ?>" data-payment="<?= $booking->payment_status ?>" data-trip="<?= $booking->trip_status ?>">Edit</button>
+                                                <button class="btn btn-outline-info btn-sm edit-booking-btn" data-id="<?= $booking->id ?>" data-pickup="<?= esc($booking->pickup_address) ?>" data-dropoff="<?= esc($booking->dropoff_address) ?>" data-pickup-lat="<?= $booking->pickup_latitude ?>" data-pickup-lng="<?= $booking->pickup_longitude ?>" data-dropoff-lat="<?= $booking->dropoff_latitude ?>" data-dropoff-lng="<?= $booking->dropoff_longitude ?>" data-vehicle="<?= $booking->vehicle_id ?>" data-driver="<?= $booking->driver_id ?>" data-distance="<?= $booking->distance_km ?>" data-price="<?= $booking->total_price ?>" data-payment="<?= $booking->payment_status ?>" data-trip="<?= $booking->trip_status ?>">Edit</button>
                                             <?php endif; ?>
                                             <?php if ($booking->trip_status === 'pending'): ?>
                                                 <form action="<?= url_to('trips.manager.cancel') ?>" method="POST" class="d-inline" onsubmit="return confirm('Cancel booking #<?= $booking->id ?>?');">
@@ -878,12 +892,45 @@
                 });
             });
 
+            function resolvePinnedAddress(text, lat, lng) {
+                if (!text.includes("Pinned Location") || lat === null || lng === null) {
+                    return Promise.resolve(text);
+                }
+                const formData = new FormData();
+                formData.append("latitude", lat);
+                formData.append("longitude", lng);
+                formData.append("csrf_test_name", window.getCSRFToken());
+
+                return fetch("<?= url_to('trips.geocode.reverse') ?>", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        window.updateCSRFToken(data.csrf_token);
+                        if (data.status === "success" && data.result.address) {
+                            return data.result.address;
+                        }
+                        return text;
+                    })
+                    .catch(() => text);
+            }
+
             // Booking edit buttons mapper
             document.querySelectorAll(".edit-booking-btn").forEach(btn => {
                 btn.addEventListener("click", function() {
+                    const pickupText = this.getAttribute("data-pickup") || "";
+                    const dropoffText = this.getAttribute("data-dropoff") || "";
+
+                    const pLat = this.getAttribute("data-pickup-lat");
+                    const pLng = this.getAttribute("data-pickup-lng");
+                    const dLat = this.getAttribute("data-dropoff-lat");
+                    const dLng = this.getAttribute("data-dropoff-lng");
+
                     document.getElementById("edit_b_id").value = this.getAttribute("data-id");
-                    document.getElementById("edit_pickup").value = this.getAttribute("data-pickup");
-                    document.getElementById("edit_dropoff").value = this.getAttribute("data-dropoff");
                     document.getElementById("edit_vehicle_id").value = this.getAttribute("data-vehicle");
                     document.getElementById("edit_driver_id").value = this.getAttribute("data-driver");
                     document.getElementById("edit_distance").value = this.getAttribute("data-distance");
@@ -892,7 +939,15 @@
                     document.getElementById("edit_trip_status").value = this.getAttribute("data-trip");
 
                     const modal = new bootstrap.Modal(document.getElementById("editBookingModal"));
-                    modal.show();
+
+                    Promise.all([
+                        resolvePinnedAddress(pickupText, pLat, pLng),
+                        resolvePinnedAddress(dropoffText, dLat, dLng)
+                    ]).then(([pickup, dropoff]) => {
+                        document.getElementById("edit_pickup").value = pickup;
+                        document.getElementById("edit_dropoff").value = dropoff;
+                        modal.show();
+                    });
                 });
             });
 

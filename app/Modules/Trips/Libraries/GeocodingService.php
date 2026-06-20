@@ -95,6 +95,63 @@ class GeocodingService
      *
      * @return float Distance in kilometers
      */
+    /**
+     * Reverse geocode coordinates to a readable address.
+     *
+     * @param float $lat
+     * @param float $lng
+     *
+     * @return string Formatted string: "Area Name (lat, lng)" or fallback "Pinned Location (lat, lng)"
+     */
+    public function reverseGeocode(float $lat, float $lng): string
+    {
+        $apiKey = env('GoogleMaps.APIKey');
+        if (empty($apiKey)) {
+            return 'Pinned Location (' . rtrim(rtrim(number_format($lat, 5), '0'), '.') . ', ' . rtrim(rtrim(number_format($lng, 5), '0'), '.') . ')';
+        }
+
+        $url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' . $lat . ',' . $lng . '&key=' . $apiKey;
+
+        try {
+            $client = \Config\Services::curlrequest();
+            $response = $client->get($url, [
+                'headers' => ['Accept' => 'application/json'],
+                'timeout' => 5,
+            ]);
+
+            if ($response->getStatusCode() === 200) {
+                $data = json_decode($response->getBody(), true);
+
+                if (isset($data['status']) && $data['status'] === 'OK' && !empty($data['results'][0]['address_components'])) {
+                    $components = $data['results'][0]['address_components'];
+                    $parts = [];
+                    $types = ['locality', 'sublocality', 'administrative_area_level_2', 'administrative_area_level_1', 'country'];
+
+                    foreach ($types as $type) {
+                        foreach ($components as $c) {
+                            if (in_array($type, $c['types'], true) && !empty($c['long_name'])) {
+                                $parts[] = $c['long_name'];
+                                break;
+                            }
+                        }
+                    }
+
+                    $area = implode(', ', array_slice($parts, 0, 2));
+
+                    return $area . ' (' . rtrim(rtrim(number_format($lat, 4), '0'), '.') . ', ' . rtrim(rtrim(number_format($lng, 4), '0'), '.') . ')';
+                }
+            }
+        } catch (\Throwable $t) {
+            log_message('error', 'Google Reverse Geocode Request Failed', [
+                'exception' => $t->getMessage(),
+                'lat' => $lat,
+                'lng' => $lng,
+            ]);
+        }
+
+        return 'Pinned Location (' . rtrim(rtrim(number_format($lat, 5), '0'), '.') . ', ' . rtrim(rtrim(number_format($lng, 5), '0'), '.') . ')';
+    }
+
     private function _calculateHaversineDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
         $earthRadius = 6371.0; // in kilometers
@@ -103,8 +160,8 @@ class GeocodingService
         $dLon = deg2rad($lng2 - $lng1);
 
         $a = sin($dLat / 2) * sin($dLat / 2)
-           + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
-           * sin($dLon / 2) * sin($dLon / 2);
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLon / 2) * sin($dLon / 2);
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 

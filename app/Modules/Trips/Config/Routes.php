@@ -13,6 +13,7 @@ $routes->group('trips', ['namespace' => 'App\Modules\Trips\Controllers'], static
     // Quotation and Booking
     $routes->get('quote', 'QuotationController::index', ['as' => 'trips.quote']);
     $routes->post('quote/calculate', 'QuotationController::calculate', ['as' => 'trips.quote.calculate']);
+    $routes->post('geocode/reverse', 'QuotationController::reverseGeocode', ['as' => 'trips.geocode.reverse']);
 
     // Customer dashboard and cancellations
     $routes->get('customer', 'QuotationController::customerDashboard', ['as' => 'trips.customer.dashboard']);

@@ -147,6 +147,35 @@ class QuotationController extends BaseController
     }
 
     /**
+     * Reverse geocode coordinates to readable address (AJAX)
+     */
+    public function reverseGeocode(): ResponseInterface
+    {
+        if (! session()->get('isLoggedIn')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Unauthorized.',
+                'result' => [],
+                'errors' => [],
+                'csrf_token' => csrf_hash(),
+            ]);
+        }
+
+        $lat = (float) $this->request->getPost('latitude');
+        $lng = (float) $this->request->getPost('longitude');
+
+        $address = service('geocodingService')->reverseGeocode($lat, $lng);
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'message' => 'Reverse geocoded.',
+            'result' => ['address' => $address],
+            'errors' => [],
+            'csrf_token' => csrf_hash(),
+        ]);
+    }
+
+    /**
      * Cancel an uninitiated booking
      */
     public function cancelBooking(): ResponseInterface
