@@ -1,14 +1,5 @@
 <?= $this->extend('layouts/default') ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .table-hover tbody tr:hover {
-        background-color: rgba(212, 175, 55, 0.05) !important;
-        transition: background-color 0.2s ease-in-out;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
@@ -23,20 +14,20 @@
     <form method="GET" action="<?= url_to('auth.admin.users') ?>" class="row g-3 align-items-end">
         <div class="col-md-5">
             <div class="form-floating">
-                <input type="text" class="form-control bg-dark border-secondary text-light" name="search" value="<?= esc($search) ?>" placeholder="Search by name or email">
-                <label class="text-secondary">Search Users</label>
+                <input type="text" class="form-control" name="search" value="<?= esc($search) ?>" placeholder="Search by name or email">
+                <label>Search Users</label>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-floating">
-                <select class="form-select bg-dark border-secondary text-light" name="role">
+                <select class="form-select" name="role">
                     <option value="">All Roles</option>
                     <option value="admin" <?= $roleFilter === 'admin' ? 'selected' : '' ?>>Admin</option>
                     <option value="manager" <?= $roleFilter === 'manager' ? 'selected' : '' ?>>Manager</option>
                     <option value="driver" <?= $roleFilter === 'driver' ? 'selected' : '' ?>>Driver</option>
                     <option value="customer" <?= $roleFilter === 'customer' ? 'selected' : '' ?>>Customer</option>
                 </select>
-                <label class="text-secondary">Filter by Role</label>
+                <label>Filter by Role</label>
             </div>
         </div>
         <div class="col-md-2">
@@ -51,7 +42,7 @@
 <!-- Users Table -->
 <div class="card blueprint-card p-4">
     <div class="table-responsive">
-        <table class="table table-dark table-striped align-middle">
+        <table class="table table-striped align-middle">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -79,7 +70,7 @@
                             <td class="small text-muted"><?= date('M d, Y', strtotime($u->created_at)) ?></td>
                             <td class="text-end">
                                 <div class="d-flex gap-2 justify-content-end">
-                                    <a href="<?= url_to('auth.admin.edit_user', $u->id) ?>" class="btn btn-outline-info btn-sm">Edit</a>
+                                    <a href="<?= url_to('auth.admin.edit_user', $u->id) ?>" class="btn btn-outline-primary btn-sm">Edit</a>
                                     <form action="<?= url_to('auth.admin.delete_user', $u->id) ?>" method="POST" onsubmit="return confirm('Delete user? This cannot be undone.');">
                                         <?= csrf_field() ?>
                                         <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>

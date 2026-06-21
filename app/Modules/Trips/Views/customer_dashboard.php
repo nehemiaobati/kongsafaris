@@ -3,15 +3,19 @@
 <?= $this->section('styles') ?>
 <style>
     @keyframes pulse-opacity {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
     }
+
     .animate-pulse {
         animation: pulse-opacity 1.5s infinite ease-in-out;
-    }
-    .table-hover tbody tr:hover {
-        background-color: rgba(212, 175, 55, 0.05) !important;
-        transition: background-color 0.2s ease-in-out;
     }
 </style>
 <?= $this->endSection() ?>
@@ -29,7 +33,7 @@
 
 <div class="card blueprint-card p-4">
     <div class="table-responsive">
-        <table class="table table-dark table-striped table-hover align-middle mb-0">
+        <table class="table table-striped table-hover align-middle mb-0">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -46,9 +50,8 @@
                     <tr>
                         <td colspan="7" class="text-center text-muted py-5">
                             <div class="py-4">
-                                <div class="mb-3 fs-1" aria-hidden="true">🗺️</div>
-                                <h5 class="text-white fw-bold mb-1">No Bookings Found</h5>
-                                <p class="text-secondary small mb-3">You haven't booked any safari trips yet. Start your adventure today!</p>
+                                <h5 class="fw-bold mb-1">No Bookings Found</h5>
+                                <p class="text-muted small mb-3">You haven't booked any safari trips yet. Start your adventure today!</p>
                                 <a href="<?= url_to('trips.quote') ?>" class="btn btn-primary btn-sm px-4">Get a Quote</a>
                             </div>
                         </td>
@@ -60,7 +63,7 @@
                             <td>
                                 <div class="small">
                                     <strong><?= esc($booking->first_name . ' ' . $booking->last_name) ?></strong><br>
-                                    <span class="text-secondary"><?= esc($booking->model) ?></span>
+                                    <span class="text-muted"><?= esc($booking->model) ?></span>
                                 </div>
                             </td>
                             <td>
@@ -77,7 +80,7 @@
                                 <?php if ($booking->payment_status === 'paid'): ?>
                                     <span class="badge bg-success">Paid</span>
                                 <?php elseif ($booking->payment_status === 'refund_requested'): ?>
-                                    <span class="badge bg-info text-dark">Refund Requested</span>
+                                    <span class="badge bg-info">Refund Requested</span>
                                 <?php elseif ($booking->payment_status === 'refunded'): ?>
                                     <span class="badge bg-secondary">Refunded</span>
                                 <?php else: ?>

@@ -1,14 +1,5 @@
 <?= $this->extend('layouts/default') ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .table-hover tbody tr:hover {
-        background-color: rgba(212, 175, 55, 0.05) !important;
-        transition: background-color 0.2s ease-in-out;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
@@ -25,14 +16,14 @@
     <form method="GET" action="<?= url_to('trips.reports') ?>" class="row g-3 align-items-end">
         <div class="col-md-4">
             <div class="form-floating">
-                <input type="date" class="form-control bg-dark border-secondary text-light" id="startDate" name="start_date" value="<?= $start_date ?>" required>
-                <label for="startDate" class="text-secondary">Start Date</label>
+                <input type="date" class="form-control" id="startDate" name="start_date" value="<?= $start_date ?>" required>
+                <label for="startDate">Start Date</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-floating">
-                <input type="date" class="form-control bg-dark border-secondary text-light" id="endDate" name="end_date" value="<?= $end_date ?>" required>
-                <label for="endDate" class="text-secondary">End Date</label>
+                <input type="date" class="form-control" id="endDate" name="end_date" value="<?= $end_date ?>" required>
+                <label for="endDate">End Date</label>
             </div>
         </div>
         <div class="col-md-2">
@@ -41,11 +32,10 @@
     </form>
 </div>
 
-<!-- New Analysis Cards -->
+<!-- Analysis Cards -->
 <div class="row g-3 mb-4">
-    <!-- Completed Trips (Realized Gains) -->
     <div class="col-sm-6 col-lg-4">
-        <div class="card blueprint-card p-3 h-100 border-success border-opacity-25">
+        <div class="card blueprint-card p-3 h-100 border-success">
             <h6 class="text-success fw-bold text-uppercase small mb-2">Completed Trips (Realized Gains)</h6>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Trips</span>
@@ -59,7 +49,7 @@
                 <span class="text-muted">Total Costs</span>
                 <strong class="text-warning">$<?= number_format((float)($completed_analysis['completed_total_costs'] ?? 0), 2) ?></strong>
             </div>
-            <hr class="my-2 border-secondary">
+            <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-success fw-bold">Net Profit</span>
                 <span class="fs-5 fw-bold text-success">$<?= number_format((float)($completed_analysis['completed_net_profit'] ?? 0), 2) ?></span>
@@ -71,9 +61,8 @@
         </div>
     </div>
 
-    <!-- Uncompleted Trips (Unrealized Gains) -->
     <div class="col-sm-6 col-lg-4">
-        <div class="card blueprint-card p-3 h-100 border-warning border-opacity-25">
+        <div class="card blueprint-card p-3 h-100 border-warning">
             <h6 class="text-warning fw-bold text-uppercase small mb-2">Uncompleted Trips (Unrealized Gains)</h6>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Total Uncompleted</span>
@@ -89,9 +78,9 @@
             </div>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Active</span>
-                <strong class="text-info"><?= esc($uncompleted_analysis['active_trips'] ?? 0) ?></strong>
+                <strong class="text-primary"><?= esc($uncompleted_analysis['active_trips'] ?? 0) ?></strong>
             </div>
-            <hr class="my-2 border-secondary">
+            <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-warning fw-bold">At-Risk Revenue</span>
                 <span class="fs-5 fw-bold text-warning">$<?= number_format((float)($uncompleted_analysis['at_risk_revenue'] ?? 0), 2) ?></span>
@@ -103,9 +92,8 @@
         </div>
     </div>
 
-    <!-- Refunds -->
     <div class="col-sm-6 col-lg-4">
-        <div class="card blueprint-card p-3 h-100 border-danger border-opacity-25">
+        <div class="card blueprint-card p-3 h-100 border-danger">
             <h6 class="text-danger fw-bold text-uppercase small mb-2">Refunds (Realized Losses)</h6>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Refunded Trips</span>
@@ -123,7 +111,7 @@
                 <span class="text-muted">Pending Requests</span>
                 <strong class="text-warning"><?= esc($refund_analysis['pending_refund_requests'] ?? 0) ?></strong>
             </div>
-            <hr class="my-2 border-secondary">
+            <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-danger fw-bold">Refund Rate</span>
                 <span class="fs-5 fw-bold text-danger"><?= number_format((float)($refund_analysis['refund_rate'] ?? 0), 2) ?>%</span>
@@ -140,36 +128,30 @@
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-lg-3">
         <div class="card blueprint-card p-3 text-center h-100">
-            <span class="text-secondary small">Total Revenue</span>
+            <span class="text-muted small">Total Revenue</span>
             <h3 class="fw-bold text-accent mt-1">$<?= number_format((float)($summary['total_revenue'] ?? 0), 2) ?></h3>
             <span class="text-success small"><?= (int)($summary['total_trips'] ?? 0) ?> trips</span>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
         <div class="card blueprint-card p-3 text-center h-100">
-            <span class="text-secondary small">Net Profit</span>
+            <span class="text-muted small">Net Profit</span>
             <h3 class="fw-bold text-success mt-1">
-                $<?= number_format(
-                        (float)($summary['total_revenue'] ?? 0)
-                            - (float)($summary['total_fuel_cost'] ?? 0)
-                            - (float)($summary['total_maintenance'] ?? 0)
-                            - (float)($summary['total_allowances'] ?? 0),
-                        2
-                    ) ?>
+                $<?= number_format((float)($summary['total_revenue'] ?? 0) - (float)($summary['total_fuel_cost'] ?? 0) - (float)($summary['total_maintenance'] ?? 0) - (float)($summary['total_allowances'] ?? 0), 2) ?>
             </h3>
             <span class="text-muted small">After costs</span>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
         <div class="card blueprint-card p-3 text-center h-100">
-            <span class="text-secondary small">Total Distance</span>
+            <span class="text-muted small">Total Distance</span>
             <h3 class="fw-bold mt-1"><?= number_format((float)($summary['total_distance'] ?? 0), 0) ?> Km</h3>
             <span class="text-muted small">Across all trips</span>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
         <div class="card blueprint-card p-3 text-center h-100">
-            <span class="text-secondary small">Fuel Costs</span>
+            <span class="text-muted small">Fuel Costs</span>
             <h3 class="fw-bold text-warning mt-1">$<?= number_format((float)($summary['total_fuel_cost'] ?? 0), 2) ?></h3>
             <span class="text-muted small">+ $<?= number_format((float)($summary['total_maintenance'] ?? 0), 2) ?> maintenance</span>
         </div>
@@ -177,14 +159,12 @@
 </div>
 
 <div class="row g-4 mb-4">
-    <!-- Revenue Trend Chart -->
     <div class="col-lg-8">
         <div class="card blueprint-card p-4 h-100">
             <h5 class="fw-bold mb-3">Daily Revenue Trend</h5>
             <canvas id="trendChart" height="200"></canvas>
         </div>
     </div>
-    <!-- Fuel Cost Trend Chart -->
     <div class="col-lg-4">
         <div class="card blueprint-card p-4 h-100">
             <h5 class="fw-bold mb-3">Fuel Price Trend</h5>
@@ -197,7 +177,7 @@
 <div class="card blueprint-card p-4 mb-4">
     <h5 class="fw-bold text-success mb-3">Completed Trips Detail (Realized Gains)</h5>
     <div class="table-responsive">
-        <table class="table table-dark table-striped align-middle">
+        <table class="table table-striped align-middle">
             <thead>
                 <tr>
                     <th>Metric</th>
@@ -242,7 +222,7 @@
 <div class="card blueprint-card p-4 mb-4">
     <h5 class="fw-bold text-accent mb-3">Revenue by Vehicle</h5>
     <div class="table-responsive">
-        <table class="table table-dark table-striped align-middle">
+        <table class="table table-striped align-middle">
             <thead>
                 <tr>
                     <th>Vehicle</th>
@@ -264,7 +244,7 @@
                     <?php foreach ($by_vehicle as $v): ?>
                         <?php $net = (float)$v['gross_revenue'] - (float)$v['total_fuel'] - (float)$v['total_maintenance'] - (float)$v['total_allowances']; ?>
                         <tr>
-                            <td><strong><?= esc($v['model']) ?></strong><br><small class="text-secondary"><?= esc($v['plate_number']) ?></small></td>
+                            <td><strong><?= esc($v['model']) ?></strong><br><small class="text-muted"><?= esc($v['plate_number']) ?></small></td>
                             <td><?= $v['trip_count'] ?></td>
                             <td><?= number_format((float)$v['total_km'], 1) ?></td>
                             <td class="text-accent fw-bold">$<?= number_format((float)$v['gross_revenue'], 2) ?></td>
@@ -284,7 +264,7 @@
 <div class="card blueprint-card p-4 mb-4">
     <h5 class="fw-bold text-accent mb-3">Revenue by Driver</h5>
     <div class="table-responsive">
-        <table class="table table-dark table-striped align-middle">
+        <table class="table table-striped align-middle">
             <thead>
                 <tr>
                     <th>Driver</th>
@@ -321,7 +301,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Revenue Trend Chart
         const trendCtx = document.getElementById('trendChart').getContext('2d');
         const trendData = <?= json_encode($trend) ?>;
 
@@ -333,8 +312,8 @@
                     datasets: [{
                         label: 'Daily Revenue ($)',
                         data: trendData.map(d => parseFloat(d.daily_revenue)),
-                        borderColor: '#d4af37',
-                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
                         fill: true,
                         tension: 0.3,
                         pointRadius: 4,
@@ -346,26 +325,26 @@
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#f1f3f2'
+                                color: '#212529'
                             }
                         }
                     },
                     scales: {
                         x: {
                             ticks: {
-                                color: '#8c9c90'
+                                color: '#6c757d'
                             },
                             grid: {
-                                color: 'rgba(255,255,255,0.05)'
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         y: {
                             ticks: {
-                                color: '#8c9c90',
+                                color: '#6c757d',
                                 callback: v => '$' + v
                             },
                             grid: {
-                                color: 'rgba(255,255,255,0.05)'
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         }
                     }
@@ -375,7 +354,6 @@
             trendCtx.canvas.parentNode.innerHTML = '<p class="text-muted text-center py-4">No revenue data available for this period.</p>';
         }
 
-        // Fuel Price Trend Chart
         const fuelCtx = document.getElementById('fuelChart').getContext('2d');
         const fuelData = <?= json_encode($fuel_trend) ?>;
 
@@ -387,8 +365,8 @@
                     datasets: [{
                         label: 'Price per Liter ($)',
                         data: fuelData.map(d => parseFloat(d.price_per_liter)),
-                        borderColor: '#28a745',
-                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
                         fill: true,
                         tension: 0.3,
                         pointRadius: 4,
@@ -399,26 +377,26 @@
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#f1f3f2'
+                                color: '#212529'
                             }
                         }
                     },
                     scales: {
                         x: {
                             ticks: {
-                                color: '#8c9c90'
+                                color: '#6c757d'
                             },
                             grid: {
-                                color: 'rgba(255,255,255,0.05)'
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         y: {
                             ticks: {
-                                color: '#8c9c90',
+                                color: '#6c757d',
                                 callback: v => '$' + v
                             },
                             grid: {
-                                color: 'rgba(255,255,255,0.05)'
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         }
                     }

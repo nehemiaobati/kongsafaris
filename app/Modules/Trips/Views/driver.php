@@ -3,9 +3,17 @@
 <?= $this->section('styles') ?>
 <style>
     @keyframes pulse-opacity {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
     }
+
     .animate-pulse {
         animation: pulse-opacity 1.5s infinite ease-in-out;
     }
@@ -14,7 +22,6 @@
 
 <?= $this->section('content') ?>
 <div class="row">
-    <!-- Active Trip Map Route Column (visible when there is an active trip) -->
     <?php
     $activeBooking = null;
     foreach ($bookings as $b) {
@@ -29,32 +36,30 @@
         <div class="col-lg-6 mb-4">
             <div class="card blueprint-card p-3 h-100">
                 <h5 class="fw-bold text-accent mb-2">Live Navigation Route</h5>
-                <div id="driverRouteMap" style="min-height: 400px; border-radius: 12px; background-color: #222;"></div>
+                <div id="driverRouteMap" style="min-height: 400px; border-radius: 12px; background-color: #f0f0f0;"></div>
             </div>
         </div>
     <?php endif; ?>
 
-    <!-- Booking Details Column -->
     <div class="<?= $activeBooking !== null ? 'col-lg-6' : 'col-md-8 mx-auto' ?> mb-4">
         <div class="card blueprint-card p-4 h-100">
             <h4 class="fw-bold text-accent mb-2">Driver Workspace</h4>
-            <p class="text-secondary small">View and manage your assigned safari transfers. Starting a trip initiates real-time GPS coordinate transmission.</p>
+            <p class="text-muted small">View and manage your assigned safari transfers. Starting a trip initiates real-time GPS coordinate transmission.</p>
 
-            <hr class="border-secondary my-3">
+            <hr class="my-3">
 
             <?php if (empty($bookings)): ?>
                 <div class="text-center py-5 text-muted">
-                    <span class="fs-1"></span>
                     <p class="mt-2 mb-0">No active or pending safari transfers assigned to you.</p>
                 </div>
             <?php else: ?>
                 <div class="list-group list-group-flush bg-transparent">
                     <?php foreach ($bookings as $booking): ?>
-                        <div class="p-3 mb-3 border border-secondary border-opacity-25 rounded bg-dark bg-opacity-25">
+                        <div class="p-3 mb-3 border rounded">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
                                     <span class="badge bg-secondary mb-1">Trip #<?= esc($booking->id) ?></span>
-                                    <h5 class="fw-bold mb-1 text-light"><?= esc($booking->plate_number) ?> - <?= esc($booking->model) ?></h5>
+                                    <h5 class="fw-bold mb-1"><?= esc($booking->plate_number) ?> - <?= esc($booking->model) ?></h5>
                                 </div>
                                 <div>
                                     <?php if ($booking->trip_status === 'active'): ?>
@@ -71,11 +76,10 @@
                                 <strong>Distance:</strong> <?= esc($booking->distance_km) ?> Km
                             </div>
 
-                            <!-- Native Navigation Link Option -->
                             <div class="mb-3">
                                 <a href="https://www.google.com/maps/dir/?api=1&destination=<?= urlencode((string)$booking->dropoff_latitude . ',' . (string)$booking->dropoff_longitude) ?>&waypoints=<?= urlencode((string)$booking->pickup_latitude . ',' . (string)$booking->pickup_longitude) ?>&travelmode=driving"
                                     target="_blank"
-                                    class="btn btn-outline-warning btn-sm w-100 py-2">
+                                    class="btn btn-outline-primary btn-sm w-100 py-2">
                                     Open in Native Google Maps App
                                 </a>
                             </div>
@@ -130,7 +134,7 @@
             directionsService = new google.maps.DirectionsService();
             directionsRenderer = new google.maps.DirectionsRenderer({
                 polylineOptions: {
-                    strokeColor: "#d4af37",
+                    strokeColor: "#0d6efd",
                     strokeWeight: 5
                 }
             });
@@ -140,40 +144,7 @@
                 center: {
                     lat: pLat,
                     lng: pLng
-                },
-                styles: [{
-                        elementType: "geometry",
-                        stylers: [{
-                            color: "#1f2721"
-                        }]
-                    },
-                    {
-                        elementType: "labels.text.stroke",
-                        stylers: [{
-                            color: "#1f2721"
-                        }]
-                    },
-                    {
-                        elementType: "labels.text.fill",
-                        stylers: [{
-                            color: "#748077"
-                        }]
-                    },
-                    {
-                        featureType: "road",
-                        elementType: "geometry",
-                        stylers: [{
-                            color: "#2d382f"
-                        }]
-                    },
-                    {
-                        featureType: "water",
-                        elementType: "geometry",
-                        stylers: [{
-                            color: "#0d1c13"
-                        }]
-                    }
-                ]
+                }
             });
 
             directionsRenderer.setMap(driverMap);
@@ -217,7 +188,6 @@
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
 
-                // Update driver location marker dynamically on map
                 if (typeof driverMap !== 'undefined' && driverMap) {
                     const driverLatLng = new google.maps.LatLng(lat, lng);
                     if (driverLocationMarker) {

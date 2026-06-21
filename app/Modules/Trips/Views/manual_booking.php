@@ -7,25 +7,24 @@
         <div class="card blueprint-card p-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold mb-0 text-accent">Safari Route Map</h5>
-                <span class="text-secondary small">Click the map directly to drop pin markers.</span>
+                <span class="text-muted small">Click the map directly to drop pin markers.</span>
             </div>
 
-            <!-- Map pinning selector -->
-            <div class="card bg-dark bg-opacity-50 border-secondary border-opacity-25 p-2 mb-3 rounded">
-                <span class="text-secondary small d-block mb-1">Map Pin Placement Mode:</span>
+            <div class="p-3 mb-3 rounded border bg-body-tertiary">
+                <span class="text-muted small d-block mb-1">Map Pin Placement Mode:</span>
                 <div class="d-flex gap-3">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pin_mode" id="pinPickup" value="pickup" checked>
-                        <label class="form-check-label text-light small" for="pinPickup">Pin Pickup Location</label>
+                        <label class="form-check-label small" for="pinPickup">Pin Pickup Location</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pin_mode" id="pinDropoff" value="dropoff">
-                        <label class="form-check-label text-light small" for="pinDropoff">Pin Destination</label>
+                        <label class="form-check-label small" for="pinDropoff">Pin Destination</label>
                     </div>
                 </div>
             </div>
 
-            <div id="bookingMap" style="min-height: 440px; border-radius: 12px; background-color: #222;"></div>
+            <div id="bookingMap" style="min-height: 440px; border-radius: 12px; background-color: #f0f0f0;"></div>
         </div>
     </div>
 
@@ -39,25 +38,25 @@
                 <?= csrf_field() ?>
 
                 <div class="form-floating mb-3">
-                    <select class="form-select bg-dark border-secondary text-light" name="customer_id" required>
+                    <select class="form-select" name="customer_id" required>
                         <option value="" selected disabled>Select Customer...</option>
                         <?php foreach ($customers as $c): ?>
                             <option value="<?= $c['id'] ?>"><?= esc($c['first_name'] . ' ' . $c['last_name']) ?> (<?= esc($c['email']) ?>)</option>
                         <?php endforeach; ?>
                     </select>
-                    <label class="text-secondary">Customer</label>
+                    <label>Customer</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control bg-dark border-secondary text-light" id="pickupInput" name="pickup_address" placeholder="Pickup Address" required>
-                    <label for="pickupInput" class="text-secondary">Pickup Location</label>
+                    <input type="text" class="form-control" id="pickupInput" name="pickup_address" placeholder="Pickup Address" required>
+                    <label for="pickupInput">Pickup Location</label>
                     <input type="hidden" id="p_lat" name="pickup_latitude">
                     <input type="hidden" id="p_lng" name="pickup_longitude">
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control bg-dark border-secondary text-light" id="dropoffInput" name="dropoff_address" placeholder="Dropoff Address" required>
-                    <label for="dropoffInput" class="text-secondary">Destination</label>
+                    <input type="text" class="form-control" id="dropoffInput" name="dropoff_address" placeholder="Dropoff Address" required>
+                    <label for="dropoffInput">Destination</label>
                     <input type="hidden" id="d_lat" name="dropoff_latitude">
                     <input type="hidden" id="d_lng" name="dropoff_longitude">
                 </div>
@@ -65,30 +64,29 @@
                 <div class="row g-2 mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select bg-dark border-secondary text-light" id="vehicleSelect" name="vehicle_id" required>
+                            <select class="form-select" id="vehicleSelect" name="vehicle_id" required>
                                 <option value="" selected disabled>Choose...</option>
                                 <?php foreach ($vehicles as $v): ?>
                                     <option value="<?= $v->id ?>"><?= esc($v->model) ?> (<?= esc($v->plate_number) ?>)</option>
                                 <?php endforeach; ?>
                             </select>
-                            <label class="text-secondary">Vehicle</label>
+                            <label>Vehicle</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select bg-dark border-secondary text-light" id="driverSelect" name="driver_id" required>
+                            <select class="form-select" id="driverSelect" name="driver_id" required>
                                 <option value="" selected disabled>Choose...</option>
                                 <?php foreach ($drivers as $d): ?>
                                     <option value="<?= $d['id'] ?>"><?= esc($d['first_name'] . ' ' . $d['last_name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <label class="text-secondary">Driver</label>
+                            <label>Driver</label>
                         </div>
                     </div>
                 </div>
 
-                <!-- Live Price Summary -->
-                <div id="priceSummary" class="p-3 mb-3 rounded bg-success bg-opacity-10 border border-success border-opacity-25" style="display: none;">
+                <div id="priceSummary" class="p-3 mb-3 rounded bg-success bg-opacity-10 border border-success" style="display: none;">
                     <h6 class="fw-bold text-accent mb-3">Auto-Calculated Cost</h6>
                     <div class="d-flex justify-content-between small mb-1">
                         <span>Distance:</span>
@@ -110,25 +108,24 @@
                         <span>Driver allowance:</span>
                         <strong id="summaryDriver">$0.00</strong>
                     </div>
-                    <hr class="my-2 border-secondary">
+                    <hr class="my-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="fw-bold">Total Price:</span>
                         <span class="fs-4 fw-bold text-accent" id="summaryTotal">$0.00</span>
                     </div>
                 </div>
 
-                <!-- Override fields -->
                 <div class="row g-2 mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="number" step="0.01" class="form-control bg-dark border-secondary text-light" name="distance_km" id="distanceInput" placeholder="System calculated value">
-                            <label class="text-secondary">Distance (Km) — Override</label>
+                            <input type="number" step="0.01" class="form-control" name="distance_km" id="distanceInput" placeholder="System calculated value">
+                            <label>Distance (Km) - Override</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="number" step="0.01" class="form-control bg-dark border-secondary text-light" name="total_price" id="priceInput" placeholder="System calculated value">
-                            <label class="text-secondary">Total Price ($) — Override</label>
+                            <input type="number" step="0.01" class="form-control" name="total_price" id="priceInput" placeholder="System calculated value">
+                            <label>Total Price ($) - Override</label>
                         </div>
                     </div>
                 </div>
@@ -136,18 +133,18 @@
                 <div class="row g-2 mb-4">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select bg-dark border-secondary text-light" name="payment_status" required>
+                            <select class="form-select" name="payment_status" required>
                                 <option value="pending">Pending (Awaiting Payment)</option>
                                 <option value="paid">Paid (Immediate Confirmation)</option>
                                 <option value="manual_verified">Manual Verified</option>
                             </select>
-                            <label class="text-secondary">Payment Status</label>
+                            <label>Payment Status</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control bg-dark border-secondary text-light" name="paystack_reference" placeholder="Manual-REF">
-                            <label class="text-secondary">Reference (optional)</label>
+                            <input type="text" class="form-control" name="paystack_reference" placeholder="Manual-REF">
+                            <label>Reference (optional)</label>
                         </div>
                     </div>
                 </div>
@@ -175,47 +172,7 @@
 
         map = new google.maps.Map(document.getElementById("bookingMap"), {
             zoom: 12,
-            center: center,
-            styles: [{
-                    elementType: "geometry",
-                    stylers: [{
-                        color: "#1f2721"
-                    }]
-                },
-                {
-                    elementType: "labels.text.stroke",
-                    stylers: [{
-                        color: "#1f2721"
-                    }]
-                },
-                {
-                    elementType: "labels.text.fill",
-                    stylers: [{
-                        color: "#748077"
-                    }]
-                },
-                {
-                    featureType: "road",
-                    elementType: "geometry",
-                    stylers: [{
-                        color: "#2d382f"
-                    }]
-                },
-                {
-                    featureType: "road",
-                    elementType: "geometry.stroke",
-                    stylers: [{
-                        color: "#212b23"
-                    }]
-                },
-                {
-                    featureType: "water",
-                    elementType: "geometry",
-                    stylers: [{
-                        color: "#0d1c13"
-                    }]
-                }
-            ]
+            center: center
         });
 
         directionsService = new google.maps.DirectionsService();
@@ -223,7 +180,7 @@
             map: map,
             suppressMarkers: true,
             polylineOptions: {
-                strokeColor: "#d4af37",
+                strokeColor: "#0d6efd",
                 strokeWeight: 5
             }
         });
@@ -238,18 +195,16 @@
                 const lng = place.geometry.location.lng();
                 document.getElementById("p_lat").value = lat;
                 document.getElementById("p_lng").value = lng;
-
                 if (pickupMarker) pickupMarker.setMap(null);
                 pickupMarker = new google.maps.Marker({
                     position: {
-                        lat: lat,
-                        lng: lng
+                        lat,
+                        lng
                     },
                     map: map,
                     title: "Pickup",
                     icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
                 });
-
                 checkAndCalculateRoute();
             }
         });
@@ -261,18 +216,16 @@
                 const lng = place.geometry.location.lng();
                 document.getElementById("d_lat").value = lat;
                 document.getElementById("d_lng").value = lng;
-
                 if (dropoffMarker) dropoffMarker.setMap(null);
                 dropoffMarker = new google.maps.Marker({
                     position: {
-                        lat: lat,
-                        lng: lng
+                        lat,
+                        lng
                     },
                     map: map,
                     title: "Destination",
                     icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
                 });
-
                 checkAndCalculateRoute();
             }
         });
@@ -286,7 +239,6 @@
                 document.getElementById("p_lat").value = lat;
                 document.getElementById("p_lng").value = lng;
                 document.getElementById("pickupInput").value = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
-
                 if (pickupMarker) pickupMarker.setMap(null);
                 pickupMarker = new google.maps.Marker({
                     position: e.latLng,
@@ -299,7 +251,6 @@
                 document.getElementById("d_lat").value = lat;
                 document.getElementById("d_lng").value = lng;
                 document.getElementById("dropoffInput").value = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
-
                 if (dropoffMarker) dropoffMarker.setMap(null);
                 dropoffMarker = new google.maps.Marker({
                     position: e.latLng,
@@ -349,19 +300,7 @@
         const d_lat = document.getElementById("d_lat").value;
         const d_lng = document.getElementById("d_lng").value;
 
-        console.debug('[ManualBooking] fetchDynamicQuote triggered', {
-            vehicle,
-            driver,
-            p_lat,
-            p_lng,
-            d_lat,
-            d_lng
-        });
-
-        if (!vehicle || !driver || !p_lat || !d_lat) {
-            console.debug('[ManualBooking] Missing required fields, aborting quote fetch');
-            return;
-        }
+        if (!vehicle || !driver || !p_lat || !d_lat) return;
 
         const formData = new FormData();
         formData.append("vehicle_id", vehicle);
@@ -381,7 +320,6 @@
             })
             .then(res => res.json())
             .then(data => {
-                console.debug('[ManualBooking] Quote API response', data);
                 window.updateCSRFToken(data.csrf_token);
                 if (data.status === "success") {
                     document.getElementById("summaryDistance").innerText = data.result.distance_km + " Km";
@@ -390,27 +328,15 @@
                     document.getElementById("summaryMaint").innerText = "$" + data.result.maintenance_reserve.toFixed(2);
                     document.getElementById("summaryDriver").innerText = "$" + data.result.driver_allowance.toFixed(2);
                     document.getElementById("summaryTotal").innerText = "$" + data.result.total_price.toFixed(2);
-
                     document.getElementById("priceSummary").style.display = "block";
-
-                    // Auto-populate override inputs with system defaults
-                    const distanceInput = document.getElementById("distanceInput");
-                    const priceInput = document.getElementById("priceInput");
-                    distanceInput.value = data.result.distance_km;
-                    priceInput.value = data.result.total_price.toFixed(2);
-
-                    console.debug('[ManualBooking] Override fields populated', {
-                        distance: distanceInput.value,
-                        price: priceInput.value
-                    });
-
+                    document.getElementById("distanceInput").value = data.result.distance_km;
+                    document.getElementById("priceInput").value = data.result.total_price.toFixed(2);
                     document.getElementById("createBtn").removeAttribute("disabled");
                 } else {
-                    console.error('[ManualBooking] Quote calculation failed', data);
                     alert("Error: " + data.message);
                 }
             })
-            .catch(err => console.error("[ManualBooking] Calculations failed", err));
+            .catch(err => console.error("Calculations failed", err));
     }
 
     document.getElementById("manualBookingForm").addEventListener("submit", function(e) {

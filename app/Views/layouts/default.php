@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -40,48 +40,48 @@
 
     <!-- JSON-LD Structured Data for Google Rich Results -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "TravelAgency",
-      "name": "Kong Safaris",
-      "image": "<?= base_url('assets/img/safari-hero.png') ?>",
-      "description": "<?= esc($metaDescription ?? 'Manage pricing, booking, and real-time fleet tracking for Kong Safaris.') ?>",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Nairobi",
-        "addressCountry": "KE"
-      },
-      "priceRange": "$$"
-    }
+        {
+            "@context": "https://schema.org",
+            "@type": "TravelAgency",
+            "name": "Kong Safaris",
+            "image": "<?= base_url('assets/img/safari-hero.png') ?>",
+            "description": "<?= esc($metaDescription ?? 'Manage pricing, booking, and real-time fleet tracking for Kong Safaris.') ?>",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Nairobi",
+                "addressCountry": "KE"
+            },
+            "priceRange": "$$"
+        }
     </script>
 
     <!-- Custom theme variables & micro-animations -->
     <style>
         :root {
-            --safari-primary: #1e3f20;
-            /* Deep Forest Green */
-            --safari-accent: #d4af37;
-            /* Safari Gold */
-            --safari-accent-rgb: 212, 175, 55;
-            --safari-bg-dark: #121813;
-            /* Very Dark Charcoal/Green */
-            --safari-card-bg: rgba(30, 47, 32, 0.25);
+            --safari-primary: #000000;
+            /* Black */
+            --safari-accent: #0d6efd;
+            /* Bootstrap Blue */
+            --safari-accent-rgb: 13, 110, 253;
+            --safari-bg-light: #ffffff;
+            /* White */
+            --safari-card-bg: #ffffff;
             --font-family-sans-serif: 'Outfit', sans-serif;
         }
 
         body {
             font-family: var(--font-family-sans-serif);
-            background-color: var(--safari-bg-dark);
-            color: #f1f3f2;
+            background-color: var(--safari-bg-light);
+            color: #212529;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
         .navbar {
-            background-color: rgba(18, 24, 19, 0.9) !important;
+            background-color: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .navbar-brand {
@@ -92,6 +92,7 @@
 
         .nav-link {
             font-weight: 500;
+            color: #495057 !important;
             transition: color 0.3s ease;
         }
 
@@ -102,43 +103,42 @@
 
         .blueprint-card {
             background: var(--safari-card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 16px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
             transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
         .blueprint-card:hover {
-            border-color: rgba(212, 175, 55, 0.3);
+            border-color: var(--safari-accent);
         }
 
         .btn-primary {
             background-color: var(--safari-accent);
             border-color: var(--safari-accent);
-            color: #121813;
+            color: #ffffff;
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
-            background-color: #c29e2e;
-            border-color: #c29e2e;
-            color: #121813;
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
         }
 
         .btn-outline-secondary {
-            color: #f1f3f2;
-            border-color: rgba(255, 255, 255, 0.3);
+            color: #495057;
+            border-color: rgba(0, 0, 0, 0.2);
             font-weight: 500;
         }
 
         .btn-outline-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border-color: #ffffff;
+            background-color: rgba(0, 0, 0, 0.03);
+            color: #000;
+            border-color: #000;
         }
 
         .text-accent {
@@ -147,11 +147,11 @@
 
         footer {
             margin-top: auto;
-            background-color: #0d120e;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: #f8f9fa;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
             padding: 20px 0;
             font-size: 0.9rem;
-            color: #8c9c90;
+            color: #6c757d;
         }
 
         /* Float labels styling compatibility */
@@ -164,10 +164,13 @@
 
         .hover-link {
             transition: color 0.2s ease-in-out;
+            color: #6c757d !important;
         }
+
         .hover-link:hover {
             color: var(--safari-accent) !important;
         }
+
         :focus-visible {
             outline: 2px solid var(--safari-accent) !important;
             outline-offset: 3px !important;
@@ -183,10 +186,10 @@
     <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 bg-primary text-white p-2" style="z-index: 9999;">Skip to main content</a>
 
     <!-- Header Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top navbar-dark">
+    <nav class="navbar navbar-expand-lg sticky-top navbar-light">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?= url_to('auth.dashboard') ?>">
-                <span class="fs-4">🦁 KONG SAFARIS</span>
+                <span class="fs-4 fw-bold">KONG SAFARIS</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -252,7 +255,7 @@
                 <!-- Right side: user info & auth actions -->
                 <div class="d-flex align-items-center">
                     <?php if (session()->get('isLoggedIn')): ?>
-                        <span class="text-light me-3 small">
+                        <span class="me-3 small text-muted">
                             Logged in as: <strong class="text-accent"><?= esc(session()->get('first_name')) ?> (<?= esc(ucfirst(session()->get('role'))) ?>)</strong>
                         </span>
                         <a href="<?= url_to('auth.logout') ?>" class="btn btn-outline-danger btn-sm">Logout</a>
@@ -281,13 +284,13 @@
         <div class="container">
             <div class="row g-4 text-start mb-4">
                 <div class="col-lg-4 col-md-6">
-                    <h5 class="text-accent fw-bold mb-3">🦁 KONG SAFARIS</h5>
+                    <h5 class="text-accent fw-bold mb-3">KONG SAFARIS</h5>
                     <p class="small text-muted">
                         Providing premium safari vehicle rentals, customized tour transport, and real-time fleet operations management across Kenya. Reimagining wild adventures with safety and ease.
                     </p>
                 </div>
                 <div class="col-lg-2 col-md-6">
-                    <h6 class="text-white fw-bold mb-3">Quick Links</h6>
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-2"><a href="<?= base_url() ?>" class="text-muted text-decoration-none hover-link">Home</a></li>
                         <li class="mb-2"><a href="<?= base_url('#fleet') ?>" class="text-muted text-decoration-none hover-link">Our Fleet</a></li>
@@ -296,7 +299,7 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <h6 class="text-white fw-bold mb-3">Top Destinations</h6>
+                    <h6 class="fw-bold mb-3">Top Destinations</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Maasai Mara National Reserve</a></li>
                         <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Amboseli National Park</a></li>
@@ -305,16 +308,16 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <h6 class="text-white fw-bold mb-3">Contact Us</h6>
+                    <h6 class="fw-bold mb-3">Contact Us</h6>
                     <ul class="list-unstyled small text-muted">
-                        <li class="mb-2">📍 Nairobi, Kenya</li>
-                        <li class="mb-2">📞 +254 700 000000</li>
-                        <li class="mb-2">✉️ info@kongsafaris.com</li>
-                        <li class="mb-2">🕒 Mon - Sat: 8:00 AM - 6:00 PM</li>
+                        <li class="mb-2">Nairobi, Kenya</li>
+                        <li class="mb-2">+254 700 000000</li>
+                        <li class="mb-2">info@kongsafaris.com</li>
+                        <li class="mb-2">Mon - Sat: 8:00 AM - 6:00 PM</li>
                     </ul>
                 </div>
             </div>
-            <hr class="border-secondary opacity-25 mb-4">
+            <hr class="opacity-25 mb-4">
             <div class="text-center">
                 <p class="mb-1 text-muted">&copy; <?= date('Y') ?> Kong Safaris Ltd. All rights reserved.</p>
                 <small class="text-muted">Dynamic Fleet Pricing, Tracking & Booking Operations</small>
@@ -328,20 +331,17 @@
     <!-- jQuery or helper function for forms CSRF updates in dynamic content -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Helper to automatically inject CSRF token into all AJAX requests via headers
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="csrf-header"]').getAttribute('content');
 
             window.getCSRFToken = () => document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             window.updateCSRFToken = (newHash) => {
                 document.querySelector('meta[name="csrf-token"]').setAttribute('content', newHash);
-                // Also update all input fields with name csrf_test_name
                 document.querySelectorAll('input[name="csrf_test_name"]').forEach(input => {
                     input.value = newHash;
                 });
             };
 
-            // Global smart smooth scroll handler for base_url('#hash') links
             document.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     if (!this.href) return;
@@ -358,9 +358,7 @@
                                 history.pushState(null, '', url.hash);
                             }
                         }
-                    } catch (err) {
-                        // Ignore invalid URLs
-                    }
+                    } catch (err) {}
                 });
             });
         });
