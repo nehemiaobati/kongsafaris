@@ -42,15 +42,15 @@ class EmailService
         $subject = 'Payment Confirmed! Safari Booking #' . $booking_id;
         $body = "
             <html>
-            <body style='font-family: Arial, sans-serif; background-color: #121813; color: #f1f3f2; padding: 20px;'>
-                <div style='max-width: 600px; margin: 0 auto; background-color: #1a231b; border: 1px solid #d4af37; border-radius: 10px; padding: 30px;'>
-                    <h2 style='color: #d4af37; text-align: center;'>🦁 KONG SAFARIS</h2>
-                    <hr style='border: 0; border-top: 1px solid #d4af37; opacity: 0.3;'>
+            <body style='font-family: Arial, sans-serif; background-color: #ffffff; color: #212529; padding: 20px;'>
+                <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #0d6efd; border-radius: 10px; padding: 30px;'>
+                    <h2 style='color: #0d6efd; text-align: center;'>KONG SAFARIS</h2>
+                    <hr style='border: 0; border-top: 1px solid #0d6efd; opacity: 0.3;'>
                     <p>Dear " . esc($customer_name) . ",</p>
                     <p>We are excited to confirm that your payment of <strong>$" . number_format($amount, 2) . "</strong> has been successfully processed for booking <strong>#" . $booking_id . "</strong>.</p>
                     <p>Your safari transfer is now fully paid and scheduled. You can track progress or review details on your customer dashboard.</p>
                     <br>
-                    <p style='font-size: 0.9em; color: #8c9c90;'>Thank you for choosing Kong Safaris.<br><em>Explore Africa in comfort.</em></p>
+                    <p style='font-size: 0.9em; color: #6c757d;'>Thank you for choosing Kong Safaris.<br><em>Explore Africa in comfort.</em></p>
                 </div>
             </body>
             </html>
@@ -74,15 +74,15 @@ class EmailService
         $subject = 'Trip Status Update: Booking #' . $booking_id;
         $body = "
             <html>
-            <body style='font-family: Arial, sans-serif; background-color: #121813; color: #f1f3f2; padding: 20px;'>
-                <div style='max-width: 600px; margin: 0 auto; background-color: #1a231b; border: 1px solid #d4af37; border-radius: 10px; padding: 30px;'>
-                    <h2 style='color: #d4af37; text-align: center;'>🦁 KONG SAFARIS</h2>
-                    <hr style='border: 0; border-top: 1px solid #d4af37; opacity: 0.3;'>
+            <body style='font-family: Arial, sans-serif; background-color: #ffffff; color: #212529; padding: 20px;'>
+                <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #0d6efd; border-radius: 10px; padding: 30px;'>
+                    <h2 style='color: #0d6efd; text-align: center;'>KONG SAFARIS</h2>
+                    <hr style='border: 0; border-top: 1px solid #0d6efd; opacity: 0.3;'>
                     <p>Dear " . esc($customer_name) . ",</p>
-                    <p>Your safari booking <strong>#" . $booking_id . "</strong> status has been updated to: <strong style='text-transform: uppercase; color: #d4af37;'>" . esc($status) . "</strong>.</p>
+                    <p>Your safari booking <strong>#" . $booking_id . "</strong> status has been updated to: <strong style='text-transform: uppercase; color: #0d6efd;'>" . esc($status) . "</strong>.</p>
                     <p>Our fleet operations coordinates are updating in real-time.</p>
                     <br>
-                    <p style='font-size: 0.9em; color: #8c9c90;'>Best Regards,<br>Kong Safaris Operations Team</p>
+                    <p style='font-size: 0.9em; color: #6c757d;'>Best Regards,<br>Kong Safaris Operations Team</p>
                 </div>
             </body>
             </html>

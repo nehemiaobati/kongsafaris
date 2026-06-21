@@ -18,10 +18,10 @@ class EmailTemplateService
 {
     private const BRAND_NAME = 'KONG SAFARIS';
     private const BRAND_COLORS = [
-        'primary' => '#d4af37',
-        'background' => '#1a231b',
-        'text' => '#f1f3f2',
-        'muted' => '#8c9c90',
+        'primary' => '#0d6efd',
+        'background' => '#ffffff',
+        'text' => '#212529',
+        'muted' => '#6c757d',
     ];
 
     /**
@@ -61,16 +61,16 @@ class EmailTemplateService
     {
         return "
             <html>
-            <body style='font-family: Arial, sans-serif; background-color: #121813; color: #f1f3f2; padding: 20px;'>
-                <div style='max-width: 600px; margin: 0 auto; background-color: #1a231b; border: 1px solid #d4af37; border-radius: 10px; padding: 30px;'>
-                    <h2 style='color: #d4af37; text-align: center;'>🦁 " . self::BRAND_NAME . "</h2>
-                    <hr style='border: 0; border-top: 1px solid #d4af37; opacity: 0.3;'>
+            <body style='font-family: Arial, sans-serif; background-color: #ffffff; color: #212529; padding: 20px;'>
+                <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #0d6efd; border-radius: 10px; padding: 30px;'>
+                    <h2 style='color: #0d6efd; text-align: center;'>" . self::BRAND_NAME . "</h2>
+                    <hr style='border: 0; border-top: 1px solid #0d6efd; opacity: 0.3;'>
                     <p>{$body}</p>
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='{$buttonUrl}' style='background-color: #d4af37; color: #121813; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;'>{$buttonText}</a>
+                        <a href='{$buttonUrl}' style='background-color: #0d6efd; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;'>{$buttonText}</a>
                     </div>
-                    <p style='font-size: 0.85em; color: #8c9c90;'>{$footerNote}</p>
-                    <p style='font-size: 0.9em; color: #8c9c90;'>Best Regards,<br>" . self::BRAND_NAME . " Operations Team</p>
+                    <p style='font-size: 0.85em; color: #6c757d;'>{$footerNote}</p>
+                    <p style='font-size: 0.9em; color: #6c757d;'>Best Regards,<br>" . self::BRAND_NAME . " Operations Team</p>
                 </div>
             </body>
             </html>
