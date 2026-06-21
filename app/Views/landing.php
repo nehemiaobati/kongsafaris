@@ -618,10 +618,10 @@
     </div>
 
     <!-- CTA Banner -->
-    <div class="py-5 mb-5 reveal-on-scroll bg-gradient text-center rounded-4 p-5 position-relative overflow-hidden" style="background: linear-gradient(135deg, var(--safari-accent) 0%, #0b5ed7 100%);">
+    <div class="py-5 mb-5 bg-primary text-center text-white rounded-4 p-5" style="background-color: #0d6efd ;">
         <div class="position-relative z-3">
-            <h2 class="display-5 fw-bold text-white mb-3">Begin Your Adventure Today</h2>
-            <p class="text-white opacity-75 mb-4 mx-auto" style="max-width: 600px;">Create your operator account to customize booking coordinates, view historical trip routes, and generate quotes in seconds.</p>
+            <h2 class="display-5 fw-bold mb-3">Begin Your Adventure Today</h2>
+            <p class="opacity-75 mb-4 mx-auto" style="max-width: 600px;">Create your operator account to customize booking coordinates, view historical trip routes, and generate quotes in seconds.</p>
             <div class="d-flex gap-3 justify-content-center">
                 <a href="<?= url_to('auth.register') ?>" class="btn btn-light btn-lg px-5">Register Account</a>
                 <a href="<?= url_to('auth.login') ?>" class="btn btn-outline-light btn-lg px-4">Sign In</a>
