@@ -266,7 +266,14 @@
         <div class="row g-4 text-center">
             <div class="col-md-3 col-6">
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                    <span class="fs-3 text-accent">🤠</span>
+                    <span class="gradient-icon-box" style="width: 48px; height: 48px; font-size: 1.25rem; margin-bottom: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </span>
                     <div class="text-start">
                         <h6 class="mb-0 fw-bold text-white">Verified Drivers</h6>
                         <small class="text-muted">Licensed & experienced</small>
@@ -275,7 +282,12 @@
             </div>
             <div class="col-md-3 col-6">
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                    <span class="fs-3 text-accent">📍</span>
+                    <span class="gradient-icon-box" style="width: 48px; height: 48px; font-size: 1.25rem; margin-bottom: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                    </span>
                     <div class="text-start">
                         <h6 class="mb-0 fw-bold text-white">Live GPS Tracking</h6>
                         <small class="text-muted">Real-time status updates</small>
@@ -284,7 +296,12 @@
             </div>
             <div class="col-md-3 col-6">
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                    <span class="fs-3 text-accent">💵</span>
+                    <span class="gradient-icon-box" style="width: 48px; height: 48px; font-size: 1.25rem; margin-bottom: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                    </span>
                     <div class="text-start">
                         <h6 class="mb-0 fw-bold text-white">Dynamic Pricing</h6>
                         <small class="text-muted">No hidden commissions</small>
@@ -293,7 +310,13 @@
             </div>
             <div class="col-md-3 col-6">
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                    <span class="fs-3 text-accent">📱</span>
+                    <span class="gradient-icon-box" style="width: 48px; height: 48px; font-size: 1.25rem; margin-bottom: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="6" width="20" height="12" rx="2" />
+                            <path d="M6 12h4" />
+                            <path d="M14 12h4" />
+                        </svg>
+                    </span>
                     <div class="text-start">
                         <h6 class="mb-0 fw-bold text-white">M-Pesa Supported</h6>
                         <small class="text-muted">Easy local payments</small>
@@ -306,402 +329,422 @@
 
 <div class="container"> <!-- Re-open container for page body -->
 
-<!-- Value Propositions -->
-<div class="row py-5 mb-5 align-items-center reveal-on-scroll">
-    <div class="col-lg-5 mb-5 mb-lg-0">
-        <span class="text-accent fw-bold text-uppercase tracking-wider">Why Choose Us</span>
-        <h2 class="display-5 fw-bold text-white mt-2 mb-4">Complete Control Over Your Safari Journey</h2>
-        <p class="text-muted mb-4">Kong Safaris isn't just a transport hire business. We are a technology-driven travel partner that guarantees transparency, safety, and a premium booking experience from start to finish.</p>
-        <div class="d-flex gap-3">
-            <a href="<?= url_to('auth.register') ?>" class="btn btn-primary px-4 py-2">Get Started Now</a>
+    <!-- Value Propositions -->
+    <div class="row py-5 mb-5 align-items-center reveal-on-scroll">
+        <div class="col-lg-5 mb-5 mb-lg-0">
+            <span class="text-accent fw-bold text-uppercase tracking-wider">Why Choose Us</span>
+            <h2 class="display-5 fw-bold text-white mt-2 mb-4">Complete Control Over Your Safari Journey</h2>
+            <p class="text-muted mb-4">Kong Safaris isn't just a transport hire business. We are a technology-driven travel partner that guarantees transparency, safety, and a premium booking experience from start to finish.</p>
+            <div class="d-flex gap-3">
+                <a href="<?= url_to('auth.register') ?>" class="btn btn-primary px-4 py-2">Get Started Now</a>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="row g-4">
+                <div class="col-sm-6">
+                    <div class="card blueprint-card p-4 h-100">
+                        <div class="gradient-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="15" x2="4" y2="21" />
+                                <line x1="12" y1="9" x2="12" y2="21" />
+                                <line x1="20" y1="3" x2="20" y2="21" />
+                            </svg>
+                        </div>
+                        <h5 class="fw-bold text-white">Dynamic Quoting</h5>
+                        <p class="text-muted small mb-0">Algorithms calculate fares based on actual route mileage, fuel price, driver allowance, and park-entry metrics.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card blueprint-card p-4 h-100">
+                        <div class="gradient-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                            </svg>
+                        </div>
+                        <h5 class="fw-bold text-white">Live Tracking</h5>
+                        <p class="text-muted small mb-0">Follow your vehicle on Google Maps as your driver navigates the savanna, complete with coordinate streams.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card blueprint-card p-4 h-100">
+                        <div class="gradient-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </div>
+                        <h5 class="fw-bold text-white">Operations Dashboard</h5>
+                        <p class="text-muted small mb-0">For fleet owners: live operations portal to coordinate runs, update vehicle status, and track driver assignments.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card blueprint-card p-4 h-100">
+                        <div class="gradient-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                                <line x1="1" y1="10" x2="23" y2="10" />
+                            </svg>
+                        </div>
+                        <h5 class="fw-bold text-white">Integrated Billing</h5>
+                        <p class="text-muted small mb-0">Instant payments via M-Pesa, Card, and Airtel Money with automatic receipts and accounting updates.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-lg-7">
+
+    <!-- Stats Counter -->
+    <div class="row py-5 mb-5 text-center reveal-on-scroll bg-body-tertiary rounded-4 p-4">
+        <div class="col-md-3 col-6 my-3">
+            <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="1500">0</span>+</h2>
+            <p class="text-muted mb-0">Safaris Completed</p>
+        </div>
+        <div class="col-md-3 col-6 my-3">
+            <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="45">0</span>+</h2>
+            <p class="text-muted mb-0">Modern Vehicles</p>
+        </div>
+        <div class="col-md-3 col-6 my-3">
+            <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="32">0</span>+</h2>
+            <p class="text-muted mb-0">Professional Drivers</p>
+        </div>
+        <div class="col-md-3 col-6 my-3">
+            <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="99">0</span>%</h2>
+            <p class="text-muted mb-0">Satisfaction Rate</p>
+        </div>
+    </div>
+
+    <!-- Fleet Showcase Gallery -->
+    <div id="fleet" class="py-5 mb-5 reveal-on-scroll">
+        <div class="text-center mb-5">
+            <span class="text-accent fw-bold text-uppercase">Our Fleet</span>
+            <h2 class="display-5 fw-bold text-white mt-1">Vetted Vehicles for African Terrain</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Every vehicle in our safari fleet is strictly maintained, fully insured, and customized with pop-up hatches for wildlife observation.</p>
+        </div>
         <div class="row g-4">
-            <div class="col-sm-6">
-                <div class="card blueprint-card p-4 h-100">
-                    <div class="gradient-icon-box">📊</div>
-                    <h5 class="fw-bold text-white">Dynamic Quoting</h5>
-                    <p class="text-muted small mb-0">Algorithms calculate fares based on actual route mileage, fuel price, driver allowance, and park-entry metrics.</p>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="card blueprint-card p-4 h-100">
-                    <div class="gradient-icon-box">🧭</div>
-                    <h5 class="fw-bold text-white">Live Tracking</h5>
-                    <p class="text-muted small mb-0">Follow your vehicle on Google Maps as your driver navigates the savanna, complete with coordinate streams.</p>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="card blueprint-card p-4 h-100">
-                    <div class="gradient-icon-box">🛡️</div>
-                    <h5 class="fw-bold text-white">Operations Dashboard</h5>
-                    <p class="text-muted small mb-0">For fleet owners: live operations portal to coordinate runs, update vehicle status, and track driver assignments.</p>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="card blueprint-card p-4 h-100">
-                    <div class="gradient-icon-box">💳</div>
-                    <h5 class="fw-bold text-white">Integrated Billing</h5>
-                    <p class="text-muted small mb-0">Instant payments via M-Pesa, Card, and Airtel Money with automatic receipts and accounting updates.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Stats Counter -->
-<div class="row py-5 mb-5 text-center reveal-on-scroll bg-body-tertiary rounded-4 p-4">
-    <div class="col-md-3 col-6 my-3">
-        <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="1500">0</span>+</h2>
-        <p class="text-muted mb-0">Safaris Completed</p>
-    </div>
-    <div class="col-md-3 col-6 my-3">
-        <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="45">0</span>+</h2>
-        <p class="text-muted mb-0">Modern Vehicles</p>
-    </div>
-    <div class="col-md-3 col-6 my-3">
-        <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="32">0</span>+</h2>
-        <p class="text-muted mb-0">Professional Drivers</p>
-    </div>
-    <div class="col-md-3 col-6 my-3">
-        <h2 class="display-4 fw-bold text-accent mb-0"><span class="stat-number" data-target="99">0</span>%</h2>
-        <p class="text-muted mb-0">Satisfaction Rate</p>
-    </div>
-</div>
-
-<!-- Fleet Showcase Gallery -->
-<div id="fleet" class="py-5 mb-5 reveal-on-scroll">
-    <div class="text-center mb-5">
-        <span class="text-accent fw-bold text-uppercase">Our Fleet</span>
-        <h2 class="display-5 fw-bold text-white mt-1">Vetted Vehicles for African Terrain</h2>
-        <p class="text-muted mx-auto" style="max-width: 600px;">Every vehicle in our safari fleet is strictly maintained, fully insured, and customized with pop-up hatches for wildlife observation.</p>
-    </div>
-    <div class="row g-4">
-        <!-- Land Cruiser -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card fleet-card h-100">
-                <div class="fleet-img-container">
-                    <img src="<?= base_url('assets/img/fleet-land-cruiser.png') ?>" alt="Toyota Land Cruiser 4x4">
-                    <div class="fleet-overlay">
-                        <a href="<?= url_to('auth.register') ?>" class="btn btn-primary">Book Now</a>
+            <!-- Land Cruiser -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card fleet-card h-100">
+                    <div class="fleet-img-container">
+                        <img src="<?= base_url('assets/img/fleet-land-cruiser.png') ?>" alt="Toyota Land Cruiser 4x4">
+                        <div class="fleet-overlay">
+                            <a href="<?= url_to('auth.register') ?>" class="btn btn-primary">Book Now</a>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h4 class="fw-bold text-white mb-0">Safari Land Cruiser</h4>
-                        <span class="badge bg-warning text-dark fw-bold">4×4 Offroad</span>
-                    </div>
-                    <p class="text-muted small">The industry standard for African safaris. Seats up to 7 passengers, featuring high-clearance offroad suspension, dual fuel tanks, and custom pop-up roof.</p>
-                    <hr class="border-secondary my-3">
-                    <div class="row text-center text-muted small">
-                        <div class="col-4 border-end border-secondary">👥 7 Seats</div>
-                        <div class="col-4 border-end border-secondary">🎒 Large</div>
-                        <div class="col-4">⚡ Diesel</div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="fw-bold text-white mb-0">Safari Land Cruiser</h4>
+                            <span class="badge bg-warning text-dark fw-bold">4×4 Offroad</span>
+                        </div>
+                        <p class="text-muted small">The industry standard for African safaris. Seats up to 7 passengers, featuring high-clearance offroad suspension, dual fuel tanks, and custom pop-up roof.</p>
+                        <hr class="border-secondary my-3">
+                        <div class="row text-center text-muted small">
+                            <div class="col-4 border-end border-secondary">7 Seats</div>
+                            <div class="col-4 border-end border-secondary">Large</div>
+                            <div class="col-4">Diesel</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Safari Van -->
-        <div class="col-lg-4 col-md-6">
-            <div class="card fleet-card h-100">
-                <div class="fleet-img-container">
-                    <img src="<?= base_url('assets/img/fleet-safari-van.png') ?>" alt="Safari Tour Van">
-                    <div class="fleet-overlay">
-                        <a href="<?= url_to('auth.register') ?>" class="btn btn-primary">Book Now</a>
+            <!-- Safari Van -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card fleet-card h-100">
+                    <div class="fleet-img-container">
+                        <img src="<?= base_url('assets/img/fleet-safari-van.png') ?>" alt="Safari Tour Van">
+                        <div class="fleet-overlay">
+                            <a href="<?= url_to('auth.register') ?>" class="btn btn-primary">Book Now</a>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h4 class="fw-bold text-white mb-0">Safari Minivan</h4>
-                        <span class="badge bg-warning text-dark fw-bold">Group Travel</span>
-                    </div>
-                    <p class="text-muted small">Perfect for group tours and families. Built with comfortable custom reclining seats, a roof hatch, and optimized charging ports for cameras and smartphones.</p>
-                    <hr class="border-secondary my-3">
-                    <div class="row text-center text-muted small">
-                        <div class="col-4 border-end border-secondary">👥 8 Seats</div>
-                        <div class="col-4 border-end border-secondary">🎒 Extra Lg</div>
-                        <div class="col-4">⚡ Diesel</div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="fw-bold text-white mb-0">Safari Minivan</h4>
+                            <span class="badge bg-warning text-dark fw-bold">Group Travel</span>
+                        </div>
+                        <p class="text-muted small">Perfect for group tours and families. Built with comfortable custom reclining seats, a roof hatch, and optimized charging ports for cameras and smartphones.</p>
+                        <hr class="border-secondary my-3">
+                        <div class="row text-center text-muted small">
+                            <div class="col-4 border-end border-secondary">8 Seats</div>
+                            <div class="col-4 border-end border-secondary">Extra Lg</div>
+                            <div class="col-4">Diesel</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Luxury SUV -->
-        <div class="col-lg-4 col-md-6 mx-auto">
-            <div class="card fleet-card h-100">
-                <div class="fleet-img-container">
-                    <img src="<?= base_url('assets/img/fleet-luxury-suv.png') ?>" alt="Luxury Safari SUV">
-                    <div class="fleet-overlay">
-                        <a href="<?= url_to('auth.register') ?>" class="btn btn-primary">Book Now</a>
+            <!-- Luxury SUV -->
+            <div class="col-lg-4 col-md-6 mx-auto">
+                <div class="card fleet-card h-100">
+                    <div class="fleet-img-container">
+                        <img src="<?= base_url('assets/img/fleet-luxury-suv.png') ?>" alt="Luxury Safari SUV">
+                        <div class="fleet-overlay">
+                            <a href="<?= url_to('auth.register') ?>" class="btn btn-primary">Book Now</a>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h4 class="fw-bold text-white mb-0">Luxury Safari SUV</h4>
-                        <span class="badge bg-warning text-dark fw-bold">Executive</span>
-                    </div>
-                    <p class="text-muted small">Premium execution for executive VIP transfers or high-end lodge itineraries. Leather interiors, climate control, and unmatched ride comfort on rough gravel routes.</p>
-                    <hr class="border-secondary my-3">
-                    <div class="row text-center text-muted small">
-                        <div class="col-4 border-end border-secondary">👥 5 Seats</div>
-                        <div class="col-4 border-end border-secondary">🎒 Medium</div>
-                        <div class="col-4">⚡ Petrol</div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="fw-bold text-white mb-0">Luxury Safari SUV</h4>
+                            <span class="badge bg-warning text-dark fw-bold">Executive</span>
+                        </div>
+                        <p class="text-muted small">Premium execution for executive VIP transfers or high-end lodge itineraries. Leather interiors, climate control, and unmatched ride comfort on rough gravel routes.</p>
+                        <hr class="border-secondary my-3">
+                        <div class="row text-center text-muted small">
+                            <div class="col-4 border-end border-secondary">5 Seats</div>
+                            <div class="col-4 border-end border-secondary">Medium</div>
+                            <div class="col-4">Petrol</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- How It Works Section -->
-<div id="how-it-works" class="py-5 mb-5 reveal-on-scroll bg-body-tertiary rounded-4 p-5">
-    <div class="text-center mb-5">
-        <span class="text-accent fw-bold text-uppercase">How It Works</span>
-        <h2 class="display-5 fw-bold text-white mt-1">Book Your Safari in 3 Easy Steps</h2>
-        <p class="text-muted mx-auto" style="max-width: 600px;">Our platform streamlines booking, pricing updates, and coordination so you can focus on the adventure.</p>
+    <!-- How It Works Section -->
+    <div id="how-it-works" class="py-5 mb-5 reveal-on-scroll bg-body-tertiary rounded-4 p-5">
+        <div class="text-center mb-5">
+            <span class="text-accent fw-bold text-uppercase">How It Works</span>
+            <h2 class="display-5 fw-bold text-white mt-1">Book Your Safari in 3 Easy Steps</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Our platform streamlines booking, pricing updates, and coordination so you can focus on the adventure.</p>
+        </div>
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="step-number">1</div>
+                <h5 class="fw-bold text-white">Choose Your Route & Vehicle</h5>
+                <p class="text-muted small">Select your pickup, destinations, and vehicle type. Our system will generate a detailed dynamic quote immediately.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="step-number">2</div>
+                <h5 class="fw-bold text-white">Instant Secure Payment</h5>
+                <p class="text-muted small">Confirm booking using Paystack options including M-Pesa, Card or Bank Transfer. Fares are secured directly.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="step-number">3</div>
+                <h5 class="fw-bold text-white">Track & Enjoy the Ride</h5>
+                <p class="text-muted small">Receive driver information, trace location updates live via client dashboard, and coordinate with operations team.</p>
+            </div>
+        </div>
     </div>
-    <div class="row g-4 text-center">
-        <div class="col-md-4">
-            <div class="step-number">1</div>
-            <h5 class="fw-bold text-white">Choose Your Route & Vehicle</h5>
-            <p class="text-muted small">Select your pickup, destinations, and vehicle type. Our system will generate a detailed dynamic quote immediately.</p>
-        </div>
-        <div class="col-md-4">
-            <div class="step-number">2</div>
-            <h5 class="fw-bold text-white">Instant Secure Payment</h5>
-            <p class="text-muted small">Confirm booking using Paystack options including M-Pesa, Card or Bank Transfer. Fares are secured directly.</p>
-        </div>
-        <div class="col-md-4">
-            <div class="step-number">3</div>
-            <h5 class="fw-bold text-white">Track & Enjoy the Ride</h5>
-            <p class="text-muted small">Receive driver information, trace location updates live via client dashboard, and coordinate with operations team.</p>
-        </div>
-    </div>
-</div>
 
-<!-- Popular Destinations -->
-<div id="destinations" class="py-5 mb-5 reveal-on-scroll">
-    <div class="text-center mb-5">
-        <span class="text-accent fw-bold text-uppercase">Popular Routes</span>
-        <h2 class="display-5 fw-bold text-white mt-1">Top Safari Destinations in Kenya</h2>
-        <p class="text-muted mx-auto" style="max-width: 600px;">Direct routes served with automated quotes, flat fuel averages, and pre-negotiated driver accommodation rates.</p>
+    <!-- Popular Destinations -->
+    <div id="destinations" class="py-5 mb-5 reveal-on-scroll">
+        <div class="text-center mb-5">
+            <span class="text-accent fw-bold text-uppercase">Popular Routes</span>
+            <h2 class="display-5 fw-bold text-white mt-1">Top Safari Destinations in Kenya</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Direct routes served with automated quotes, flat fuel averages, and pre-negotiated driver accommodation rates.</p>
+        </div>
+        <div class="row g-4">
+            <!-- Maasai Mara -->
+            <div class="col-lg-3 col-sm-6">
+                <div class="card dest-card">
+                    <img src="<?= base_url('assets/img/dest-maasai-mara.png') ?>" alt="Maasai Mara National Reserve">
+                    <div class="dest-content">
+                        <h5 class="fw-bold text-white mb-0">Maasai Mara</h5>
+                        <p class="text-muted small mb-0">Savanna wilderness & Wildebeest Migration</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Amboseli -->
+            <div class="col-lg-3 col-sm-6">
+                <div class="card dest-card">
+                    <img src="<?= base_url('assets/img/dest-amboseli.png') ?>" alt="Amboseli National Park">
+                    <div class="dest-content">
+                        <h5 class="fw-bold text-white mb-0">Amboseli</h5>
+                        <p class="text-muted small mb-0">Elephants and Mount Kilimanjaro views</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Lake Nakuru -->
+            <div class="col-lg-3 col-sm-6">
+                <div class="card dest-card">
+                    <img src="<?= base_url('assets/img/dest-lake-nakuru.png') ?>" alt="Lake Nakuru">
+                    <div class="dest-content">
+                        <h5 class="fw-bold text-white mb-0">Lake Nakuru</h5>
+                        <p class="text-muted small mb-0">Flamingos, rhinos and scenic viewpoints</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Tsavo -->
+            <div class="col-lg-3 col-sm-6">
+                <div class="card dest-card">
+                    <img src="<?= base_url('assets/img/dest-tsavo.png') ?>" alt="Tsavo National Park">
+                    <div class="dest-content">
+                        <h5 class="fw-bold text-white mb-0">Tsavo East & West</h5>
+                        <p class="text-muted small mb-0">Red dust elephants and lava landscapes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row g-4">
-        <!-- Maasai Mara -->
-        <div class="col-lg-3 col-sm-6">
-            <div class="card dest-card">
-                <img src="<?= base_url('assets/img/dest-maasai-mara.png') ?>" alt="Maasai Mara National Reserve">
-                <div class="dest-content">
-                    <h5 class="fw-bold text-white mb-0">Maasai Mara</h5>
-                    <p class="text-muted small mb-0">Savanna wilderness & Wildebeest Migration</p>
-                </div>
-            </div>
-        </div>
-        <!-- Amboseli -->
-        <div class="col-lg-3 col-sm-6">
-            <div class="card dest-card">
-                <img src="<?= base_url('assets/img/dest-amboseli.png') ?>" alt="Amboseli National Park">
-                <div class="dest-content">
-                    <h5 class="fw-bold text-white mb-0">Amboseli</h5>
-                    <p class="text-muted small mb-0">Elephants and Mount Kilimanjaro views</p>
-                </div>
-            </div>
-        </div>
-        <!-- Lake Nakuru -->
-        <div class="col-lg-3 col-sm-6">
-            <div class="card dest-card">
-                <img src="<?= base_url('assets/img/dest-lake-nakuru.png') ?>" alt="Lake Nakuru">
-                <div class="dest-content">
-                    <h5 class="fw-bold text-white mb-0">Lake Nakuru</h5>
-                    <p class="text-muted small mb-0">Flamingos, rhinos and scenic viewpoints</p>
-                </div>
-            </div>
-        </div>
-        <!-- Tsavo -->
-        <div class="col-lg-3 col-sm-6">
-            <div class="card dest-card">
-                <img src="<?= base_url('assets/img/dest-tsavo.png') ?>" alt="Tsavo National Park">
-                <div class="dest-content">
-                    <h5 class="fw-bold text-white mb-0">Tsavo East & West</h5>
-                    <p class="text-muted small mb-0">Red dust elephants and lava landscapes</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Testimonials -->
-<div class="py-5 mb-5 reveal-on-scroll text-center bg-body-tertiary rounded-4 p-5">
-    <span class="text-accent fw-bold text-uppercase">Reviews</span>
-    <h2 class="display-5 fw-bold text-white mt-1 mb-5">What Tour Operators Say</h2>
-    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner" style="max-width: 800px; margin: 0 auto;">
-            <!-- Review 1 -->
-            <div class="carousel-item active">
-                <span class="fs-1 text-accent">“</span>
-                <p class="fs-5 text-light mb-4">"Kong Safaris completely overhauled our transport logistics. The live tracking gives our clients peace of mind, and the auto-generated quotes saved us countless manual negotiation hours."</p>
-                <h6 class="fw-bold text-white">David Kiprop</h6>
-                <small class="text-muted">Operations Director, Rift Valley Safaris</small>
-            </div>
-            <!-- Review 2 -->
-            <div class="carousel-item">
-                <span class="fs-1 text-accent">“</span>
-                <p class="fs-5 text-light mb-4">"The M-Pesa integration makes booking confirmation instantaneous. We can deploy a Land Cruiser to Maasai Mara on short notice knowing that payment is confirmed through Paystack."</p>
-                <h6 class="fw-bold text-white">Sarah Jenkins</h6>
-                <small class="text-muted">Founder, Savannah Escapes Ltd</small>
-            </div>
-            <!-- Review 3 -->
-            <div class="carousel-item">
-                <span class="fs-1 text-accent">“</span>
-                <p class="fs-5 text-light mb-4">"Having a mobile-ready dashboard for drivers allows us to know exactly when trips start, current vehicle location coordinates, and when the safari concludes safely."</p>
-                <h6 class="fw-bold text-white">Moses Omondi</h6>
-                <small class="text-muted">Transport Manager, East African Tours</small>
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-</div>
-
-<!-- FAQ Accordion -->
-<div id="faq" class="py-5 mb-5 reveal-on-scroll">
-    <div class="text-center mb-5">
-        <span class="text-accent fw-bold text-uppercase">FAQ</span>
-        <h2 class="display-5 fw-bold text-white mt-1">Frequently Asked Questions</h2>
-        <p class="text-muted mx-auto" style="max-width: 600px;">Everything you need to know about our fleet booking and operations engine.</p>
-    </div>
-    <div class="accordion accordion-flush" id="faqAccordion" style="max-width: 800px; margin: 0 auto;">
-        <!-- Q1 -->
-        <div class="accordion-item mb-3 bg-transparent">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-1">
-                    How is the dynamic safari trip price calculated?
-                </button>
-            </h2>
-            <div id="faq-1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-muted small">
-                    Fares are automatically generated based on the actual driving distance, estimated fuel consumption for the chosen vehicle category, driver daily allowances (including park accommodation rules), and a vehicle maintenance reserve.
+    <!-- Testimonials -->
+    <div class="py-5 mb-5 reveal-on-scroll text-center bg-body-tertiary rounded-4 p-5">
+        <span class="text-accent fw-bold text-uppercase">Reviews</span>
+        <h2 class="display-5 fw-bold text-white mt-1 mb-5">What Tour Operators Say</h2>
+        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner" style="max-width: 800px; margin: 0 auto;">
+                <!-- Review 1 -->
+                <div class="carousel-item active">
+                    <span class="fs-1 text-accent">“</span>
+                    <p class="fs-5 text-light mb-4">"Kong Safaris completely overhauled our transport logistics. The live tracking gives our clients peace of mind, and the auto-generated quotes saved us countless manual negotiation hours."</p>
+                    <h6 class="fw-bold text-white">David Kiprop</h6>
+                    <small class="text-muted">Operations Director, Rift Valley Safaris</small>
+                </div>
+                <!-- Review 2 -->
+                <div class="carousel-item">
+                    <span class="fs-1 text-accent">“</span>
+                    <p class="fs-5 text-light mb-4">"The M-Pesa integration makes booking confirmation instantaneous. We can deploy a Land Cruiser to Maasai Mara on short notice knowing that payment is confirmed through Paystack."</p>
+                    <h6 class="fw-bold text-white">Sarah Jenkins</h6>
+                    <small class="text-muted">Founder, Savannah Escapes Ltd</small>
+                </div>
+                <!-- Review 3 -->
+                <div class="carousel-item">
+                    <span class="fs-1 text-accent">“</span>
+                    <p class="fs-5 text-light mb-4">"Having a mobile-ready dashboard for drivers allows us to know exactly when trips start, current vehicle location coordinates, and when the safari concludes safely."</p>
+                    <h6 class="fw-bold text-white">Moses Omondi</h6>
+                    <small class="text-muted">Transport Manager, East African Tours</small>
                 </div>
             </div>
-        </div>
-        <!-- Q2 -->
-        <div class="accordion-item mb-3 bg-transparent">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-2">
-                    Does the booking include a driver and fuel?
-                </button>
-            </h2>
-            <div id="faq-2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-muted small">
-                    Yes! All standard rentals on Kong Safaris are fully chauffeured by our licensed professional guides and include base fuel allocations calculated for your pre-specified route.
-                </div>
-            </div>
-        </div>
-        <!-- Q3 -->
-        <div class="accordion-item mb-3 bg-transparent">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-3">
-                    Can I track my booked vehicle in real time?
-                </button>
-            </h2>
-            <div id="faq-3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-muted small">
-                    Absolutely. Once a trip commences, drivers stream coordinates from their mobile workspace, allowing clients and managers to visualize the vehicle's progress on an interactive map.
-                </div>
-            </div>
-        </div>
-        <!-- Q4 -->
-        <div class="accordion-item mb-3 bg-transparent">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-4">
-                    What payment methods do you support?
-                </button>
-            </h2>
-            <div id="faq-4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-muted small">
-                    We support secure online checkout via Paystack, accommodating M-Pesa, Card payments (Visa, Mastercard), and Airtel Money.
-                </div>
-            </div>
-        </div>
-        <!-- Q5 -->
-        <div class="accordion-item mb-3 bg-transparent">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-5">
-                    What happens if a vehicle breaks down during safari?
-                </button>
-            </h2>
-            <div id="faq-5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-muted small">
-                    We maintain standby backup vehicles in Nairobi and Narok (near Maasai Mara). If any mechanical issue occurs, our operations team can quickly deploy replacement options.
-                </div>
-            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
     </div>
-</div>
 
-<!-- CTA Banner -->
-<div class="py-5 mb-5 reveal-on-scroll bg-gradient text-center rounded-4 p-5 position-relative overflow-hidden" style="background: linear-gradient(135deg, var(--safari-primary) 0%, #0d120e 100%); border: 1px solid rgba(212, 175, 55, 0.25);">
-    <div class="position-relative z-3">
-        <h2 class="display-5 fw-bold text-white mb-3">Begin Your Adventure Today</h2>
-        <p class="text-muted mb-4 mx-auto" style="max-width: 600px;">Create your operator account to customize booking coordinates, view historical trip routes, and generate quotes in seconds.</p>
-        <div class="d-flex gap-3 justify-content-center">
-            <a href="<?= url_to('auth.register') ?>" class="btn btn-primary btn-lg px-5">Register Account</a>
-            <a href="<?= url_to('auth.login') ?>" class="btn btn-outline-light btn-lg px-4">Sign In</a>
+    <!-- FAQ Accordion -->
+    <div id="faq" class="py-5 mb-5 reveal-on-scroll">
+        <div class="text-center mb-5">
+            <span class="text-accent fw-bold text-uppercase">FAQ</span>
+            <h2 class="display-5 fw-bold text-white mt-1">Frequently Asked Questions</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Everything you need to know about our fleet booking and operations engine.</p>
+        </div>
+        <div class="accordion accordion-flush" id="faqAccordion" style="max-width: 800px; margin: 0 auto;">
+            <!-- Q1 -->
+            <div class="accordion-item mb-3 bg-transparent">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-1">
+                        How is the dynamic safari trip price calculated?
+                    </button>
+                </h2>
+                <div id="faq-1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                        Fares are automatically generated based on the actual driving distance, estimated fuel consumption for the chosen vehicle category, driver daily allowances (including park accommodation rules), and a vehicle maintenance reserve.
+                    </div>
+                </div>
+            </div>
+            <!-- Q2 -->
+            <div class="accordion-item mb-3 bg-transparent">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-2">
+                        Does the booking include a driver and fuel?
+                    </button>
+                </h2>
+                <div id="faq-2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                        Yes! All standard rentals on Kong Safaris are fully chauffeured by our licensed professional guides and include base fuel allocations calculated for your pre-specified route.
+                    </div>
+                </div>
+            </div>
+            <!-- Q3 -->
+            <div class="accordion-item mb-3 bg-transparent">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-3">
+                        Can I track my booked vehicle in real time?
+                    </button>
+                </h2>
+                <div id="faq-3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                        Absolutely. Once a trip commences, drivers stream coordinates from their mobile workspace, allowing clients and managers to visualize the vehicle's progress on an interactive map.
+                    </div>
+                </div>
+            </div>
+            <!-- Q4 -->
+            <div class="accordion-item mb-3 bg-transparent">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-4">
+                        What payment methods do you support?
+                    </button>
+                </h2>
+                <div id="faq-4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                        We support secure online checkout via Paystack, accommodating M-Pesa, Card payments (Visa, Mastercard), and Airtel Money.
+                    </div>
+                </div>
+            </div>
+            <!-- Q5 -->
+            <div class="accordion-item mb-3 bg-transparent">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-5">
+                        What happens if a vehicle breaks down during safari?
+                    </button>
+                </h2>
+                <div id="faq-5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                        We maintain standby backup vehicles in Nairobi and Narok (near Maasai Mara). If any mechanical issue occurs, our operations team can quickly deploy replacement options.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<?= $this->endSection() ?>
+    <!-- CTA Banner -->
+    <div class="py-5 mb-5 reveal-on-scroll bg-gradient text-center rounded-4 p-5 position-relative overflow-hidden" style="background: linear-gradient(135deg, var(--safari-primary) 0%, #0d120e 100%); border: 1px solid rgba(212, 175, 55, 0.25);">
+        <div class="position-relative z-3">
+            <h2 class="display-5 fw-bold text-white mb-3">Begin Your Adventure Today</h2>
+            <p class="text-muted mb-4 mx-auto" style="max-width: 600px;">Create your operator account to customize booking coordinates, view historical trip routes, and generate quotes in seconds.</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="<?= url_to('auth.register') ?>" class="btn btn-primary btn-lg px-5">Register Account</a>
+                <a href="<?= url_to('auth.login') ?>" class="btn btn-outline-light btn-lg px-4">Sign In</a>
+            </div>
+        </div>
+    </div>
 
-<?= $this->section('scripts') ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 1. IntersectionObserver for scroll reveal animations
-        const revealElements = document.querySelectorAll('.reveal-on-scroll');
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    // Stop observing once revealed
-                    observer.unobserve(entry.target);
-                    
-                    // If this element contains counter numbers, trigger them
-                    const counters = entry.target.querySelectorAll('.stat-number');
-                    counters.forEach(counter => triggerCounter(counter));
-                }
+    <?= $this->endSection() ?>
+
+    <?= $this->section('scripts') ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. IntersectionObserver for scroll reveal animations
+            const revealElements = document.querySelectorAll('.reveal-on-scroll');
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        // Stop observing once revealed
+                        observer.unobserve(entry.target);
+
+                        // If this element contains counter numbers, trigger them
+                        const counters = entry.target.querySelectorAll('.stat-number');
+                        counters.forEach(counter => triggerCounter(counter));
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -50px 0px'
             });
-        }, {
-            threshold: 0.15,
-            rootMargin: '0px 0px -50px 0px'
+
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // 2. Counter Animation Function
+            function triggerCounter(counter) {
+                const target = parseInt(counter.getAttribute('data-target'), 10);
+                const duration = 1500; // ms
+                const stepTime = 15; // ms
+                const steps = duration / stepTime;
+                const stepVal = target / steps;
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += stepVal;
+                    if (current >= target) {
+                        counter.innerText = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.innerText = Math.floor(current);
+                    }
+                }, stepTime);
+            }
         });
-
-        revealElements.forEach(el => revealObserver.observe(el));
-
-        // 2. Counter Animation Function
-        function triggerCounter(counter) {
-            const target = parseInt(counter.getAttribute('data-target'), 10);
-            const duration = 1500; // ms
-            const stepTime = 15; // ms
-            const steps = duration / stepTime;
-            const stepVal = target / steps;
-            let current = 0;
-
-            const timer = setInterval(() => {
-                current += stepVal;
-                if (current >= target) {
-                    counter.innerText = target;
-                    clearInterval(timer);
-                } else {
-                    counter.innerText = Math.floor(current);
-                }
-            }, stepTime);
-        }
-    });
-</script>
-<?= $this->endSection() ?>
+    </script>
+    <?= $this->endSection() ?>
