@@ -47,10 +47,20 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<?php
+/** @var float $base_booking_fee */
+/** @var float $currentPetrolRate */
+/** @var float $currentDieselRate */
+/** @var array<int, object> $bookings */
+/** @var array<int, object> $refundRequests */
+/** @var array<int, object> $vehicles */
+/** @var array<int, array<string, mixed>> $drivers */
+/** @var string $googleApiKey */
+?>
 <!-- Top Info Sections -->
 <div class="row mb-4">
     <!-- System Settings Card -->
-    <div class="col-md-4 mb-3">
+    <div class="col-md-6 mb-3">
         <div class="card blueprint-card p-4 h-100">
             <h5 class="fw-bold text-accent mb-3">System Settings</h5>
             <p class="text-muted small mb-3">Configure global pricing parameters.</p>
@@ -67,7 +77,7 @@
     </div>
 
     <!-- Fuel Rate Administration Card -->
-    <div class="col-md-4 mb-3">
+    <div class="col-md-6 mb-3">
         <div class="card blueprint-card p-4 h-100">
             <h5 class="fw-bold text-accent mb-3">Fuel Price Admin</h5>
             <p class="text-muted small mb-3">Set the global price per liter for each fuel type used by the Dynamic Pricing Engine.</p>
@@ -78,7 +88,7 @@
                         <?= csrf_field() ?>
                         <input type="hidden" name="fuel_type" value="petrol">
                         <div class="form-floating mb-2">
-                            <input type="number" step="0.01" min="0.01" class="form-control" id="petrolFuelInput" name="price_per_liter" value="<?= esc($currentPetrolRate) ?>" required>
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="petrolFuelInput" name="price_per_liter" value="<?= (string)$currentPetrolRate ?>" required>
                             <label for="petrolFuelInput">Petrol ($/L)</label>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Update Petrol</button>
@@ -89,10 +99,10 @@
                         <?= csrf_field() ?>
                         <input type="hidden" name="fuel_type" value="diesel">
                         <div class="form-floating mb-2">
-                            <input type="number" step="0.01" min="0.01" class="form-control" id="dieselFuelInput" name="price_per_liter" value="<?= esc($currentDieselRate) ?>" required>
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="dieselFuelInput" name="price_per_liter" value="<?= (string)$currentDieselRate ?>" required>
                             <label for="dieselFuelInput">Diesel ($/L)</label>
                         </div>
-                        <button type="submit" class="btn btn-outline-warning w-100">Update Diesel</button>
+                        <button type="submit" class="btn btn-primary w-100">Update Diesel</button>
                     </form>
                 </div>
             </div>
@@ -100,7 +110,7 @@
     </div>
 
     <!-- Fleet Status Summary -->
-    <div class="col-md-8 mb-3">
+    <div class="col-md-12 mb-3">
         <div class="card blueprint-card p-4 h-100">
             <h5 class="fw-bold text-accent mb-3">Fleet Operations Overview</h5>
             <div class="row g-3">
@@ -113,25 +123,25 @@
                 <div class="col-sm-3">
                     <div class="p-3 border rounded text-center">
                         <span class="text-muted small">Refund Requests</span>
-                        <h2 class="fw-bold mt-1 text-danger"><?= esc(count($refundRequests)) ?></h2>
+                        <h2 class="fw-bold mt-1 text-danger"><?= (string)count($refundRequests) ?></h2>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="p-3 border rounded text-center">
                         <span class="text-muted small">Fleet Vehicles</span>
-                        <h2 class="fw-bold mt-1 text-info"><?= esc(count($vehicles)) ?></h2>
+                        <h2 class="fw-bold mt-1 text-info"><?= (string)count($vehicles) ?></h2>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="p-3 border rounded text-center">
                         <span class="text-muted small">Petrol Rate</span>
-                        <h2 class="fw-bold mt-1 text-accent">$<?= number_format($currentPetrolRate, 2) ?></h2>
+                        <h2 class="fw-bold mt-1 text-accent">$<?= number_format((float)$currentPetrolRate, 2) ?></h2>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="p-3 border rounded text-center">
                         <span class="text-muted small">Diesel Rate</span>
-                        <h2 class="fw-bold mt-1 text-warning">$<?= number_format($currentDieselRate, 2) ?></h2>
+                        <h2 class="fw-bold mt-1 text-warning">$<?= number_format((float)$currentDieselRate, 2) ?></h2>
                     </div>
                 </div>
             </div>
