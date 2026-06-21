@@ -896,7 +896,10 @@
                 .then(res => res.json())
                 .then(data => {
                     window.updateCSRFToken(data.csrf_token);
-                    return data.status === "success" && data.result.address ? data.result.address : text;
+                    if (data.status === "success" && data.result.address) {
+                        return data.result.address;
+                    }
+                    return text;
                 })
                 .catch(() => text);
         }

@@ -195,6 +195,8 @@
                 const lng = place.geometry.location.lng();
                 document.getElementById("p_lat").value = lat;
                 document.getElementById("p_lng").value = lng;
+                const address = place.formatted_address || place.name || "";
+                document.getElementById("pickupInput").value = address;
                 if (pickupMarker) pickupMarker.setMap(null);
                 pickupMarker = new google.maps.Marker({
                     position: {
@@ -216,6 +218,8 @@
                 const lng = place.geometry.location.lng();
                 document.getElementById("d_lat").value = lat;
                 document.getElementById("d_lng").value = lng;
+                const address = place.formatted_address || place.name || "";
+                document.getElementById("dropoffInput").value = address;
                 if (dropoffMarker) dropoffMarker.setMap(null);
                 dropoffMarker = new google.maps.Marker({
                     position: {
@@ -238,7 +242,8 @@
             if (pinMode === 'pickup') {
                 document.getElementById("p_lat").value = lat;
                 document.getElementById("p_lng").value = lng;
-                document.getElementById("pickupInput").value = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
+                const tempText = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
+                document.getElementById("pickupInput").value = tempText;
                 if (pickupMarker) pickupMarker.setMap(null);
                 pickupMarker = new google.maps.Marker({
                     position: e.latLng,
@@ -246,11 +251,13 @@
                     title: "Pickup",
                     icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
                 });
+                resolveAddress("pickupInput", lat, lng, tempText);
                 checkAndCalculateRoute();
             } else {
                 document.getElementById("d_lat").value = lat;
                 document.getElementById("d_lng").value = lng;
-                document.getElementById("dropoffInput").value = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
+                const tempText = "Pinned Location (" + lat.toFixed(5) + ", " + lng.toFixed(5) + ")";
+                document.getElementById("dropoffInput").value = tempText;
                 if (dropoffMarker) dropoffMarker.setMap(null);
                 dropoffMarker = new google.maps.Marker({
                     position: e.latLng,
@@ -258,6 +265,7 @@
                     title: "Destination",
                     icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
                 });
+                resolveAddress("dropoffInput", lat, lng, tempText);
                 checkAndCalculateRoute();
             }
         });
@@ -337,6 +345,32 @@
                 }
             })
             .catch(err => console.error("Calculations failed", err));
+    }
+
+    function resolveAddress(inputId, lat, lng, fallbackText) {
+        const formData = new FormData();
+        formData.append("latitude", lat);
+        formData.append("longitude", lng);
+        formData.append("csrf_test_name", window.getCSRFToken());
+        fetch("<?= url_to('trips.geocode.reverse') ?>", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                window.updateCSRFToken(data.csrf_token);
+                if (data.status === "success" && data.result.address) {
+                    document.getElementById(inputId).value = data.result.address;
+                } else {
+                    document.getElementById(inputId).value = fallbackText;
+                }
+            })
+            .catch(() => {
+                document.getElementById(inputId).value = fallbackText;
+            });
     }
 
     document.getElementById("manualBookingForm").addEventListener("submit", function(e) {
