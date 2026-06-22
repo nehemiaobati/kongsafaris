@@ -18,6 +18,7 @@ class Vehicle extends Entity
         'fuel_efficiency'             => 'float',
         'target_profit_margin_per_km' => 'float',
         'maintenance_reserve_per_km'  => 'float',
+        'capacity'                    => 'integer',
         'status'                      => 'string',
     ];
 }

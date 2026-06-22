@@ -41,10 +41,14 @@ class FleetController extends BaseController
     public function addVehicle(): ResponseInterface
     {
         $rules = [
-            'plate_number' => 'required|string|is_unique[vehicles.plate_number]',
-            'model'        => 'required|string',
-            'capacity'     => 'required|integer|greater_than[0]',
-            'status'       => 'required|in_list[active,inactive,maintenance]',
+            'plate_number'                => 'required|string|is_unique[vehicles.plate_number]',
+            'model'                       => 'required|string',
+            'fuel_efficiency'             => 'required|numeric|greater_than[0]',
+            'target_profit_margin_per_km' => 'required|numeric|greater_than_equal_to[0]',
+            'maintenance_reserve_per_km'  => 'required|numeric|greater_than_equal_to[0]',
+            'fuel_type'                   => 'required|in_list[petrol,diesel]',
+            'capacity'                    => 'required|integer|greater_than[0]',
+            'status'                      => 'required|in_list[active,inactive,maintenance]',
         ];
 
         if (! $this->validate($rules)) {
@@ -52,10 +56,14 @@ class FleetController extends BaseController
         }
 
         $vehicle = new Vehicle([
-            'plate_number' => (string) $this->request->getPost('plate_number'),
-            'model'        => (string) $this->request->getPost('model'),
-            'capacity'     => (int) $this->request->getPost('capacity'),
-            'status'       => (string) $this->request->getPost('status'),
+            'plate_number'                => (string) $this->request->getPost('plate_number'),
+            'model'                       => (string) $this->request->getPost('model'),
+            'fuel_efficiency'             => (float) $this->request->getPost('fuel_efficiency'),
+            'target_profit_margin_per_km' => (float) $this->request->getPost('target_profit_margin_per_km'),
+            'maintenance_reserve_per_km'  => (float) $this->request->getPost('maintenance_reserve_per_km'),
+            'fuel_type'                   => (string) $this->request->getPost('fuel_type'),
+            'capacity'                    => (int) $this->request->getPost('capacity'),
+            'status'                      => (string) $this->request->getPost('status'),
         ]);
 
         $this->vehicleModel->insert($vehicle);
@@ -69,11 +77,15 @@ class FleetController extends BaseController
     public function editVehicle(): ResponseInterface
     {
         $rules = [
-            'vehicle_id'   => 'required|integer',
-            'plate_number' => 'required|string',
-            'model'        => 'required|string',
-            'capacity'     => 'required|integer|greater_than[0]',
-            'status'       => 'required|in_list[active,inactive,maintenance]',
+            'vehicle_id'                   => 'required|integer',
+            'plate_number'                 => 'required|string',
+            'model'                        => 'required|string',
+            'fuel_efficiency'              => 'required|numeric|greater_than[0]',
+            'target_profit_margin_per_km'  => 'required|numeric|greater_than_equal_to[0]',
+            'maintenance_reserve_per_km'   => 'required|numeric|greater_than_equal_to[0]',
+            'fuel_type'                    => 'required|in_list[petrol,diesel]',
+            'capacity'                     => 'required|integer|greater_than[0]',
+            'status'                       => 'required|in_list[active,inactive,maintenance]',
         ];
 
         if (! $this->validate($rules)) {
@@ -88,10 +100,14 @@ class FleetController extends BaseController
             return redirect()->back()->with('error', 'Vehicle not found.');
         }
 
-        $vehicle->plate_number = (string) $this->request->getPost('plate_number');
-        $vehicle->model = (string) $this->request->getPost('model');
-        $vehicle->capacity = (int) $this->request->getPost('capacity');
-        $vehicle->status = (string) $this->request->getPost('status');
+        $vehicle->plate_number                = (string) $this->request->getPost('plate_number');
+        $vehicle->model                       = (string) $this->request->getPost('model');
+        $vehicle->fuel_efficiency             = (float) $this->request->getPost('fuel_efficiency');
+        $vehicle->target_profit_margin_per_km = (float) $this->request->getPost('target_profit_margin_per_km');
+        $vehicle->maintenance_reserve_per_km  = (float) $this->request->getPost('maintenance_reserve_per_km');
+        $vehicle->fuel_type                   = (string) $this->request->getPost('fuel_type');
+        $vehicle->capacity                    = (int) $this->request->getPost('capacity');
+        $vehicle->status                      = (string) $this->request->getPost('status');
 
         $this->vehicleModel->update($vehicle_id, $vehicle);
 

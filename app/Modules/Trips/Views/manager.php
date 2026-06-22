@@ -393,6 +393,7 @@
                                             data-margin="<?= $v->target_profit_margin_per_km ?>"
                                             data-reserve="<?= $v->maintenance_reserve_per_km ?>"
                                             data-fuel-type="<?= $v->fuel_type ?>"
+                                            data-capacity="<?= $v->capacity ?>"
                                             data-status="<?= esc($v->status) ?>">Edit</button>
                                         <form action="<?= base_url('trips/vehicles/delete/' . $v->id) ?>" method="POST" onsubmit="return confirm('Delete vehicle?');">
                                             <?= csrf_field() ?>
@@ -557,6 +558,10 @@
                             <option value="diesel">Diesel</option>
                         </select>
                         <label>Fuel Type</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" step="1" min="1" class="form-control" name="capacity" id="edit_v_capacity" required>
+                        <label>Passenger Capacity</label>
                     </div>
                     <div class="form-floating mb-3">
                         <select class="form-select" name="status" id="edit_v_status">
@@ -861,6 +866,7 @@
                 document.getElementById("edit_v_margin").value = this.getAttribute("data-margin");
                 document.getElementById("edit_v_reserve").value = this.getAttribute("data-reserve");
                 document.getElementById("edit_v_fuel_type").value = this.getAttribute("data-fuel-type");
+                document.getElementById("edit_v_capacity").value = this.getAttribute("data-capacity");
                 document.getElementById("edit_v_status").value = this.getAttribute("data-status");
                 new bootstrap.Modal(document.getElementById("editVehicleModal")).show();
             });

@@ -24,6 +24,7 @@ class VehicleModel extends Model
         'fuel_efficiency',
         'target_profit_margin_per_km',
         'maintenance_reserve_per_km',
+        'capacity',
         'status',
     ];
 }
