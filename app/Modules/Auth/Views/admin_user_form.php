@@ -6,7 +6,7 @@
         <div class="card blueprint-card p-4">
             <h4 class="fw-bold text-accent mb-4"><?= $mode === 'create' ? 'Create New User' : 'Edit User' ?></h4>
 
-            <form action="<?= $mode === 'create' ? url_to('auth.admin.create_user.submit') : url_to('auth.admin.edit_user.submit', [$user->id]) ?>" method="POST">
+            <form action="<?= $mode === 'create' ? url_to('auth.admin.create_user.submit') : url_to('auth.admin.edit_user.submit', (string)$user->id) ?>" method="POST">
                 <?= csrf_field() ?>
 
                 <div class="form-floating mb-3">

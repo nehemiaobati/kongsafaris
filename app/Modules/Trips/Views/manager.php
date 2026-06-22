@@ -499,6 +499,10 @@
                         <label>Fuel Type</label>
                     </div>
                     <div class="form-floating mb-3">
+                        <input type="number" step="1" min="1" class="form-control" name="capacity" placeholder="7" required>
+                        <label>Passenger Capacity</label>
+                    </div>
+                    <div class="form-floating mb-3">
                         <select class="form-select" name="status">
                             <option value="active" selected>Active</option>
                             <option value="maintenance">Maintenance</option>

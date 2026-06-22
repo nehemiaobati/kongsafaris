@@ -12,6 +12,7 @@ class Home extends BaseController
             'metaKeywords'    => 'safari car hire Kenya, safari booking, Amboseli transport, Maasai Mara land cruiser, tourist van rental Kenya, M-Pesa safari payment, fleet tracking, travel Kenya',
             'canonicalUrl'    => url_to('home'),
             'robotsTag'       => 'index, follow',
+            'metaImage'       => base_url('assets/img/safari-hero.png'),
         ]);
     }
 }

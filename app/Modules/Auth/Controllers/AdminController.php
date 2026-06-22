@@ -130,7 +130,7 @@ class AdminController extends BaseController
         return view('App\Modules\Auth\Views\admin_user_form', [
             'pageTitle'       => 'Edit User | Admin',
             'metaDescription' => 'Edit system user details.',
-            'canonicalUrl'    => url_to('auth.admin.edit_user', ['id' => $id]),
+            'canonicalUrl'    => url_to('auth.admin.edit_user', (string)$id),
             'robotsTag'       => 'noindex, nofollow',
             'mode'            => 'edit',
             'user'            => $user,

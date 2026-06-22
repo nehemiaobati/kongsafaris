@@ -121,26 +121,56 @@ class FleetController extends BaseController
     public function addDriver(): ResponseInterface
     {
         $rules = [
-            'license_number'     => 'required|string|is_unique[drivers.license_number]',
-            'user_id'            => 'required|integer',
+            'first_name'          => 'required|string',
+            'last_name'           => 'required|string',
+            'email'               => 'required|valid_email|is_unique[users.email]',
+            'password'            => 'required|min_length[6]',
+            'license_number'      => 'required|string|is_unique[drivers.license_number]',
             'allowance_flat_rate' => 'required|numeric|greater_than_equal_to[0]',
-            'status'             => 'required|in_list[available,on_trip,inactive]',
+            'status'              => 'required|in_list[available,on_trip,inactive]',
         ];
 
         if (! $this->validate($rules)) {
             return redirect()->back()->with('errors', $this->validator->getErrors());
         }
 
-        $driver = new Driver([
-            'license_number'      => (string) $this->request->getPost('license_number'),
-            'user_id'             => (int) $this->request->getPost('user_id'),
-            'allowance_flat_rate' => (float) $this->request->getPost('allowance_flat_rate'),
-            'status'              => (string) $this->request->getPost('status'),
-        ]);
+        $db = \Config\Database::connect();
+        $db->transStart();
 
-        $this->driverModel->insert($driver);
+        try {
+            $userModel = new \App\Modules\Auth\Models\UserModel();
+            $user = new \App\Modules\Auth\Entities\User([
+                'first_name' => (string) $this->request->getPost('first_name'),
+                'last_name'  => (string) $this->request->getPost('last_name'),
+                'email'      => (string) $this->request->getPost('email'),
+                'role'       => 'driver',
+            ]);
+            $user->setPassword((string) $this->request->getPost('password'));
+            $userId = $userModel->insert($user);
 
-        return redirect()->back()->with('success', 'Driver added successfully.');
+            if ($userId === false) {
+                throw new \RuntimeException('Failed to create user record for driver.');
+            }
+
+            $driver = new Driver([
+                'user_id'             => (int) $userId,
+                'license_number'      => (string) $this->request->getPost('license_number'),
+                'allowance_flat_rate' => (float) $this->request->getPost('allowance_flat_rate'),
+                'status'              => (string) $this->request->getPost('status'),
+            ]);
+
+            $this->driverModel->insert($driver);
+
+            $db->transComplete();
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            log_message('error', 'Driver registration failed', [
+                'exception' => $e->getMessage(),
+            ]);
+            return redirect()->back()->with('error', 'Failed to register driver. ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Driver registered successfully.');
     }
 
     /**
