@@ -185,6 +185,13 @@
         border-radius: 12px !important;
         overflow: hidden;
     }
+
+    #fleet,
+    #how-it-works,
+    #destinations,
+    #faq {
+        scroll-margin-top: 80px;
+    }
 </style>
 <?= $this->endSection() ?>
 
