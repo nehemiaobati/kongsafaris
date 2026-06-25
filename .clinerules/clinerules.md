@@ -121,15 +121,18 @@ Controllers are HTTP request handlers. They orchestrate input validation and del
 - **MUST** validate incoming HTTP requests using the Validation service.
 - **MUST** invoke Service classes to process business operations.
 - **MUST** return `ResponseInterface` objects (via `$this->response` or `return redirect()`) or `string` values (via `return view()`).
-- **MUST** pass SEO variables (`pageTitle`, `metaDescription`, `canonicalUrl`, `robotsTag`) in the view data array:
+- **MUST** pass pre-formatted data (no business/processing logic exceeding 5 lines inside views) and SEO/structured metadata arrays in the view data array:
 
   ```php
   return view('App\Modules\[ModuleName]\Views\domain\view', [
       'pageTitle'       => 'Page Title',
       'metaDescription' => 'Meta description content',
+      'metaKeywords'    => 'keyword1, keyword2',
       'canonicalUrl'    => url_to('named.route'),
-      'robotsTag'       => 'index, follow',
-      'data'            => $serviceResult,
+      'robotsTag'       => 'index, follow', // 'index, follow' for public pages; 'noindex, follow' for private dashboards/auth forms
+      'metaImage'       => 'https://example.com/image.jpg',
+      'schemaJson'      => $jsonLdData,     // Targeted JSON-LD Schema config block (e.g. WebPage, Product, Organization)
+      'data'            => $serviceResult,  // Pre-formatted data
   ]);
   ```
 
@@ -207,10 +210,13 @@ Entities are strict data objects that represent business records with type safet
 
 Views render Presentation Layer output.
 
-- **MUST** extend the master layout file: `<?= $this->extend('layouts/default') ?>`.
-- **MUST NOT** contain nested conditional statements (maximum nesting depth of 1).
-- **MUST NOT** contain any PHP code blocks exceeding 5 lines.
-- **MUST** escape ALL output using the native `esc()` helper: `<?= esc($variable) ?>`.
+- **MUST** extend the master layout file using: `<?= $this->extend('layouts/default') ?>`.
+- **MUST** wrap structural content in: `<?= $this->section('content') ?> ... <?= $this->endSection() ?>`.
+- **MUST** inject page-specific micro-styles via: `<?= $this->section('styles') ?> ... <?= $this->endSection() ?>`.
+- **MUST** inject page-specific scripts via: `<?= $this->section('scripts') ?> ... <?= $this->endSection() ?>`.
+- **MUST NOT** contain nested conditional statements (maximum nesting depth of 1 inside PHP templates).
+- **MUST NOT** contain any raw PHP code blocks exceeding 5 lines.
+- **MUST** escape ALL dynamic data rendered inside HTML elements or attributes using `esc($variable, 'html')` or `esc($variable, 'attr')`.
 - **MUST NOT** make database calls.
 - **MUST NOT** instantiate Services or Models.
 
@@ -513,33 +519,85 @@ To maintain compatibility with stateless and serverless platforms:
 
 ### 11.1 Framework & Structure
 
-- **Framework**: Bootstrap 5 (Utility-first approach).
-- **Layouts**: All views MUST extend `layouts/default`.
+- **Framework**: Bootstrap 5.3+ modular architecture.
+- **Layouts**: All views MUST extend `layouts/default` (e.g., `<?= $this->extend('layouts/default') ?>`), which provides the global HTML skeleton, base sans-serif font rendering, Bootstrap 5 scripts/styles, CSRF meta elements, a responsive navigation system, dynamic role-based menus, and global flash messaging structures.
 - **Partials**: Reusable UI chunks MUST be placed in `partials/` (e.g., `flash_messages.php`).
 - **Structure (The Blueprint Method)**:
   - **Container**: Wrap content in `<div class="container my-5">`.
   - **Header**: Use `<div class="blueprint-header">`.
   - **Card**: Use `<div class="card blueprint-card">`.
+    - Custom components MUST utilize the standard structural class `.blueprint-card` for container wrappers, which supports focus outline adjustments, light shadow elevations, and subtle border color transitions on hover.
 
-### 11.2 Theme Awareness
+### 11.2 Design System & Theme Awareness (Plug-and-Play Theme Architecture)
 
-Hardcoding colors is FORBIDDEN. Priority order:
-1. Use Theme-aware Bootstrap utilities first (e.g., `bg-body-tertiary`).
-2. Use project CSS variables second (e.g., `var(--card-bg)`).
+To support plug-and-play theme swapability, all custom stylesheets and component overrides MUST reference semantic theme variables rather than hardcoded hex values.
 
-### 11.3 UI Components
+#### 11.2.1 Active Theme Configuration & Dark Mode Mappings
+Themes are defined by mapping system CSS variables. The default active theme is the high-contrast **White, Black, and Blue** design system. To support theme and mode swapability (e.g., auto-switching via Bootstrap's `data-bs-theme` attribute), variables MUST map strictly to these definitions:
 
-- **Inputs**: All text inputs MUST use Bootstrap 5 "Floating labels". ux/ui always use and or refer public/bootstrap-5.3.8-examples. 
+```css
+/* --- Light Mode Configuration (Default Active Theme) --- */
+:root, [data-bs-theme="light"] {
+    --theme-bg-light: #ffffff;        /* Canvas Base: Stark White background canvases & containers */
+    --theme-primary: #000000;         /* Primary Tone: Stark Black typography, structure & borders */
+    --theme-accent: #0d6efd;          /* Highlight Accent: Interactive Blue CTA highlights & active states */
+    --theme-accent-rgb: 13, 110, 253; /* Highlight Accent RGB: Opacity-based masking */
+    --theme-card-bg: #ffffff;         /* Standard Card Surface: Card container background */
+}
+
+/* --- Dark Mode Configuration (Auto-Swapped Roles) --- */
+[data-bs-theme="dark"] {
+    --theme-bg-light: #121212;        /* Canvas Base: Stark Dark background canvases & containers */
+    --theme-primary: #ffffff;         /* Primary Tone: Stark White typography, structure & borders */
+    --theme-accent: #0d6efd;          /* Highlight Accent: Interactive Blue (or adjusted high-contrast highlight) */
+    --theme-accent-rgb: 13, 110, 253; /* Highlight Accent RGB: Opacity-based masking */
+    --theme-card-bg: #1e1e1e;         /* Standard Card Surface: Dark Card container background */
+}
+```
+
+#### 11.2.2 Theme Patterns & Palette Rules
+All components, elements, content text, icons, and focus states MUST align strictly with the roles mapped in the active theme config:
+- **Canvas & Backgrounds (var(--theme-bg-light))**: Reserved for main background canvases, card bodies, and containers where maximum legibility is REQUIRED.
+- **Typography, Structure, & High-Contrast (var(--theme-primary))**: Used for primary body text, headers, framing borders, and neutral boundaries.
+- **Interactivity & Focus Highlights (var(--theme-accent))**: Reserved strictly for active/hover highlights, active states, link hover text, custom SVG icon fills, focus rings, primary Call-To-Action (CTA) backgrounds, and success/status highlights.
+
+#### 11.2.3 Variable Mapping & Strict Compliance
+- Utilize native Bootstrap 5.3+ utilities as the primary styling mechanism.
+- For custom theme styling, overrides MUST map strictly to the generic layout CSS variables defined in Section 11.2.1 (which resolve dynamically based on the active light/dark mode configurations):
+  - Primary Theme Tone: `var(--theme-primary)`
+  - Highlight Accent: `var(--theme-accent)`
+  - Highlight Accent RGB: `var(--theme-accent-rgb)`
+  - Standard Canvas Light: `var(--theme-bg-light)`
+  - Standard Card Surface: `var(--theme-card-bg)`
+- NEVER hardcode HEX values directly in style declarations. Map them strictly to these semantic CSS variables.
+
+
+
+### 11.3 UI Components & Form Handling
+
+- **Inputs & Floating Labels**: All text inputs MUST use Bootstrap 5 "Floating labels". Forms MUST feature semantic floating labels adhering to Bootstrap 5 structures:
+  ```html
+  <div class="form-floating mb-3">
+      <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
+      <label for="emailInput">Email Address</label>
+  </div>
+  ```
+- **Form CSRF Integration**: Every POST form MUST contain: `<?= csrf_field() ?>`.
+- **AJAX CSRF Integration**: Fetch the active token via `window.getCSRFToken()` and update inputs on success using `window.updateCSRFToken(newHash)`.
 - **Buttons**:
-  - Primary Action: `btn-primary`
-  - Secondary Action: `btn-outline-secondary`
-  - Destructive Action: `btn-danger`
+  - Primary Action (CTA / Active states / Blue accent background): `.btn-primary`
+  - Secondary Action (Stark black/white outline): `.btn-outline-secondary`
+  - Destructive Action (Actions like delete/destruction): `.btn-outline-danger` or `btn-danger`
+- **Accessibility (a11y)**:
+  - All interactive elements MUST support keyboard focus transitions using the layout's focus styling system: `:focus-visible { outline: 2px solid var(--theme-accent) !important; outline-offset: 3px !important; }`.
+  - Use correct ARIA landmark attributes if defining structural elements within your content section.
 
-### 11.4 SEO & Social Sharing
+### 11.4 SEO & Structured Data
 
-**Meta Data**: Controllers MUST pass these variables in view data:
+**Meta Data**: Controllers MUST pass these variables in view data, and templates MUST render them:
 - `pageTitle`
 - `metaDescription`
+- `metaKeywords`
 - `canonicalUrl`
 - `robotsTag`
 - `metaImage`
@@ -547,6 +605,9 @@ Hardcoding colors is FORBIDDEN. Priority order:
 **Indexing Strategy**:
 - **Public Pages**: USE `index, follow` (Marketing, informative, and public tool pages).
 - **Private/Auth Pages**: USE `noindex, follow` (Auth forms, User dashboards, Admin panels).
+
+**JSON-LD Schema**:
+- Provide a targeted JSON-LD `<script type="application/ld+json">` configuration block relevant to the page context (e.g., `WebPage`, `Product`, `Organization`, or `BreadcrumbList`).
 
 **Social Sharing**: Layouts MUST include complete Open Graph AND Twitter Card meta tags:
 - **Open Graph**: `og:type`, `og:url`, `og:title`, `og:description`, `og:image`
