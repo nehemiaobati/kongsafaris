@@ -201,7 +201,7 @@
     <nav class="navbar navbar-expand-lg sticky-top navbar-light">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?= url_to('auth.dashboard') ?>">
-                <span class="fs-4 fw-bold">KONG SAFARIS</span>
+                <img src="<?= base_url('assets/img/logo.svg') ?>" alt="KONG" style="height: 40px; width: auto; max-height: 100%;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
