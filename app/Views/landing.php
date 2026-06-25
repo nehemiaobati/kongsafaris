@@ -31,15 +31,15 @@
     }
 
     .trust-bar {
-        background: rgba(0, 0, 0, 0.02);
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        background: rgba(var(--theme-primary-rgb), 0.02);
+        border-top: 1px solid rgba(var(--theme-primary-rgb), 0.06);
+        border-bottom: 1px solid rgba(var(--theme-primary-rgb), 0.06);
     }
 
     .gradient-icon-box {
         width: 64px;
         height: 64px;
-        background: linear-gradient(135deg, var(--safari-accent) 0%, #0b5ed7 100%);
+        background: linear-gradient(135deg, var(--theme-accent) 0%, rgba(var(--theme-accent-rgb), 0.8) 100%);
         color: #ffffff;
         display: flex;
         align-items: center;
@@ -47,14 +47,14 @@
         border-radius: 16px;
         font-size: 1.75rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.15);
+        box-shadow: 0 8px 20px rgba(var(--theme-accent-rgb), 0.15);
     }
 
     .fleet-card {
         overflow: hidden;
         border-radius: 16px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        background: #ffffff;
+        border: 1px solid rgba(var(--theme-primary-rgb), 0.08);
+        background: var(--theme-card-bg);
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
@@ -73,8 +73,8 @@
 
     .fleet-card:hover {
         transform: translateY(-8px);
-        border-color: var(--safari-accent);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        border-color: var(--theme-accent);
+        box-shadow: 0 12px 30px rgba(var(--theme-primary-rgb), 0.1);
     }
 
     .fleet-card:hover .fleet-img-container img {
@@ -141,9 +141,9 @@
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background-color: rgba(13, 110, 253, 0.08);
-        border: 2px solid var(--safari-accent);
-        color: var(--safari-accent);
+        background-color: rgba(var(--theme-accent-rgb), 0.08);
+        border: 2px solid var(--theme-accent);
+        color: var(--theme-accent);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -164,24 +164,24 @@
     }
 
     .carousel-indicators [data-bs-target] {
-        background-color: var(--safari-accent);
+        background-color: var(--theme-accent);
     }
 
     .accordion-button {
-        background-color: rgba(0, 0, 0, 0.02) !important;
-        color: #333 !important;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        background-color: rgba(var(--theme-primary-rgb), 0.02) !important;
+        color: var(--theme-primary) !important;
+        border: 1px solid rgba(var(--theme-primary-rgb), 0.08);
     }
 
     .accordion-button:not(.collapsed) {
-        background-color: rgba(13, 110, 253, 0.05) !important;
-        color: var(--safari-accent) !important;
+        background-color: rgba(var(--theme-accent-rgb), 0.05) !important;
+        color: var(--theme-accent) !important;
         box-shadow: none;
     }
 
     .accordion-item {
         background-color: transparent !important;
-        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border: 1px solid rgba(var(--theme-primary-rgb), 0.08) !important;
         border-radius: 12px !important;
         overflow: hidden;
     }

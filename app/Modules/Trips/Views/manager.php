@@ -13,18 +13,18 @@
     }
 
     .nav-tabs .nav-link:hover {
-        border-color: rgba(13, 110, 253, 0.15) rgba(13, 110, 253, 0.15) transparent;
-        color: #212529 !important;
+        border-color: rgba(var(--theme-accent-rgb), 0.15) rgba(var(--theme-accent-rgb), 0.15) transparent;
+        color: var(--theme-primary) !important;
     }
 
     .nav-tabs .nav-link.active {
-        background-color: rgba(13, 110, 253, 0.05) !important;
-        border-color: rgba(13, 110, 253, 0.3) rgba(13, 110, 253, 0.3) transparent !important;
-        color: var(--safari-accent) !important;
+        background-color: rgba(var(--theme-accent-rgb), 0.05) !important;
+        border-color: rgba(var(--theme-accent-rgb), 0.3) rgba(var(--theme-accent-rgb), 0.3) transparent !important;
+        color: var(--theme-accent) !important;
     }
 
     .table-hover tbody tr:hover {
-        background-color: rgba(13, 110, 253, 0.03) !important;
+        background-color: rgba(var(--theme-accent-rgb), 0.03) !important;
         transition: background-color 0.2s ease-in-out;
     }
 

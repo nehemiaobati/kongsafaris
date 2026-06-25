@@ -25,7 +25,7 @@
     }
 
     .pac-matched {
-        color: var(--safari-accent) !important;
+        color: var(--theme-accent) !important;
     }
 </style>
 <?= $this->endSection() ?>

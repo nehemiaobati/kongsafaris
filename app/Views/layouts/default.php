@@ -57,65 +57,77 @@
 
     <!-- Custom theme variables & micro-animations -->
     <style>
-        :root {
-            --safari-primary: #000000;
-            /* Black */
-            --safari-accent: #0d6efd;
-            /* Bootstrap Blue */
-            --safari-accent-rgb: 13, 110, 253;
-            --safari-bg-light: #ffffff;
-            /* White */
-            --safari-card-bg: #ffffff;
+        /* --- Light Mode Configuration (Default Active Theme) --- */
+        :root,
+        [data-bs-theme="light"] {
+            --theme-primary: #000000;
+            --theme-primary-rgb: 0, 0, 0;
+            --theme-accent: #0d6efd;
+            --theme-accent-rgb: 13, 110, 253;
+            --theme-bg-light: #ffffff;
+            --theme-bg-light-rgb: 255, 255, 255;
+            --theme-card-bg: #ffffff;
             --font-family-sans-serif: 'Outfit', sans-serif;
+        }
+
+        /* --- Dark Mode Configuration (Auto-Swapped Roles) --- */
+        [data-bs-theme="dark"] {
+            --theme-primary: #ffffff;
+            --theme-primary-rgb: 255, 255, 255;
+            --theme-accent: #0d6efd;
+            --theme-accent-rgb: 13, 110, 253;
+            --theme-bg-light: #121212;
+            --theme-bg-light-rgb: 18, 18, 18;
+            --theme-card-bg: #1e1e1e;
         }
 
         body {
             font-family: var(--font-family-sans-serif);
-            background-color: var(--safari-bg-light);
-            color: #212529;
+            background-color: var(--theme-bg-light);
+            color: var(--theme-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
         .navbar {
-            background-color: rgba(255, 255, 255, 0.95) !important;
+            background-color: rgba(var(--theme-bg-light-rgb), 0.95) !important;
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid rgba(var(--theme-primary-rgb), 0.08);
         }
 
         .navbar-brand {
             font-weight: 800;
-            color: var(--safari-accent) !important;
+            color: var(--theme-accent) !important;
             letter-spacing: 1px;
         }
 
         .nav-link {
             font-weight: 500;
-            color: #495057 !important;
+            color: rgba(var(--theme-primary-rgb), 0.6) !important;
             transition: color 0.3s ease;
         }
 
         .nav-link:hover,
         .nav-link.active {
-            color: var(--safari-accent) !important;
+            color: var(--theme-accent) !important;
         }
 
         .blueprint-card {
-            background: var(--safari-card-bg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: var(--theme-card-bg);
+            border: 1px solid rgba(var(--theme-primary-rgb), 0.1);
             border-radius: 16px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 4px rgba(var(--theme-primary-rgb), 0.04);
             transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
         .blueprint-card:hover {
-            border-color: var(--safari-accent);
+            border-color: var(--theme-accent);
         }
 
         .btn-primary {
-            background-color: var(--safari-accent);
-            border-color: var(--safari-accent);
+            background-color: var(--theme-accent);
+            border-color: var(--theme-accent);
             color: #ffffff;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -126,53 +138,53 @@
             border-color: #0a58ca;
             color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            box-shadow: 0 4px 12px rgba(var(--theme-accent-rgb), 0.3);
         }
 
         .btn-outline-secondary {
-            color: #495057;
-            border-color: rgba(0, 0, 0, 0.2);
+            color: rgba(var(--theme-primary-rgb), 0.6);
+            border-color: rgba(var(--theme-primary-rgb), 0.2);
             font-weight: 500;
         }
 
         .btn-outline-secondary:hover {
-            background-color: rgba(0, 0, 0, 0.03);
-            color: #000;
-            border-color: #000;
+            background-color: rgba(var(--theme-primary-rgb), 0.03);
+            color: var(--theme-primary);
+            border-color: var(--theme-primary);
         }
 
         .text-accent {
-            color: var(--safari-accent) !important;
+            color: var(--theme-accent) !important;
         }
 
         footer {
             margin-top: auto;
-            background-color: #f8f9fa;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            background-color: rgba(var(--theme-bg-light-rgb), 0.97);
+            border-top: 1px solid rgba(var(--theme-primary-rgb), 0.08);
             padding: 20px 0;
             font-size: 0.9rem;
-            color: #6c757d;
+            color: rgba(var(--theme-primary-rgb), 0.55);
         }
 
         /* Float labels styling compatibility */
         .form-floating>.form-control:focus~label,
         .form-floating>.form-control:not(:placeholder-shown)~label,
         .form-floating>.form-select~label {
-            color: var(--safari-accent);
+            color: var(--theme-accent);
             opacity: 0.85;
         }
 
         .hover-link {
             transition: color 0.2s ease-in-out;
-            color: #6c757d !important;
+            color: rgba(var(--theme-primary-rgb), 0.55) !important;
         }
 
         .hover-link:hover {
-            color: var(--safari-accent) !important;
+            color: var(--theme-accent) !important;
         }
 
         :focus-visible {
-            outline: 2px solid var(--safari-accent) !important;
+            outline: 2px solid var(--theme-accent) !important;
             outline-offset: 3px !important;
             border-radius: 4px;
         }
