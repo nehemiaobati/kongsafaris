@@ -211,7 +211,7 @@
                 <div class="carousel-caption-custom text-start">
                     <span class="badge bg-primary text-white mb-3 px-3 py-2 text-uppercase fw-bold">Wild Kenya Adventures</span>
                     <h1 class="display-3 fw-bold text-white mb-3">Safari Car Hire <br><span class="text-white">Reimagined</span></h1>
-                    <p class="lead text-white mb-4">Book robust 4x4 Land Cruisers and Safari vans. Live trip coordinates streaming, experienced local drivers, and secure M-Pesa integrations.</p>
+                    <p class="lead text-white mb-4">Book robust 4x4 Land Cruisers and Safari vans. Experienced local drivers and secure M-Pesa integrations.</p>
                     <div class="d-flex gap-3">
                         <a href="<?= url_to('auth.register') ?>" class="btn btn-primary btn-lg px-4">Start Booking</a>
                         <a href="#fleet" class="btn btn-outline-light btn-lg px-4">Explore Fleet</a>
@@ -276,8 +276,8 @@
                         </svg>
                     </span>
                     <div class="text-start">
-                        <h6 class="mb-0 fw-bold">Live GPS Tracking</h6>
-                        <small class="text-muted">Real-time status updates</small>
+                        <h6 class="mb-0 fw-bold">Instant Quotes</h6>
+                        <small class="text-muted">No hidden fees</small>
                     </div>
                 </div>
             </div>
@@ -349,8 +349,8 @@
                                 <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
                             </svg>
                         </div>
-                        <h5 class="fw-bold">Live Tracking</h5>
-                        <p class="text-muted small mb-0">Follow your vehicle on Google Maps as your driver navigates the savanna, complete with coordinate streams.</p>
+                        <h5 class="fw-bold">Easy Booking</h5>
+                        <p class="text-muted small mb-0">Book your safari in minutes with our simple online form. No phone tag, no back-and-forth.</p>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -360,8 +360,8 @@
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                             </svg>
                         </div>
-                        <h5 class="fw-bold">Operations Dashboard</h5>
-                        <p class="text-muted small mb-0">For fleet owners: live operations portal to coordinate runs, update vehicle status, and track driver assignments.</p>
+                        <h5 class="fw-bold">Trip Dashboard</h5>
+                        <p class="text-muted small mb-0">View your upcoming and past bookings, download receipts, and manage your reservations all from one place.</p>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -373,7 +373,7 @@
                             </svg>
                         </div>
                         <h5 class="fw-bold">Integrated Billing</h5>
-                        <p class="text-muted small mb-0">Instant payments via M-Pesa, Card, and Airtel Money with automatic receipts and accounting updates.</p>
+                        <p class="text-muted small mb-0">Instant payments via M-Pesa, Card, and Airtel Money with automatic receipts.</p>
                     </div>
                 </div>
             </div>
@@ -501,7 +501,7 @@
             <div class="col-md-4">
                 <div class="step-number">3</div>
                 <h5 class="fw-bold">Track & Enjoy the Ride</h5>
-                <p class="text-muted small">Receive driver information, trace location updates live via client dashboard, and coordinate with operations team.</p>
+                <p class="text-muted small">Receive driver details and trip confirmation. Show up, enjoy the ride, and we handle the rest.</p>
             </div>
         </div>
     </div>
@@ -511,7 +511,7 @@
         <div class="text-center mb-5">
             <span class="text-accent fw-bold text-uppercase">Popular Routes</span>
             <h2 class="display-5 fw-bold mt-1">Top Safari Destinations in Kenya</h2>
-            <p class="text-muted mx-auto" style="max-width: 600px;">Direct routes served with automated quotes, flat fuel averages, and pre-negotiated driver accommodation rates.</p>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Direct routes to Kenya's most iconic national parks with instant, transparent pricing.</p>
         </div>
         <div class="row g-4">
             <div class="col-lg-3 col-sm-6">
@@ -594,7 +594,7 @@
                     <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-1">How is the dynamic safari trip price calculated?</button>
                 </h2>
                 <div id="faq-1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                    <div class="accordion-body text-muted small">Fares are automatically generated based on the actual driving distance, estimated fuel consumption for the chosen vehicle category, driver daily allowances, and a vehicle maintenance reserve.</div>
+                    <div class="accordion-body text-muted small">Fares are automatically generated based on the actual driving distance, estimated fuel consumption for the chosen vehicle category, and current fuel costs for full fare transparency.</div>
                 </div>
             </div>
             <div class="accordion-item mb-3 bg-transparent">
@@ -610,7 +610,7 @@
                     <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq-3">Can I track my booked vehicle in real time?</button>
                 </h2>
                 <div id="faq-3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                    <div class="accordion-body text-muted small">Absolutely. Once a trip commences, drivers stream coordinates from their mobile workspace, allowing clients to visualize the vehicle's progress on an interactive map.</div>
+                    <div class="accordion-body text-muted small">Our operations team monitors every trip in real time to ensure safety and timely arrivals. You'll receive driver contact information before departure.</div>
                 </div>
             </div>
             <div class="accordion-item mb-3 bg-transparent">
@@ -628,7 +628,7 @@
     <div class="py-5 mb-5 bg-primary text-center text-white rounded-4 p-5" style="background-color: #0d6efd ;">
         <div class="position-relative z-3">
             <h2 class="display-5 fw-bold mb-3">Begin Your Adventure Today</h2>
-            <p class="opacity-75 mb-4 mx-auto" style="max-width: 600px;">Create your operator account to customize booking coordinates, view historical trip routes, and generate quotes in seconds.</p>
+            <p class="opacity-75 mb-4 mx-auto" style="max-width: 600px;">Create your account to get instant safari quotes, manage bookings, and receive trip confirmations.</p>
             <div class="d-flex gap-3 justify-content-center">
                 <a href="<?= url_to('auth.register') ?>" class="btn btn-light btn-lg px-5">Register Account</a>
                 <a href="<?= url_to('auth.login') ?>" class="btn btn-outline-light btn-lg px-4">Sign In</a>

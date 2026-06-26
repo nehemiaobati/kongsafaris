@@ -45,6 +45,7 @@ class Autoload extends AutoloadConfig
         'App\Modules\Trips' => APPPATH . 'Modules/Trips',
         'App\Modules\Payments' => APPPATH . 'Modules/Payments',
         'App\Modules\Notifications' => APPPATH . 'Modules/Notifications',
+        'App\Modules\Legal' => APPPATH . 'Modules/Legal',
     ];
 
     /**

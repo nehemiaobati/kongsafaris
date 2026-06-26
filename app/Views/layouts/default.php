@@ -308,6 +308,8 @@
                         <li class="mb-2"><a href="<?= base_url('#fleet') ?>" class="text-muted text-decoration-none hover-link">Our Fleet</a></li>
                         <li class="mb-2"><a href="<?= base_url('#destinations') ?>" class="text-muted text-decoration-none hover-link">Destinations</a></li>
                         <li class="mb-2"><a href="<?= base_url('#how-it-works') ?>" class="text-muted text-decoration-none hover-link">How It Works</a></li>
+                        <li class="mb-2"><a href="<?= url_to('legal.terms') ?>" class="text-muted text-decoration-none hover-link">Terms of Service</a></li>
+                        <li class="mb-2"><a href="<?= url_to('legal.privacy') ?>" class="text-muted text-decoration-none hover-link">Privacy Policy</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
