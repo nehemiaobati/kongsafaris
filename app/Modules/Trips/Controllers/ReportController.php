@@ -83,7 +83,7 @@ class ReportController extends BaseController
         $reportService = new ReportService();
         $rows = $reportService->getRevenueByVehicle($startDate, $endDate);
 
-        $csv = "Vehicle Model,Plate Number,Trips,Distance (Km),Gross Revenue,Fuel Cost,Maintenance,Allowances,Net Profit\n";
+        $csv = "Vehicle Model,Plate Number,Trips,Distance (Km),Total Revenue,Fuel Cost,Maintenance,Allowances,Net Profit (after costs)\n";
 
         foreach ($rows as $row) {
             $net = (float) $row['gross_revenue']

@@ -41,13 +41,6 @@ class CreateSystemSettings extends Migration
         $this->forge->addUniqueKey('setting_key');
         $this->forge->addKey('updated_by');
         $this->forge->createTable('system_settings', true);
-
-        // Insert defaults
-        $db = \Config\Database::connect();
-        $db->table('system_settings')->insertBatch([
-            ['setting_key' => 'base_booking_fee', 'setting_value' => '50.00', 'updated_by' => 1, 'updated_at' => date('Y-m-d H:i:s')],
-            ['setting_key' => 'system_name', 'setting_value' => 'Kong Safaris', 'updated_by' => 1, 'updated_at' => date('Y-m-d H:i:s')],
-        ]);
     }
 
     public function down(): void

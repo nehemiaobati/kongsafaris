@@ -42,7 +42,7 @@
                 <strong><?= esc($completed_analysis['completed_trips'] ?? 0) ?></strong>
             </div>
             <div class="d-flex justify-content-between small mb-1">
-                <span class="text-muted">Gross Revenue</span>
+                <span class="text-muted">Total Revenue</span>
                 <strong class="text-accent">Ksh <?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong>
             </div>
             <div class="d-flex justify-content-between small mb-1">
@@ -194,7 +194,7 @@
                     <td><strong><?= number_format((float)($completed_analysis['completed_distance'] ?? 0), 2) ?> Km</strong></td>
                 </tr>
                 <tr>
-                    <td>Gross Revenue</td>
+                    <td>Total Revenue</td>
                     <td><strong class="text-accent">Ksh <?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong></td>
                 </tr>
                 <tr>
@@ -228,7 +228,7 @@
                     <th>Vehicle</th>
                     <th>Trips</th>
                     <th>Distance (Km)</th>
-                    <th>Gross Revenue</th>
+                    <th>Total Revenue</th>
                     <th>Fuel Cost</th>
                     <th>Maintenance</th>
                     <th>Allowances</th>
@@ -270,7 +270,7 @@
                     <th>Driver</th>
                     <th>Trips</th>
                     <th>Distance (Km)</th>
-                    <th>Gross Revenue</th>
+                    <th>Total Revenue</th>
                     <th>Allowances Paid</th>
                 </tr>
             </thead>

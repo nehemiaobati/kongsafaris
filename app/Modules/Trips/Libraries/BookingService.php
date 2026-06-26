@@ -226,6 +226,23 @@ class BookingService
                 'trip_status'      => $newTripStatus,
             ];
 
+            // Recalculate pricing breakdown if vehicle, driver, or distance changed
+            if (($data['vehicle_id'] ?? $booking->vehicle_id) != $booking->vehicle_id
+                || ($data['driver_id'] ?? $booking->driver_id) != $booking->driver_id
+                || ($data['distance_km'] ?? $booking->distance_km) != $booking->distance_km
+            ) {
+                $vehicle = $this->vehicleModel->find((int) $updateData['vehicle_id']);
+                $driver  = $this->driverModel->find((int) $updateData['driver_id']);
+
+                if ($vehicle !== null && $driver !== null) {
+                    $pricing = $this->pricingService->calculateQuote($vehicle, $driver, (float) $updateData['distance_km']);
+                    $updateData['base_booking_fee']    = $pricing['base_booking_fee'];
+                    $updateData['per_km_fuel_cost']    = $pricing['per_km_fuel_cost'];
+                    $updateData['maintenance_reserve'] = $pricing['maintenance_reserve'];
+                    $updateData['driver_allowance']    = $pricing['driver_allowance'];
+                }
+            }
+
             $this->bookingModel->update($bookingId, $updateData);
 
             // Handle driver status transitions
@@ -267,6 +284,10 @@ class BookingService
         try {
             $vehicle = $this->vehicleModel->find((int) $data['vehicle_id']);
             $driver = $this->driverModel->find((int) $data['driver_id']);
+
+            if ($driver === null || (string) $driver->status !== 'available') {
+                throw new \RuntimeException('Selected driver is not available for assignment.');
+            }
 
             /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
             /** @var \App\Modules\Trips\Entities\Driver|null $driver */
@@ -317,8 +338,71 @@ class BookingService
             return ['status' => true, 'booking_id' => $bookingId, 'message' => 'Manual booking #' . $bookingId . ' created successfully.'];
         } catch (\Throwable $e) {
             $this->db->transRollback();
-            log_message('error', 'Manual Booking Failed', ['exception' => $e->getMessage()]);
+            log_message('error', 'Manual Booking Failed', [
+                'customer_id'  => $data['customer_id'] ?? null,
+                'vehicle_id'   => $data['vehicle_id'] ?? null,
+                'driver_id'    => $data['driver_id'] ?? null,
+                'distance_km'  => $data['distance_km'] ?? null,
+                'total_price'  => $data['total_price'] ?? null,
+                'payment_status' => $data['payment_status'] ?? null,
+                'exception'    => $e->getMessage(),
+            ]);
             return ['status' => false, 'booking_id' => 0, 'message' => 'Failed to create manual booking.'];
+        }
+    }
+
+    /**
+     * Assign a driver to an existing booking.
+     *
+     * @param int $bookingId
+     * @param int $driverId
+     *
+     * @return array{status: bool, message: string}
+     */
+    public function assignDriver(int $bookingId, int $driverId): array
+    {
+        $booking = $this->bookingModel->find($bookingId);
+        if ($booking === null) {
+            return ['status' => false, 'message' => 'Booking not found.'];
+        }
+
+        $driver = $this->driverModel->find($driverId);
+        if ($driver === null || (string) $driver->status !== 'available') {
+            return ['status' => false, 'message' => 'Selected driver is not available for assignment.'];
+        }
+
+        $oldDriverId = (int) $booking->driver_id;
+
+        $this->db->transStart();
+
+        try {
+            $this->bookingModel->update($bookingId, ['driver_id' => $driverId]);
+
+            // Release old driver if assigned
+            if (! empty($oldDriverId)) {
+                $this->driverModel->update($oldDriverId, ['status' => 'available']);
+            }
+
+            // Set new driver to on_trip if booking is pending/active
+            if (in_array($booking->trip_status, ['pending', 'active'], true)) {
+                $this->driverModel->update($driverId, ['status' => 'on_trip']);
+            }
+
+            $this->db->transComplete();
+
+            if ($this->db->transStatus() === false) {
+                throw new \RuntimeException('Failed to assign driver.');
+            }
+
+            return ['status' => true, 'message' => 'Driver assigned to booking #' . $bookingId . ' successfully.'];
+        } catch (\Throwable $e) {
+            $this->db->transRollback();
+            log_message('error', 'Assign Driver Failure', [
+                'booking_id' => $bookingId,
+                'driver_id'  => $driverId,
+                'exception'  => $e->getMessage(),
+            ]);
+            return ['status' => false, 'message' => 'Failed to assign driver.'];
         }
     }
 

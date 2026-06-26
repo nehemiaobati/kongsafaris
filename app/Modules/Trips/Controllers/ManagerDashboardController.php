@@ -8,6 +8,7 @@ use App\Controllers\BaseController;
 use App\Modules\Trips\Models\FuelRateModel;
 use App\Modules\Trips\Entities\FuelRate;
 use App\Modules\Trips\Libraries\TripQueryService;
+use App\Modules\Trips\Libraries\BookingService;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 
@@ -25,10 +26,12 @@ use CodeIgniter\I18n\Time;
 class ManagerDashboardController extends BaseController
 {
     private TripQueryService $queryService;
+    private BookingService $bookingService;
 
     public function __construct()
     {
         $this->queryService = service('tripQueryService');
+        $this->bookingService = service('bookingService');
     }
 
     /**
@@ -50,8 +53,8 @@ class ManagerDashboardController extends BaseController
             'robotsTag'          => 'noindex, nofollow',
             'bookings'           => $dashboardData['bookings'],
             'pager'              => $dashboardData['pager'],
-            'currentPetrolRate'  => $fuelRates['petrol'] ?? 1.45,
-            'currentDieselRate'  => $fuelRates['diesel'] ?? 1.35,
+            'currentPetrolRate'  => $fuelRates['petrol'] ?? 188.50,
+            'currentDieselRate'  => $fuelRates['diesel'] ?? 175.50,
             'googleApiKey'       => env('GoogleMaps.APIKey') ?? '',
             'vehicles'           => $vehicles,
             'drivers'            => $drivers,
@@ -88,7 +91,33 @@ class ManagerDashboardController extends BaseController
         $fuelRateModel->insert($rate);
 
         return redirect()->to(url_to('trips.manager'))
-            ->with('success', ucfirst($fuelType) . ' fuel rate updated successfully to $' . number_format($price, 2) . ' per liter.');
+            ->with('success', ucfirst($fuelType) . ' fuel rate updated successfully to Ksh ' . number_format($price, 2) . ' per liter.');
+    }
+
+    /**
+     * Assign a driver to an existing booking.
+     */
+    public function assignDriver(): ResponseInterface
+    {
+        $rules = [
+            'booking_id' => 'required|integer',
+            'driver_id'  => 'required|integer',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->with('errors', $this->validator->getErrors());
+        }
+
+        $bookingId = (int) $this->request->getPost('booking_id');
+        $driverId  = (int) $this->request->getPost('driver_id');
+
+        $result = $this->bookingService->assignDriver($bookingId, $driverId);
+
+        if (! $result['status']) {
+            return redirect()->back()->with('error', $result['message']);
+        }
+
+        return redirect()->to(url_to('trips.manager'))->with('success', $result['message']);
     }
 
     /**

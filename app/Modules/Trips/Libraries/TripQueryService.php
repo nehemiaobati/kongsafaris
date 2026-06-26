@@ -155,6 +155,8 @@ class TripQueryService
         return $this->db->table('drivers')
             ->select('drivers.id, drivers.status, users.first_name, users.last_name')
             ->join('users', 'users.id = drivers.user_id')
+            ->where('drivers.status', 'available')
+            ->orderBy('users.first_name', 'ASC')
             ->get()
             ->getResultArray();
     }

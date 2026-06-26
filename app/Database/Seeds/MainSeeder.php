@@ -109,11 +109,36 @@ class MainSeeder extends Seeder
 
         // 4. Seed Fuel Rates
         $fuelRateData = [
-            'price_per_liter' => 145.00, // Ksh 145 per liter baseline price
-            'updated_by'      => $managerId,
-            'created_at'      => Time::now()->toDateTimeString(),
+            [
+                'fuel_type'       => 'petrol',
+                'price_per_liter' => 188.50,
+                'updated_by'      => $managerId,
+                'created_at'      => Time::now()->toDateTimeString(),
+            ],
+            [
+                'fuel_type'       => 'diesel',
+                'price_per_liter' => 175.50,
+                'updated_by'      => $managerId,
+                'created_at'      => Time::now()->toDateTimeString(),
+            ],
         ];
 
-        $db->table('fuel_rates')->insert($fuelRateData);
+        $db->table('fuel_rates')->insertBatch($fuelRateData);
+
+        // 5. Seed System Settings
+        $db->table('system_settings')->insertBatch([
+            [
+                'setting_key'   => 'base_booking_fee',
+                'setting_value' => '50.00',
+                'updated_by'    => $managerId,
+                'updated_at'    => Time::now()->toDateTimeString(),
+            ],
+            [
+                'setting_key'   => 'system_name',
+                'setting_value' => 'Kong Safaris',
+                'updated_by'    => $managerId,
+                'updated_at'    => Time::now()->toDateTimeString(),
+            ],
+        ]);
     }
 }
