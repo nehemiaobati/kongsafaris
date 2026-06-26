@@ -43,7 +43,7 @@ class PricingService
         /** @var \App\Modules\Trips\Entities\FuelRate|null $fuelRate */
         $fuelRate = $fuelRateModel->where('fuel_type', $vehicleFuelType)->orderBy('created_at', 'DESC')->first();
 
-        $price_per_liter = $fuelRate !== null ? (float)$fuelRate->price_per_liter : 1.50; // Fallback if no rate exists
+        $price_per_liter = $fuelRate !== null ? (float)$fuelRate->price_per_liter : 188.50; // Fallback if no rate exists (Ksh)
 
         // 2. Calculate fuel cost per Km
         // fuel_efficiency is in Km per Liter. Fuel cost per Km = price_per_liter / fuel_efficiency.

@@ -74,7 +74,7 @@
                             </td>
                             <td>
                                 <span class="badge bg-secondary mb-1"><?= esc($booking->distance_km) ?> Km</span><br>
-                                <strong class="text-accent">$<?= number_format($booking->total_price, 2) ?></strong>
+                                <strong class="text-accent">Ksh <?= number_format($booking->total_price, 2) ?></strong>
                             </td>
                             <td>
                                 <?php if ($booking->payment_status === 'paid'): ?>

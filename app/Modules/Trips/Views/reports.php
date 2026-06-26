@@ -43,16 +43,16 @@
             </div>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Gross Revenue</span>
-                <strong class="text-accent">$<?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong>
+                <strong class="text-accent">Ksh <?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong>
             </div>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Total Costs</span>
-                <strong class="text-warning">$<?= number_format((float)($completed_analysis['completed_total_costs'] ?? 0), 2) ?></strong>
+                <strong class="text-warning">Ksh <?= number_format((float)($completed_analysis['completed_total_costs'] ?? 0), 2) ?></strong>
             </div>
             <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-success fw-bold">Net Profit</span>
-                <span class="fs-5 fw-bold text-success">$<?= number_format((float)($completed_analysis['completed_net_profit'] ?? 0), 2) ?></span>
+                <span class="fs-5 fw-bold text-success">Ksh <?= number_format((float)($completed_analysis['completed_net_profit'] ?? 0), 2) ?></span>
             </div>
             <div class="d-flex justify-content-between small mt-2 text-muted">
                 <span>Avg distance</span>
@@ -83,11 +83,11 @@
             <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-warning fw-bold">At-Risk Revenue</span>
-                <span class="fs-5 fw-bold text-warning">$<?= number_format((float)($uncompleted_analysis['at_risk_revenue'] ?? 0), 2) ?></span>
+                <span class="fs-5 fw-bold text-warning">Ksh <?= number_format((float)($uncompleted_analysis['at_risk_revenue'] ?? 0), 2) ?></span>
             </div>
             <div class="d-flex justify-content-between small mt-2 text-muted">
                 <span>Potential lost</span>
-                <span>$<?= number_format((float)($uncompleted_analysis['unrealized_potential_revenue'] ?? 0), 2) ?></span>
+                <span>Ksh <?= number_format((float)($uncompleted_analysis['unrealized_potential_revenue'] ?? 0), 2) ?></span>
             </div>
         </div>
     </div>
@@ -101,11 +101,11 @@
             </div>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Total Refunded</span>
-                <strong class="text-danger">$<?= number_format((float)($refund_analysis['total_refunded'] ?? 0), 2) ?></strong>
+                <strong class="text-danger">Ksh <?= number_format((float)($refund_analysis['total_refunded'] ?? 0), 2) ?></strong>
             </div>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Avg Refund</span>
-                <strong>$<?= number_format((float)($refund_analysis['avg_refund_amount'] ?? 0), 2) ?></strong>
+                <strong>Ksh <?= number_format((float)($refund_analysis['avg_refund_amount'] ?? 0), 2) ?></strong>
             </div>
             <div class="d-flex justify-content-between small mb-1">
                 <span class="text-muted">Pending Requests</span>
@@ -129,7 +129,7 @@
     <div class="col-sm-6 col-lg-3">
         <div class="card blueprint-card p-3 text-center h-100">
             <span class="text-muted small">Total Revenue</span>
-            <h3 class="fw-bold text-accent mt-1">$<?= number_format((float)($summary['total_revenue'] ?? 0), 2) ?></h3>
+            <h3 class="fw-bold text-accent mt-1">Ksh <?= number_format((float)($summary['total_revenue'] ?? 0), 2) ?></h3>
             <span class="text-success small"><?= (int)($summary['total_trips'] ?? 0) ?> trips</span>
         </div>
     </div>
@@ -137,7 +137,7 @@
         <div class="card blueprint-card p-3 text-center h-100">
             <span class="text-muted small">Net Profit</span>
             <h3 class="fw-bold text-success mt-1">
-                $<?= number_format((float)($summary['total_revenue'] ?? 0) - (float)($summary['total_fuel_cost'] ?? 0) - (float)($summary['total_maintenance'] ?? 0) - (float)($summary['total_allowances'] ?? 0), 2) ?>
+                Ksh <?= number_format((float)($summary['total_revenue'] ?? 0) - (float)($summary['total_fuel_cost'] ?? 0) - (float)($summary['total_maintenance'] ?? 0) - (float)($summary['total_allowances'] ?? 0), 2) ?>
             </h3>
             <span class="text-muted small">After costs</span>
         </div>
@@ -152,8 +152,8 @@
     <div class="col-sm-6 col-lg-3">
         <div class="card blueprint-card p-3 text-center h-100">
             <span class="text-muted small">Fuel Costs</span>
-            <h3 class="fw-bold text-warning mt-1">$<?= number_format((float)($summary['total_fuel_cost'] ?? 0), 2) ?></h3>
-            <span class="text-muted small">+ $<?= number_format((float)($summary['total_maintenance'] ?? 0), 2) ?> maintenance</span>
+            <h3 class="fw-bold text-warning mt-1">Ksh <?= number_format((float)($summary['total_fuel_cost'] ?? 0), 2) ?></h3>
+            <span class="text-muted small">+ Ksh <?= number_format((float)($summary['total_maintenance'] ?? 0), 2) ?> maintenance</span>
         </div>
     </div>
 </div>
@@ -195,15 +195,15 @@
                 </tr>
                 <tr>
                     <td>Gross Revenue</td>
-                    <td><strong class="text-accent">$<?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong></td>
+                    <td><strong class="text-accent">Ksh <?= number_format((float)($completed_analysis['completed_gross_revenue'] ?? 0), 2) ?></strong></td>
                 </tr>
                 <tr>
                     <td>Total Costs (Fuel + Maint + Allowance)</td>
-                    <td><strong class="text-warning">$<?= number_format((float)($completed_analysis['completed_total_costs'] ?? 0), 2) ?></strong></td>
+                    <td><strong class="text-warning">Ksh <?= number_format((float)($completed_analysis['completed_total_costs'] ?? 0), 2) ?></strong></td>
                 </tr>
                 <tr>
                     <td>Net Profit (Realized)</td>
-                    <td><strong class="text-success">$<?= number_format((float)($completed_analysis['completed_net_profit'] ?? 0), 2) ?></strong></td>
+                    <td><strong class="text-success">Ksh <?= number_format((float)($completed_analysis['completed_net_profit'] ?? 0), 2) ?></strong></td>
                 </tr>
                 <tr>
                     <td>Average Trip Distance</td>
@@ -211,7 +211,7 @@
                 </tr>
                 <tr>
                     <td>Average Trip Value</td>
-                    <td><strong>$<?= number_format((float)($completed_analysis['avg_trip_value'] ?? 0), 2) ?></strong></td>
+                    <td><strong>Ksh <?= number_format((float)($completed_analysis['avg_trip_value'] ?? 0), 2) ?></strong></td>
                 </tr>
             </tbody>
         </table>
@@ -247,11 +247,11 @@
                             <td><strong><?= esc($v['model']) ?></strong><br><small class="text-muted"><?= esc($v['plate_number']) ?></small></td>
                             <td><?= $v['trip_count'] ?></td>
                             <td><?= number_format((float)$v['total_km'], 1) ?></td>
-                            <td class="text-accent fw-bold">$<?= number_format((float)$v['gross_revenue'], 2) ?></td>
-                            <td>$<?= number_format((float)$v['total_fuel'], 2) ?></td>
-                            <td>$<?= number_format((float)$v['total_maintenance'], 2) ?></td>
-                            <td>$<?= number_format((float)$v['total_allowances'], 2) ?></td>
-                            <td class="fw-bold <?= $net >= 0 ? 'text-success' : 'text-danger' ?>">$<?= number_format($net, 2) ?></td>
+                            <td class="text-accent fw-bold">Ksh <?= number_format((float)$v['gross_revenue'], 2) ?></td>
+                            <td>Ksh <?= number_format((float)$v['total_fuel'], 2) ?></td>
+                            <td>Ksh <?= number_format((float)$v['total_maintenance'], 2) ?></td>
+                            <td>Ksh <?= number_format((float)$v['total_allowances'], 2) ?></td>
+                            <td class="fw-bold <?= $net >= 0 ? 'text-success' : 'text-danger' ?>">Ksh <?= number_format($net, 2) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -285,8 +285,8 @@
                             <td><strong><?= esc($d['first_name'] . ' ' . $d['last_name']) ?></strong></td>
                             <td><?= $d['trip_count'] ?></td>
                             <td><?= number_format((float)$d['total_km'], 1) ?></td>
-                            <td class="text-accent fw-bold">$<?= number_format((float)$d['gross_revenue'], 2) ?></td>
-                            <td>$<?= number_format((float)$d['total_allowances'], 2) ?></td>
+                            <td class="text-accent fw-bold">Ksh <?= number_format((float)$d['gross_revenue'], 2) ?></td>
+                            <td>Ksh <?= number_format((float)$d['total_allowances'], 2) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -310,7 +310,7 @@
                 data: {
                     labels: trendData.map(d => d.date),
                     datasets: [{
-                        label: 'Daily Revenue ($)',
+                        label: 'Daily Revenue (Ksh)',
                         data: trendData.map(d => parseFloat(d.daily_revenue)),
                         borderColor: '#0d6efd',
                         backgroundColor: 'rgba(13, 110, 253, 0.1)',
@@ -341,7 +341,7 @@
                         y: {
                             ticks: {
                                 color: '#6c757d',
-                                callback: v => '$' + v
+                                callback: v => 'Ksh ' + v
                             },
                             grid: {
                                 color: 'rgba(0,0,0,0.05)'
@@ -363,7 +363,7 @@
                 data: {
                     labels: fuelData.map(d => d.month),
                     datasets: [{
-                        label: 'Price per Liter ($)',
+                        label: 'Price per Liter (Ksh)',
                         data: fuelData.map(d => parseFloat(d.price_per_liter)),
                         borderColor: '#198754',
                         backgroundColor: 'rgba(25, 135, 84, 0.1)',
@@ -393,7 +393,7 @@
                         y: {
                             ticks: {
                                 color: '#6c757d',
-                                callback: v => '$' + v
+                                callback: v => 'Ksh ' + v
                             },
                             grid: {
                                 color: 'rgba(0,0,0,0.05)'

@@ -47,7 +47,7 @@ class EmailService
                     <h2 style='color: #0d6efd; text-align: center;'>KONG SAFARIS</h2>
                     <hr style='border: 0; border-top: 1px solid #0d6efd; opacity: 0.3;'>
                     <p>Dear " . esc($customer_name) . ",</p>
-                    <p>We are excited to confirm that your payment of <strong>$" . number_format($amount, 2) . "</strong> has been successfully processed for booking <strong>#" . $booking_id . "</strong>.</p>
+                    <p>We are excited to confirm that your payment of <strong>Ksh " . number_format($amount, 2) . "</strong> has been successfully processed for booking <strong>#" . $booking_id . "</strong>.</p>
                     <p>Your safari transfer is now fully paid and scheduled. You can track progress or review details on your customer dashboard.</p>
                     <br>
                     <p style='font-size: 0.9em; color: #6c757d;'>Thank you for choosing Kong Safaris.<br><em>Explore Africa in comfort.</em></p>

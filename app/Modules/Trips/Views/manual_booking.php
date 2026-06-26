@@ -103,24 +103,24 @@
                     </div>
                     <div class="d-flex justify-content-between small mb-1">
                         <span>Base booking fee:</span>
-                        <strong id="summaryBase">$0.00</strong>
+                        <strong id="summaryBase">Ksh 0.00</strong>
                     </div>
                     <div class="d-flex justify-content-between small mb-1">
                         <span>Est. fuel cost:</span>
-                        <strong id="summaryFuel">$0.00</strong>
+                        <strong id="summaryFuel">Ksh 0.00</strong>
                     </div>
                     <div class="d-flex justify-content-between small mb-1">
                         <span>Maintenance reserve:</span>
-                        <strong id="summaryMaint">$0.00</strong>
+                        <strong id="summaryMaint">Ksh 0.00</strong>
                     </div>
                     <div class="d-flex justify-content-between small mb-1">
                         <span>Driver allowance:</span>
-                        <strong id="summaryDriver">$0.00</strong>
+                        <strong id="summaryDriver">Ksh 0.00</strong>
                     </div>
                     <hr class="my-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="fw-bold">Total Price:</span>
-                        <span class="fs-4 fw-bold text-accent" id="summaryTotal">$0.00</span>
+                        <span class="fs-4 fw-bold text-accent" id="summaryTotal">Ksh 0.00</span>
                     </div>
                 </div>
 
@@ -134,7 +134,7 @@
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input type="number" step="0.01" class="form-control" name="total_price" id="priceInput" placeholder="System calculated value">
-                            <label>Total Price ($) - Override</label>
+                            <label>Total Price (Ksh) - Override</label>
                         </div>
                     </div>
                 </div>
@@ -350,11 +350,11 @@
                     const isRound = m === 2;
 
                     document.getElementById("summaryDistance").innerText = (data.result.distance_km * m).toFixed(2) + " Km";
-                    document.getElementById("summaryBase").innerText = "$" + (data.result.base_booking_fee * m).toFixed(2);
-                    document.getElementById("summaryFuel").innerText = "$" + (data.result.per_km_fuel_cost * m).toFixed(2);
-                    document.getElementById("summaryMaint").innerText = "$" + (data.result.maintenance_reserve * m).toFixed(2);
-                    document.getElementById("summaryDriver").innerText = "$" + (data.result.driver_allowance * m).toFixed(2);
-                    document.getElementById("summaryTotal").innerText = "$" + (data.result.total_price * m).toFixed(2);
+                    document.getElementById("summaryBase").innerText = "Ksh " + (data.result.base_booking_fee * m).toFixed(2);
+                    document.getElementById("summaryFuel").innerText = "Ksh " + (data.result.per_km_fuel_cost * m).toFixed(2);
+                    document.getElementById("summaryMaint").innerText = "Ksh " + (data.result.maintenance_reserve * m).toFixed(2);
+                    document.getElementById("summaryDriver").innerText = "Ksh " + (data.result.driver_allowance * m).toFixed(2);
+                    document.getElementById("summaryTotal").innerText = "Ksh " + (data.result.total_price * m).toFixed(2);
                     document.getElementById("priceSummary").style.display = "block";
                     document.getElementById("distanceInput").value = data.result.distance_km * m;
                     document.getElementById("priceInput").value = (data.result.total_price * m).toFixed(2);

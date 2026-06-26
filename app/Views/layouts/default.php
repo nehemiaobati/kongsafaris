@@ -51,7 +51,7 @@
                 "addressLocality": "Nairobi",
                 "addressCountry": "KE"
             },
-            "priceRange": "$$"
+            "priceRange": "Ksh"
         }
     </script>
 

@@ -69,7 +69,7 @@
                 <?= csrf_field() ?>
                 <div class="form-floating mb-3">
                     <input type="number" step="0.01" min="0" class="form-control" id="baseFeeInput" name="base_booking_fee" value="<?= esc($base_booking_fee) ?>" required>
-                    <label for="baseFeeInput">Base Booking Fee (USD)</label>
+                    <label for="baseFeeInput">Base Booking Fee (Ksh)</label>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Update Base Fee</button>
             </form>
@@ -89,7 +89,7 @@
                         <input type="hidden" name="fuel_type" value="petrol">
                         <div class="form-floating mb-2">
                             <input type="number" step="0.01" min="0.01" class="form-control" id="petrolFuelInput" name="price_per_liter" value="<?= (string)$currentPetrolRate ?>" required>
-                            <label for="petrolFuelInput">Petrol ($/L)</label>
+                            <label for="petrolFuelInput">Petrol (Ksh/L)</label>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Update Petrol</button>
                     </form>
@@ -100,7 +100,7 @@
                         <input type="hidden" name="fuel_type" value="diesel">
                         <div class="form-floating mb-2">
                             <input type="number" step="0.01" min="0.01" class="form-control" id="dieselFuelInput" name="price_per_liter" value="<?= (string)$currentDieselRate ?>" required>
-                            <label for="dieselFuelInput">Diesel ($/L)</label>
+                            <label for="dieselFuelInput">Diesel (Ksh/L)</label>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Update Diesel</button>
                     </form>
@@ -135,13 +135,13 @@
                 <div class="col-sm-3">
                     <div class="p-3 border rounded text-center">
                         <span class="text-muted small">Petrol Rate</span>
-                        <h2 class="fw-bold mt-1 text-accent">$<?= number_format((float)$currentPetrolRate, 2) ?></h2>
+                        <h2 class="fw-bold mt-1 text-accent">Ksh <?= number_format((float)$currentPetrolRate, 2) ?></h2>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="p-3 border rounded text-center">
                         <span class="text-muted small">Diesel Rate</span>
-                        <h2 class="fw-bold mt-1 text-warning">$<?= number_format((float)$currentDieselRate, 2) ?></h2>
+                        <h2 class="fw-bold mt-1 text-warning">Ksh <?= number_format((float)$currentDieselRate, 2) ?></h2>
                     </div>
                 </div>
             </div>
@@ -217,7 +217,7 @@
                                     </td>
                                     <td>
                                         <span class="badge bg-secondary mb-1"><?= esc($booking->distance_km) ?> Km</span><br>
-                                        <strong class="text-accent">$<?= number_format($booking->total_price, 2) ?></strong>
+                                        <strong class="text-accent">Ksh <?= number_format($booking->total_price, 2) ?></strong>
                                     </td>
                                     <td>
                                         <?php if ($booking->payment_status === 'paid'): ?>
@@ -320,7 +320,7 @@
                                 <tr>
                                     <td><strong>#<?= $refund->id ?></strong></td>
                                     <td><?= esc($refund->first_name . ' ' . $refund->last_name) ?></td>
-                                    <td class="text-accent fw-bold">$<?= number_format($refund->total_price, 2) ?></td>
+                                    <td class="text-accent fw-bold">Ksh <?= number_format($refund->total_price, 2) ?></td>
                                     <td><code><?= esc($refund->paystack_reference ?? 'Manual-Charge') ?></code></td>
                                     <td class="text-end">
                                         <div class="d-inline-flex gap-2">
@@ -376,8 +376,8 @@
                                 <td><?= esc($v->model) ?></td>
                                 <td><span class="badge bg-<?= $v->fuel_type === 'diesel' ? 'warning text-dark' : 'secondary' ?>"><?= esc(ucfirst($v->fuel_type)) ?></span></td>
                                 <td><?= esc($v->fuel_efficiency) ?> Km/L</td>
-                                <td>$<?= esc($v->target_profit_margin_per_km) ?></td>
-                                <td>$<?= esc($v->maintenance_reserve_per_km) ?></td>
+                                <td>Ksh <?= esc($v->target_profit_margin_per_km) ?></td>
+                                <td>Ksh <?= esc($v->maintenance_reserve_per_km) ?></td>
                                 <td>
                                     <span class="badge bg-<?= $v->status === 'active' ? 'success' : ($v->status === 'maintenance' ? 'warning text-dark' : 'danger') ?>">
                                         <?= esc(ucfirst($v->status)) ?>
@@ -433,7 +433,7 @@
                                 <td><strong><?= esc($d['first_name'] . ' ' . $d['last_name']) ?></strong></td>
                                 <td><?= esc($d['email']) ?></td>
                                 <td><code><?= esc($d['license_number']) ?></code></td>
-                                <td>$<?= number_format((float)$d['allowance_flat_rate'], 2) ?></td>
+                                <td>Ksh <?= number_format((float)$d['allowance_flat_rate'], 2) ?></td>
                                 <td>
                                     <span class="badge bg-<?= $d['status'] === 'available' ? 'success' : ($d['status'] === 'on_trip' ? 'info' : 'secondary') ?>">
                                         <?= esc(ucfirst($d['status'])) ?>
@@ -486,11 +486,11 @@
                     </div>
                     <div class="form-floating mb-3">
                         <input type="number" step="0.01" class="form-control" name="target_profit_margin_per_km" placeholder="1.50" required>
-                        <label>Target Profit Margin per Km (USD)</label>
+                        <label>Target Profit Margin per Km (Ksh)</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="number" step="0.01" class="form-control" name="maintenance_reserve_per_km" placeholder="0.50" required>
-                        <label>Maintenance Reserve per Km (USD)</label>
+                        <label>Maintenance Reserve per Km (Ksh)</label>
                     </div>
                     <div class="form-floating mb-3">
                         <select class="form-select" name="fuel_type">
@@ -546,11 +546,11 @@
                     </div>
                     <div class="form-floating mb-3">
                         <input type="number" step="0.01" class="form-control" name="target_profit_margin_per_km" id="edit_v_margin" required>
-                        <label>Target Profit Margin / Km (USD)</label>
+                        <label>Target Profit Margin / Km (Ksh)</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="number" step="0.01" class="form-control" name="maintenance_reserve_per_km" id="edit_v_reserve" required>
-                        <label>Maintenance Reserve / Km (USD)</label>
+                        <label>Maintenance Reserve / Km (Ksh)</label>
                     </div>
                     <div class="form-floating mb-3">
                         <select class="form-select" name="fuel_type" id="edit_v_fuel_type">
@@ -613,7 +613,7 @@
                     </div>
                     <div class="form-floating mb-3">
                         <input type="number" step="0.01" class="form-control" name="allowance_flat_rate" placeholder="50.00" required>
-                        <label>Flat Rate Allowance (USD)</label>
+                        <label>Flat Rate Allowance (Ksh)</label>
                     </div>
                     <div class="form-floating mb-3">
                         <select class="form-select" name="status">
@@ -650,7 +650,7 @@
                     </div>
                     <div class="form-floating mb-3">
                         <input type="number" step="0.01" class="form-control" name="allowance_flat_rate" id="edit_d_allowance" required>
-                        <label>Flat Rate Allowance (USD)</label>
+                        <label>Flat Rate Allowance (Ksh)</label>
                     </div>
                     <div class="form-floating mb-3">
                         <select class="form-select" name="status" id="edit_d_status">
@@ -723,7 +723,7 @@
                         <div class="col-md-4">
                             <div class="form-floating mb-3">
                                 <input type="number" step="0.01" class="form-control" name="total_price" id="edit_price" required>
-                                <label>Total Price ($)</label>
+                                <label>Total Price (Ksh)</label>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -778,7 +778,7 @@
                             <option value="" disabled>Select Driver...</option>
                             <?php foreach ($drivers as $d): ?>
                                 <option value="<?= $d['id'] ?>">
-                                    <?= esc($d['first_name'] . ' ' . $d['last_name']) ?> (Allowance: $<?= number_format((float)$d['allowance_flat_rate'], 2) ?>) - <?= esc(ucfirst($d['status'])) ?>
+                                    <?= esc($d['first_name'] . ' ' . $d['last_name']) ?> (Allowance: Ksh <?= number_format((float)$d['allowance_flat_rate'], 2) ?>) - <?= esc(ucfirst($d['status'])) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -821,7 +821,7 @@
                         </div>
                         <div class="d-flex justify-content-between small mb-1">
                             <span>Amount Due:</span>
-                            <strong class="text-accent" id="payTotal">$0.00</strong>
+                            <strong class="text-accent" id="payTotal">Ksh 0.00</strong>
                         </div>
                     </div>
                 </div>
@@ -945,7 +945,7 @@
             btn.addEventListener("click", function() {
                 document.getElementById("pay_b_id").value = this.getAttribute("data-id");
                 document.getElementById("payCustomer").innerText = this.getAttribute("data-customer");
-                document.getElementById("payTotal").innerText = "$" + this.getAttribute("data-total");
+                document.getElementById("payTotal").innerText = "Ksh " + this.getAttribute("data-total");
                 new bootstrap.Modal(document.getElementById("collectPaymentModal")).show();
             });
         });

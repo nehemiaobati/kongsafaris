@@ -109,7 +109,7 @@ class MainSeeder extends Seeder
 
         // 4. Seed Fuel Rates
         $fuelRateData = [
-            'price_per_liter' => 1.45, // $1.45 per liter baseline price
+            'price_per_liter' => 145.00, // Ksh 145 per liter baseline price
             'updated_by'      => $managerId,
             'created_at'      => Time::now()->toDateTimeString(),
         ];

@@ -6,7 +6,9 @@ namespace App\Modules\Trips\Libraries;
 
 use App\Modules\Trips\Models\BookingModel;
 use App\Modules\Trips\Models\DriverModel;
+use App\Modules\Trips\Models\VehicleModel;
 use App\Modules\Trips\Entities\Booking;
+use App\Modules\Trips\Libraries\PricingService;
 use App\Modules\Auth\Models\UserModel;
 use App\Modules\Notifications\Libraries\EmailService;
 use CodeIgniter\Database\ConnectionInterface;
@@ -27,12 +29,16 @@ class BookingService
     private ConnectionInterface $db;
     private BookingModel $bookingModel;
     private DriverModel $driverModel;
+    private VehicleModel $vehicleModel;
+    private PricingService $pricingService;
 
     public function __construct()
     {
         $this->db = \Config\Database::connect();
         $this->bookingModel = new BookingModel();
         $this->driverModel = new DriverModel();
+        $this->vehicleModel = new VehicleModel();
+        $this->pricingService = new PricingService();
     }
 
     /**
@@ -259,6 +265,17 @@ class BookingService
         $this->db->transStart();
 
         try {
+            $vehicle = $this->vehicleModel->find((int) $data['vehicle_id']);
+            $driver = $this->driverModel->find((int) $data['driver_id']);
+
+            /** @var \App\Modules\Trips\Entities\Vehicle|null $vehicle */
+            /** @var \App\Modules\Trips\Entities\Driver|null $driver */
+            $pricingBreakdown = $this->pricingService->calculateQuote(
+                $vehicle ?? new \App\Modules\Trips\Entities\Vehicle(),
+                $driver ?? new \App\Modules\Trips\Entities\Driver(),
+                (float) $data['distance_km']
+            );
+
             $booking = new Booking([
                 'customer_id'         => (int) $data['customer_id'],
                 'vehicle_id'          => (int) $data['vehicle_id'],
@@ -271,10 +288,10 @@ class BookingService
                 'dropoff_longitude'   => (float) $data['dropoff_longitude'],
                 'distance_km'         => (float) $data['distance_km'],
                 'total_price'         => (float) $data['total_price'],
-                'base_booking_fee'    => 0.00,
-                'per_km_fuel_cost'    => 0.00,
-                'maintenance_reserve' => 0.00,
-                'driver_allowance'    => 0.00,
+                'base_booking_fee'    => $pricingBreakdown['base_booking_fee'],
+                'per_km_fuel_cost'    => $pricingBreakdown['per_km_fuel_cost'],
+                'maintenance_reserve' => $pricingBreakdown['maintenance_reserve'],
+                'driver_allowance'    => $pricingBreakdown['driver_allowance'],
                 'payment_status'      => (string) $data['payment_status'],
                 'trip_status'         => 'pending',
                 'paystack_reference'  => (string) ($data['paystack_reference'] ?? 'MANUAL-' . bin2hex(random_bytes(4))),

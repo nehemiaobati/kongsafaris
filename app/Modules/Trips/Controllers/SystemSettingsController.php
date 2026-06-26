@@ -62,6 +62,6 @@ class SystemSettingsController extends BaseController
         }
 
         return redirect()->to(url_to('trips.manager'))
-            ->with('success', 'Base booking fee updated to $' . number_format($fee, 2) . '.');
+            ->with('success', 'Base booking fee updated to Ksh ' . number_format($fee, 2) . '.');
     }
 }

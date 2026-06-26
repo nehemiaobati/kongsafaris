@@ -76,8 +76,8 @@ class TripQueryService
         $dieselRate = $this->fuelRateModel->where('fuel_type', 'diesel')->orderBy('created_at', 'DESC')->first();
 
         return [
-            'petrol' => $petrolRate !== null ? (float) $petrolRate->price_per_liter : 1.45,
-            'diesel' => $dieselRate !== null ? (float) $dieselRate->price_per_liter : 1.35,
+            'petrol' => $petrolRate !== null ? (float) $petrolRate->price_per_liter : 188.50,
+            'diesel' => $dieselRate !== null ? (float) $dieselRate->price_per_liter : 175.50,
         ];
     }
 
