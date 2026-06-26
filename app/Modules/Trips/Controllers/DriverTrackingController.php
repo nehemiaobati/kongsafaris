@@ -49,12 +49,20 @@ class DriverTrackingController extends BaseController
             ->orderBy('bookings.created_at', 'DESC')
             ->findAll();
 
+        $pastBookings = $bookingModel->select('bookings.*, vehicles.plate_number, vehicles.model')
+            ->join('vehicles', 'vehicles.id = bookings.vehicle_id')
+            ->where('driver_id', $driverRow->id)
+            ->whereIn('trip_status', ['completed', 'cancelled'])
+            ->orderBy('bookings.created_at', 'DESC')
+            ->findAll();
+
         return view('App\Modules\Trips\Views\driver', [
             'pageTitle'       => 'Driver Workspace | Kong Safaris',
             'metaDescription' => 'Start trips and update coordinates on safari drives.',
             'canonicalUrl'    => url_to('trips.driver'),
             'robotsTag'       => 'noindex, nofollow',
             'bookings'        => $bookings,
+            'pastBookings'    => $pastBookings,
         ]);
     }
 

@@ -17,6 +17,11 @@
     .animate-pulse {
         animation: pulse-opacity 1.5s infinite ease-in-out;
     }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(var(--theme-accent-rgb), 0.02) !important;
+        transition: background-color 0.2s ease-in-out;
+    }
 </style>
 <?= $this->endSection() ?>
 

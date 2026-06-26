@@ -24,7 +24,7 @@
     }
 
     .table-hover tbody tr:hover {
-        background-color: rgba(var(--theme-accent-rgb), 0.03) !important;
+        background-color: rgba(var(--theme-accent-rgb), 0.02) !important;
         transition: background-color 0.2s ease-in-out;
     }
 
@@ -210,7 +210,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="small text-truncate" style="max-width: 260px;">
+                                        <div class="small text-truncate" style="max-width: 250px;">
                                             <strong>From:</strong> <?= esc($booking->pickup_address) ?><br>
                                             <strong>To:</strong> <?= esc($booking->dropoff_address) ?>
                                         </div>
