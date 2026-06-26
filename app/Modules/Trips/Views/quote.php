@@ -74,6 +74,15 @@
                     <input type="hidden" id="p_lng" name="pickup_longitude">
                 </div>
 
+                <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded border bg-body-tertiary">
+                    <span class="small fw-medium text-muted">One Way</span>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" id="roundTripToggle" role="switch" style="cursor: pointer;">
+                    </div>
+                    <span class="small fw-medium">Round Trip</span>
+                    <span id="roundTripBadge" class="badge bg-accent ms-auto" style="display: none;">×2</span>
+                </div>
+
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="dropoffInput" name="dropoff_address" placeholder="Dropoff Address" required>
                     <label for="dropoffInput">Destination</label>
@@ -113,7 +122,7 @@
                 <div id="priceSummary" class="p-3 mb-4 rounded bg-success bg-opacity-10 border border-success" style="display: none;">
                     <h6 class="fw-bold text-accent mb-3">Cost Summary</h6>
                     <div class="d-flex justify-content-between small mb-1">
-                        <span>Distance:</span>
+                        <span>Distance: <span id="tripTypeLabel" class="text-muted fst-italic">(one way)</span></span>
                         <strong id="summaryDistance">0.00 Km</strong>
                     </div>
                     <div class="d-flex justify-content-between small mb-1">
@@ -340,6 +349,18 @@
         }
     }
 
+    // Round trip toggle: re-apply multiplier whenever toggle changes
+    document.getElementById("roundTripToggle").addEventListener("change", function() {
+        const summary = document.getElementById("priceSummary");
+        if (summary.style.display !== "none") {
+            fetchDynamicQuote();
+        }
+    });
+
+    function getRoundTripMultiplier() {
+        return document.getElementById("roundTripToggle").checked ? 2 : 1;
+    }
+
     function fetchDynamicQuote() {
         const vehicle = document.getElementById("vehicleSelect").value;
         const driver = document.getElementById("driverSelect").value;
@@ -370,14 +391,20 @@
             .then(data => {
                 window.updateCSRFToken(data.csrf_token);
                 if (data.status === "success") {
-                    document.getElementById("summaryDistance").innerText = data.result.distance_km + " Km";
-                    document.getElementById("summaryBase").innerText = "$" + data.result.base_booking_fee.toFixed(2);
-                    document.getElementById("summaryFuel").innerText = "$" + data.result.per_km_fuel_cost.toFixed(2);
-                    document.getElementById("summaryMaint").innerText = "$" + data.result.maintenance_reserve.toFixed(2);
-                    document.getElementById("summaryDriver").innerText = "$" + data.result.driver_allowance.toFixed(2);
-                    document.getElementById("summaryTotal").innerText = "$" + data.result.total_price.toFixed(2);
+                    const m = getRoundTripMultiplier();
+                    const isRound = m === 2;
+
+                    document.getElementById("summaryDistance").innerText = (data.result.distance_km * m).toFixed(2) + " Km";
+                    document.getElementById("summaryBase").innerText = "$" + (data.result.base_booking_fee * m).toFixed(2);
+                    document.getElementById("summaryFuel").innerText = "$" + (data.result.per_km_fuel_cost * m).toFixed(2);
+                    document.getElementById("summaryMaint").innerText = "$" + (data.result.maintenance_reserve * m).toFixed(2);
+                    document.getElementById("summaryDriver").innerText = "$" + (data.result.driver_allowance * m).toFixed(2);
+                    document.getElementById("summaryTotal").innerText = "$" + (data.result.total_price * m).toFixed(2);
                     document.getElementById("priceSummary").style.display = "block";
                     document.getElementById("bookBtn").removeAttribute("disabled");
+
+                    document.getElementById("tripTypeLabel").innerText = isRound ? "(round trip)" : "(one way)";
+                    document.getElementById("roundTripBadge").style.display = isRound ? "inline" : "none";
                 } else {
                     alert("Error: " + data.message);
                 }
