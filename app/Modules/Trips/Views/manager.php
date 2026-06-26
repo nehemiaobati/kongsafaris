@@ -179,8 +179,14 @@
     <div class="tab-content" id="managerTabContent">
         <!-- 1. Bookings Tab -->
         <div class="tab-pane fade show active" id="bookings-panel" role="tabpanel">
+            <?php if (!empty($bookings)): ?>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="managerBookingsSearchInput" placeholder="Search bookings...">
+                    <label for="managerBookingsSearchInput">Search bookings...</label>
+                </div>
+            <?php endif; ?>
             <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
+                <table class="table table-striped table-hover align-middle" id="managerBookingsTable">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -299,8 +305,14 @@
 
         <!-- 2. Refunds Tab -->
         <div class="tab-pane fade" id="refunds-panel" role="tabpanel">
+            <?php if (!empty($refundRequests)): ?>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="managerRefundsSearchInput" placeholder="Search refund requests...">
+                    <label for="managerRefundsSearchInput">Search refund requests...</label>
+                </div>
+            <?php endif; ?>
             <div class="table-responsive">
-                <table class="table table-striped align-middle">
+                <table class="table table-striped align-middle" id="managerRefundsTable">
                     <thead>
                         <tr>
                             <th>Booking ID</th>
@@ -355,8 +367,15 @@
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addVehicleModal">+ Add Vehicle</button>
             </div>
 
+            <?php if (!empty($vehicles)): ?>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="managerVehiclesSearchInput" placeholder="Search vehicles...">
+                    <label for="managerVehiclesSearchInput">Search vehicles...</label>
+                </div>
+            <?php endif; ?>
+
             <div class="table-responsive">
-                <table class="table table-striped align-middle">
+                <table class="table table-striped align-middle" id="managerVehiclesTable">
                     <thead>
                         <tr>
                             <th>Plate</th>
@@ -415,8 +434,15 @@
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDriverModal">+ Add Driver</button>
             </div>
 
+            <?php if (!empty($drivers)): ?>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="managerDriversSearchInput" placeholder="Search drivers...">
+                    <label for="managerDriversSearchInput">Search drivers...</label>
+                </div>
+            <?php endif; ?>
+
             <div class="table-responsive">
-                <table class="table table-striped align-middle">
+                <table class="table table-striped align-middle" id="managerDriversTable">
                     <thead>
                         <tr>
                             <th>Driver Name</th>
@@ -857,6 +883,50 @@
 <?= $this->section('scripts') ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Reusable Table Filter Helper
+        function setupTableSearch(inputId, tableId, noMatchesText) {
+            const searchInput = document.getElementById(inputId);
+            const table = document.getElementById(tableId);
+            if (searchInput && table) {
+                searchInput.addEventListener('input', function() {
+                    const filter = this.value.toLowerCase().trim();
+                    const rows = table.querySelectorAll('tbody tr:not(.no-matches-row)');
+                    let visibleCount = 0;
+                    
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(filter)) {
+                            row.style.setProperty('display', '', 'important');
+                            visibleCount++;
+                        } else {
+                            row.style.setProperty('display', 'none', 'important');
+                        }
+                    });
+                    
+                    const existingMsg = table.querySelector('.no-matches-row');
+                    if (existingMsg) {
+                        existingMsg.remove();
+                    }
+                    
+                    if (visibleCount === 0 && filter !== '') {
+                        const tbody = table.querySelector('tbody');
+                        if (tbody) {
+                            const colsCount = table.querySelectorAll('thead th').length || 7;
+                            const tr = document.createElement('tr');
+                            tr.className = 'no-matches-row';
+                            tr.innerHTML = `<td colspan="${colsCount}" class="text-center text-muted py-4">${noMatchesText}</td>`;
+                            tbody.appendChild(tr);
+                        }
+                    }
+                });
+            }
+        }
+
+        setupTableSearch('managerBookingsSearchInput', 'managerBookingsTable', 'No matching bookings found.');
+        setupTableSearch('managerRefundsSearchInput', 'managerRefundsTable', 'No matching refund requests found.');
+        setupTableSearch('managerVehiclesSearchInput', 'managerVehiclesTable', 'No matching vehicles found.');
+        setupTableSearch('managerDriversSearchInput', 'managerDriversTable', 'No matching drivers found.');
+
         document.querySelectorAll(".edit-vehicle-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 document.getElementById("edit_v_id").value = this.getAttribute("data-id");

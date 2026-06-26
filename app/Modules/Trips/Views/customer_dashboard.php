@@ -37,8 +37,12 @@
 </div>
 
 <div class="card blueprint-card p-4">
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="customerSearchInput" placeholder="Search my bookings...">
+        <label for="customerSearchInput">Search bookings...</label>
+    </div>
     <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle mb-0">
+        <table class="table table-striped table-hover align-middle mb-0" id="customerBookingsTable">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -121,4 +125,45 @@
         </table>
     </div>
 </div>
+
+<?= $this->section('scripts') ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('customerSearchInput');
+    const table = document.getElementById('customerBookingsTable');
+    if (searchInput && table) {
+        searchInput.addEventListener('input', function() {
+            const filter = this.value.toLowerCase().trim();
+            const rows = table.querySelectorAll('tbody tr:not(.no-matches-row)');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    row.style.setProperty('display', '', 'important');
+                    visibleCount++;
+                } else {
+                    row.style.setProperty('display', 'none', 'important');
+                }
+            });
+            
+            const existingMsg = table.querySelector('.no-matches-row');
+            if (existingMsg) {
+                existingMsg.remove();
+            }
+            
+            if (visibleCount === 0 && filter !== '') {
+                const tbody = table.querySelector('tbody');
+                if (tbody) {
+                    const colsCount = table.querySelectorAll('thead th').length || 7;
+                    const tr = document.createElement('tr');
+                    tr.className = 'no-matches-row';
+                    tr.innerHTML = `<td colspan="${colsCount}" class="text-center text-muted py-4">No matching safari bookings found.</td>`;
+                    tbody.appendChild(tr);
+                }
+            }
+        });
+    }
+});
+</script>
 <?= $this->endSection() ?>
